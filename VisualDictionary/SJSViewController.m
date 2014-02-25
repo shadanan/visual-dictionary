@@ -14,7 +14,9 @@
 
 @end
 
-@implementation SJSViewController
+@implementation SJSViewController {
+    CGFloat _scaleStart;
+}
 
 - (void)viewDidLoad
 {
@@ -26,7 +28,15 @@
     skView.ignoresSiblingOrder = YES;
 
     SJSGraphScene *wordScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        _scaleStart = 1;
+    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        _scaleStart = 1.5;
+    }
+    
     wordScene.scaleMode = SKSceneScaleModeAspectFill;
+    wordScene.scale = _scaleStart;
     
     UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     recognizer.delegate = (id)self;
@@ -44,7 +54,13 @@
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
     SKView *skView = (SKView *) self.view;
     SJSGraphScene *wordScene = (SJSGraphScene *)skView.scene;
-    wordScene.scale = recognizer.scale;
+    
+    if ([recognizer state] == UIGestureRecognizerStateBegan) {
+        _scaleStart = wordScene.scale;
+    }
+    
+    wordScene.scale = _scaleStart * recognizer.scale;
+    
 }
 
 - (void)loadWordNetDb:(SJSGraphScene *)wordScene

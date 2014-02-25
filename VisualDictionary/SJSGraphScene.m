@@ -8,11 +8,12 @@
 
 #import "SJSGraphScene.h"
 
-@implementation SJSGraphScene
-
 NSInteger searchAreaOpen = 40;
-NSInteger maxDepth = 3;
-NSInteger maxForce = 20;
+
+@implementation SJSGraphScene {
+    CGFloat _anchorRadius;
+    CGFloat _springLength;
+}
 
 - (void)didMoveToView:(SKView *)view
 {
@@ -36,9 +37,13 @@ NSInteger maxForce = 20;
 
 - (void)createSceneContents
 {
+    NSLog(@"Scale: %f", self.scale);
+    
+    _anchorRadius = 60 * self.scale;
+    _springLength = 60 * self.scale;
+    
     self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
     self.scaleMode = SKSceneScaleModeResizeFill;
-    self.scale = 1;
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
@@ -68,13 +73,28 @@ NSInteger maxForce = 20;
     self.searchIcon = [SKLabelNode new];
     self.searchIcon.name = @"searchIcon";
     self.searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    self.searchIcon.fontSize = 20;
+    self.searchIcon.fontSize = 24;
     self.searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     self.searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     self.searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
     self.searchIcon.zPosition = 200;
     self.searchIcon.hidden = YES;
     [self addChild:self.searchIcon];
+    
+    SKShapeNode *anchorPoint = [SKShapeNode new];
+    
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
+    anchorPoint.path = path;
+    CGPathRelease(path);
+    
+    anchorPoint.name = @"anchorPoint";
+    anchorPoint.fillColor = [SKColor whiteColor];
+    anchorPoint.alpha = 0;
+    anchorPoint.glowWidth = 1;
+    anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    [self addChild:anchorPoint];
+    
     
     SKNode *edgeNodes = [[SKNode alloc] init];
     edgeNodes.name = @"edgeNodes";
@@ -123,7 +143,7 @@ NSInteger maxForce = 20;
         if ([node isKindOfClass:[SJSWordNode class]]) {
             self.dragging = NO;
             self.currentNode = (SJSWordNode *)node;
-            self.currentNode.physicsBody.dynamic = NO;
+            [self.currentNode disableDynamic];
         }
         
         if ([node.name isEqualToString:@"searchIcon"]) {
@@ -142,20 +162,44 @@ NSInteger maxForce = 20;
         self.dragging = YES;
         CGPoint point = [[touches anyObject] locationInNode:self];
         self.currentNode.position = point;
+        
+        SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
+        if (![anchorPoint hasActions]) {
+            if (anchorPoint.alpha != 0.4 && [self.currentNode distanceTo:anchorPoint] < _anchorRadius) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
+                [anchorPoint runAction:fadeIn];
+            } else if (anchorPoint.alpha != 0.2 && [self.currentNode distanceTo:anchorPoint] >= _anchorRadius) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
+                [anchorPoint runAction:fadeIn];
+            }
+        }
     }
 }
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     if (self.currentNode != nil) {
-        self.currentNode.physicsBody.dynamic = YES;
+        [self.currentNode enableDynamic];
         
         if (!self.dragging) {
-            [self.currentNode growRecursivelyWithMaxDepth:1];
+            [self.currentNode grow];
             [self buildEdgeNodes];
             
             [self.definitionsView open];
             [self.definitionsView setText:[self.currentNode getDefinition]];
+        }
+        
+        SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
+        SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
+        [anchorPoint runAction:fadeOut];
+        
+        if (self.dragging && [self.currentNode distanceTo:anchorPoint] < _anchorRadius) {
+            [self.root enableDynamic];
+            [self.currentNode disableDynamic];
+            
+            [self.currentNode promoteToRoot];
+            SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
+            [self.root runAction:moveToCentre];
         }
     }
 }
@@ -210,13 +254,12 @@ NSInteger maxForce = 20;
     
     [wordNodes removeAllChildren];
     
-    self.root = [[SJSWordNode alloc] initWithName:word withType:WordType];
+    self.root = [[SJSWordNode alloc] initWordWithName:word];
     self.root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    self.root.physicsBody.dynamic = NO;
+    [self.root disableDynamic];
     [wordNodes addChild:self.root];
     
-    [self.root growRecursivelyWithMaxDepth:maxDepth];
-    [self buildEdgeNodes];
+    [self.root promoteToRoot];
 }
 
 - (void)buildEdgeNodes
@@ -231,7 +274,7 @@ NSInteger maxForce = 20;
         for (int j = i + 1; j < wordNodes.children.count; j++) {
             SJSWordNode *them = [wordNodes.children objectAtIndex:j];
             
-            if ((me.type == MeaningType && them.type == WordType && [self.wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type == MeaningType && [self.wordNetDb word:me.name isConnectedToMeaning:them.name])) {
+            if ((me.type != WordType && them.type == WordType && [self.wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [self.wordNetDb word:me.name isConnectedToMeaning:them.name])) {
                 SJSEdgeNode *edge = [[SJSEdgeNode alloc] initWithNodeA:me withNodeB:them];
                 [edgeNodes addChild:edge];
             }
@@ -241,41 +284,30 @@ NSInteger maxForce = 20;
 
 - (BOOL)node:(SJSWordNode *)node1 isConnectedTo:(SJSWordNode *)node2
 {
-    if (node1.type == MeaningType && node2.type == WordType) {
+    if (node1.type != WordType && node2.type == WordType) {
         return [self.wordNetDb word:node2.name isConnectedToMeaning:node1.name];
     }
     
-    if (node1.type == WordType && node2.type == MeaningType) {
+    if (node1.type == WordType && node2.type != WordType) {
         return [self.wordNetDb word:node1.name isConnectedToMeaning:node2.name];
     }
     
     return false;
 }
 
-double limit(double value) {
-    if (value > maxForce) {
-        return maxForce;
-    } else if (value < -maxForce) {
-        return -maxForce;
-    } else {
-        return value;
-    }
-}
-
 - (void)update:(NSTimeInterval)currentTime
 {
     SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
     
-    double r0 = 50 * self.scale;
-    double ka = 1;
-    double kp = 10000;
+    double r0 = _springLength * self.scale;
+    double ka = 1 * self.scale;
+    double kp = 10000 * self.scale;
     
     for (SJSWordNode *me in wordNodes.children) {
         double x1 = me.position.x;
         double y1 = me.position.y;
         
-        me.xScale = self.scale;
-        me.yScale = self.scale;
+        [me setScale:self.scale];
         
         // No forces on the root
         if (me == self.root) {

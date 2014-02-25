@@ -11,22 +11,30 @@
 @interface SJSWordNode : SKLabelNode
 
 typedef NS_ENUM(NSInteger, NodeType) {
-    UnknownType,
     WordType,
-    MeaningType
+    AdverbType,
+    AdjectiveType,
+    NounType,
+    VerbType
 };
 
 @property enum NodeType type;
 @property NSInteger distance;
-@property NSArray *neighbourNames;
+@property (readonly) NSArray *neighbourNames;
+@property CGFloat defaultScale;
 
-- (id)initWithName:(NSString *)name withType:(NodeType)type;
+- (id)initWordWithName:(NSString *)name;
+- (id)initMeaningWithName:(NSString *)name;
+
+- (CGFloat)distanceTo:(SKNode *)node;
+
+- (void)disableDynamic;
+
+- (void)enableDynamic;
+
+- (void)promoteToRoot;
 
 - (NSArray *)neighbourNodes;
-
-- (void)prune;
-
-- (void)pruneNeighbours;
 
 - (void)grow;
 

@@ -31,6 +31,9 @@
 @property CGFloat scale;
 
 - (void)setMessage:(NSString *)message;
+
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
+
+- (void)buildEdgeNodes;
 
 @end

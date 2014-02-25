@@ -33,6 +33,8 @@
 		73BC6A5E18A8722C006E6898 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A5D18A8722C006E6898 /* SpriteKit.framework */; };
 		73BC6A6118A872D8006E6898 /* SJSGraphScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A6018A872D8006E6898 /* SJSGraphScene.m */; };
 		73BC6A7918AAA531006E6898 /* SJSWordNetDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */; };
+		73F40FC418B6D29300802464 /* iPad.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1718A87107006E6898 /* iPad.storyboard */; };
+		73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1418A87107006E6898 /* iPhone.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -74,8 +76,8 @@
 		73BC6A1018A87107006E6898 /* VisualDictionary-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "VisualDictionary-Prefix.pch"; sourceTree = "<group>"; };
 		73BC6A1118A87107006E6898 /* SJSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSAppDelegate.h; sourceTree = "<group>"; };
 		73BC6A1218A87107006E6898 /* SJSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SJSAppDelegate.m; sourceTree = "<group>"; };
-		73BC6A1518A87107006E6898 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPhone.storyboard; sourceTree = "<group>"; };
-		73BC6A1818A87107006E6898 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main_iPad.storyboard; sourceTree = "<group>"; };
+		73BC6A1518A87107006E6898 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPhone.storyboard; sourceTree = "<group>"; };
+		73BC6A1818A87107006E6898 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPad.storyboard; sourceTree = "<group>"; };
 		73BC6A1A18A87107006E6898 /* SJSViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSViewController.h; sourceTree = "<group>"; };
 		73BC6A1B18A87107006E6898 /* SJSViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SJSViewController.m; sourceTree = "<group>"; };
 		73BC6A1D18A87107006E6898 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -169,26 +171,26 @@
 		73BC6A0818A87107006E6898 /* VisualDictionary */ = {
 			isa = PBXGroup;
 			children = (
-				73BC6A1118A87107006E6898 /* SJSAppDelegate.h */,
-				737F04F418B1F39F005717F6 /* SJSDefinitionsView.h */,
-				737F04E718B118AE005717F6 /* SJSEdgeNode.h */,
-				73BC6A5F18A872D8006E6898 /* SJSGraphScene.h */,
-				73BC6A1A18A87107006E6898 /* SJSViewController.h */,
-				73BC6A7718AAA531006E6898 /* SJSWordNetDB.h */,
-				737F04DA18ADE33B005717F6 /* SJSWordNode.h */,
-				73BC6A1218A87107006E6898 /* SJSAppDelegate.m */,
-				737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */,
-				737F04E818B118AE005717F6 /* SJSEdgeNode.m */,
-				73BC6A6018A872D8006E6898 /* SJSGraphScene.m */,
-				73BC6A1B18A87107006E6898 /* SJSViewController.m */,
-				73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */,
-				737F04DB18ADE33B005717F6 /* SJSWordNode.m */,
-				737F04E518AE1180005717F6 /* wordnet.sqlite */,
-				73BC6A1D18A87107006E6898 /* Images.xcassets */,
 				734EF9B618B3103A007A5BB2 /* FMDB */,
-				73BC6A1718A87107006E6898 /* Main_iPad.storyboard */,
-				73BC6A1418A87107006E6898 /* Main_iPhone.storyboard */,
+				73BC6A1D18A87107006E6898 /* Images.xcassets */,
+				73BC6A1718A87107006E6898 /* iPad.storyboard */,
+				73BC6A1418A87107006E6898 /* iPhone.storyboard */,
+				73BC6A1118A87107006E6898 /* SJSAppDelegate.h */,
+				73BC6A1218A87107006E6898 /* SJSAppDelegate.m */,
+				73BC6A1A18A87107006E6898 /* SJSViewController.h */,
+				73BC6A1B18A87107006E6898 /* SJSViewController.m */,
+				737F04F418B1F39F005717F6 /* SJSDefinitionsView.h */,
+				737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */,
+				73BC6A5F18A872D8006E6898 /* SJSGraphScene.h */,
+				73BC6A6018A872D8006E6898 /* SJSGraphScene.m */,
+				737F04DA18ADE33B005717F6 /* SJSWordNode.h */,
+				737F04DB18ADE33B005717F6 /* SJSWordNode.m */,
+				737F04E718B118AE005717F6 /* SJSEdgeNode.h */,
+				737F04E818B118AE005717F6 /* SJSEdgeNode.m */,
+				73BC6A7718AAA531006E6898 /* SJSWordNetDB.h */,
+				73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */,
 				73BC6A0918A87107006E6898 /* Supporting Files */,
+				737F04E518AE1180005717F6 /* wordnet.sqlite */,
 			);
 			path = VisualDictionary;
 			sourceTree = "<group>";
@@ -302,6 +304,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				73F40FC418B6D29300802464 /* iPad.storyboard in Resources */,
+				73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */,
 				73BC6A1E18A87107006E6898 /* Images.xcassets in Resources */,
 				73BC6A0D18A87107006E6898 /* InfoPlist.strings in Resources */,
 				737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */,
@@ -366,20 +370,20 @@
 			name = InfoPlist.strings;
 			sourceTree = "<group>";
 		};
-		73BC6A1418A87107006E6898 /* Main_iPhone.storyboard */ = {
+		73BC6A1418A87107006E6898 /* iPhone.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				73BC6A1518A87107006E6898 /* Base */,
 			);
-			name = Main_iPhone.storyboard;
+			name = iPhone.storyboard;
 			sourceTree = "<group>";
 		};
-		73BC6A1718A87107006E6898 /* Main_iPad.storyboard */ = {
+		73BC6A1718A87107006E6898 /* iPad.storyboard */ = {
 			isa = PBXVariantGroup;
 			children = (
 				73BC6A1818A87107006E6898 /* Base */,
 			);
-			name = Main_iPad.storyboard;
+			name = iPad.storyboard;
 			sourceTree = "<group>";
 		};
 		73BC6A2D18A87107006E6898 /* InfoPlist.strings */ = {
