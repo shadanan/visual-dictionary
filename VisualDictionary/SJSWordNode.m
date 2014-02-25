@@ -20,6 +20,11 @@ CGFloat circleRadius = 16;
 
 @implementation SKColor (Extensions)
 
++ (SKColor *)rootNodeColor
+{
+    return [SKColor colorWithRed:0 green:0.3 blue:0.3 alpha:1];
+}
+
 + (SKColor *)wordNodeColor
 {
     return [SKColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
@@ -77,6 +82,7 @@ CGFloat circleRadius = 16;
 
 @implementation SJSWordNode {
     NSArray *_neighbourNames;
+    SKShapeNode *_circle;
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -131,16 +137,16 @@ CGFloat circleRadius = 16;
     
     _neighbourNames = nil;
     
-    SKShapeNode *shapeNode = [SKShapeNode new];
+    _circle = [SKShapeNode new];
     
     CGMutablePathRef circlePath = CGPathCreateMutable();
     CGPathAddArc(circlePath, nil, 0, 0, circleRadius, 0, M_PI*2, true);
     
-    shapeNode.name = @"circle";
-    shapeNode.path = circlePath;
-    shapeNode.lineWidth = lineWidth;
-    shapeNode.fillColor = [SKColor colorByNodeType:type];
-    shapeNode.zPosition = 0.0;
+    _circle.name = @"circle";
+    _circle.path = circlePath;
+    _circle.lineWidth = lineWidth;
+    _circle.fillColor = [SKColor colorByNodeType:type];
+    _circle.zPosition = 0.0;
 
     CGPathRelease(circlePath);
     
@@ -151,7 +157,7 @@ CGFloat circleRadius = 16;
     self.physicsBody.friction = 0;
     self.physicsBody.allowsRotation = NO;
     
-    [self addChild:shapeNode];
+    [self addChild:_circle];
     
     return self;
 }
@@ -191,6 +197,7 @@ CGFloat circleRadius = 16;
 {
     SJSGraphScene *scene = (SJSGraphScene *)self.scene;
     scene.root = self;
+    _circle.fillColor = [SKColor rootNodeColor];
     
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
@@ -242,11 +249,9 @@ CGFloat circleRadius = 16;
         self.fontSize = meaningFontSize * scale;
     }
 
-    SKShapeNode *shapeNode = (SKShapeNode *)[self childNodeWithName:@"circle"];
-    
     CGMutablePathRef circlePath = CGPathCreateMutable();
     CGPathAddArc(circlePath, nil, 0, 0, circleRadius * scale, 0, M_PI*2, true);
-    shapeNode.path = circlePath;
+    _circle.path = circlePath;
     CGPathRelease(circlePath);
 }
 
@@ -292,11 +297,10 @@ CGFloat circleRadius = 16;
 
 - (void)updateShapeNodePath
 {
-    SKShapeNode *shapeNode = (SKShapeNode *)[self childNodeWithName:@"circle"];
     if ([self canGrow]) {
-        shapeNode.strokeColor = [SKColor canGrowEdgeColor];
+        _circle.strokeColor = [SKColor canGrowEdgeColor];
     } else {
-        shapeNode.strokeColor = [SKColor cannotGrowEdgeColor];
+        _circle.strokeColor = [SKColor cannotGrowEdgeColor];
     }
 }
 
