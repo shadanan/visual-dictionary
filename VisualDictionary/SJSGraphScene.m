@@ -12,6 +12,8 @@ NSInteger searchAreaOpen = 40;
 CGFloat searchIconSize = 30;
 CGFloat anchorRadius = 60;
 CGFloat springLength = 60;
+CGFloat definitionsHeightIPhone = 100;
+CGFloat definitionsHeightIPad = 200;
 
 @implementation SJSGraphScene {
     CGFloat _anchorRadius;
@@ -107,7 +109,12 @@ CGFloat springLength = 60;
     wordNodes.name = @"wordNodes";
     [self addChild:wordNodes];
     
-    self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, 100)];
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPhone)];
+    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPad)];
+    }
+    
     [self.view addSubview:self.definitionsView];
 }
 
@@ -136,7 +143,10 @@ CGFloat springLength = 60;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    [self closeSearchPane];
+    if (self.root != nil) {
+        [self closeSearchPane];
+    }
+    
     [self.definitionsView close];
     
     CGPoint start = [[touches anyObject] locationInNode:self];

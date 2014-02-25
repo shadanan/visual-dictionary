@@ -23,8 +23,6 @@
     [super viewDidLoad];
     
     SKView *skView = (SKView *) self.view;
-    skView.showsNodeCount = YES;
-    skView.showsFPS = YES;
     skView.ignoresSiblingOrder = YES;
 
     SJSGraphScene *wordScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
