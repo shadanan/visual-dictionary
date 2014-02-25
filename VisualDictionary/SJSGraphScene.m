@@ -9,6 +9,9 @@
 #import "SJSGraphScene.h"
 
 NSInteger searchAreaOpen = 40;
+CGFloat searchIconSize = 30;
+CGFloat anchorRadius = 60;
+CGFloat springLength = 60;
 
 @implementation SJSGraphScene {
     CGFloat _anchorRadius;
@@ -39,8 +42,8 @@ NSInteger searchAreaOpen = 40;
 {
     NSLog(@"Scale: %f", self.scale);
     
-    _anchorRadius = 60 * self.scale;
-    _springLength = 60 * self.scale;
+    _anchorRadius = anchorRadius * self.scale;
+    _springLength = springLength * self.scale;
     
     self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
     self.scaleMode = SKSceneScaleModeResizeFill;
@@ -73,7 +76,7 @@ NSInteger searchAreaOpen = 40;
     self.searchIcon = [SKLabelNode new];
     self.searchIcon.name = @"searchIcon";
     self.searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    self.searchIcon.fontSize = 24;
+    self.searchIcon.fontSize = searchIconSize * self.scale;
     self.searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     self.searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     self.searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;

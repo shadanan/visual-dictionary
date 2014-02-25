@@ -9,7 +9,7 @@
 #import "SJSWordNode.h"
 #import "SJSGraphScene.h"
 
-NSInteger maxNodeThreshold = 40;
+NSInteger maxNodeThreshold = 20;
 NSInteger maxDepth = 3;
 CGFloat lineWidth = 0.1;
 NSString *wordFont = @"AvenirNextCondensed-DemiBold";
@@ -195,7 +195,7 @@ CGFloat circleRadius = 16;
     
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
-    [self growRecursivelyWithMaxDepth:maxDepth];
+    [self growRecursively];
     [scene buildEdgeNodes];
 }
 
@@ -213,7 +213,7 @@ CGFloat circleRadius = 16;
         SJSWordNode *node = [queue objectAtIndex:0];
         [queue removeObjectAtIndex:0];
         
-        for (SJSWordNode *child in [node neighbourNodesInScene]) {
+        for (SJSWordNode *child in [node neighbourNodes]) {
             if (child.distance == -1) {
                 child.distance = node.distance + 1;
                 [queue addObject:child];
@@ -252,20 +252,6 @@ CGFloat circleRadius = 16;
 }
 
 - (NSArray *)neighbourNodes
-{
-    if (self.neighbourNames == nil)
-        return nil;
-    
-    NSMutableArray *neighbourNodes = [NSMutableArray new];
-    
-    for (NSString *neighbourName in self.neighbourNames) {
-        [neighbourNodes addObject:[self.parent childNodeWithName:neighbourName]];
-    }
-    
-    return neighbourNodes;
-}
-
-- (NSArray *)neighbourNodesInScene
 {
     if (self.neighbourNames == nil)
         return nil;
@@ -327,16 +313,27 @@ CGFloat circleRadius = 16;
     return false;
 }
 
-- (void)growRecursivelyWithMaxDepth:(NSUInteger)depth
+- (void)growRecursively
 {
-    if (depth == 0) {
-        return;
+    for (SJSWordNode *node in [self.parent children]) {
+        node.distance = -1;
     }
     
-    [self grow];
+    NSMutableArray *queue = [NSMutableArray new];
+    self.distance = 0;
+    [queue addObject:self];
     
-    for (SJSWordNode *neighbour in [self neighbourNodes]) {
-        [neighbour growRecursivelyWithMaxDepth:depth - 1];
+    while (queue.count > 0 && self.parent.children.count < maxNodeThreshold) {
+        SJSWordNode *node = [queue objectAtIndex:0];
+        [queue removeObjectAtIndex:0];
+        
+        [node grow];
+        for (SJSWordNode *child in [node neighbourNodes]) {
+            if (child.distance == -1) {
+                child.distance = node.distance + 1;
+                [queue addObject:child];
+            }
+        }
     }
 }
 

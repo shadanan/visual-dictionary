@@ -38,8 +38,6 @@ typedef NS_ENUM(NSInteger, NodeType) {
 
 - (void)grow;
 
-- (void)growRecursivelyWithMaxDepth:(NSUInteger)depth;
-
 - (NSString *)getDefinition;
 
 @end

@@ -36,12 +36,104 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VisualDictionary/SJSWordNode.m"
-            timestampString = "415001544.029073"
+            timestampString = "415004423.992299"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "161"
-            endingLineNumber = "161"
-            landmarkName = "-neighbourNames"
+            startingLineNumber = "295"
+            endingLineNumber = "295"
+            landmarkName = "-updateShapeNodePath"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SJSWordNode growRecursively]"
+                  moduleName = "VisualDictionary"
+                  urlString = "file:///Users/shad/Dropbox/ObjectiveC/VisualDictionary/VisualDictionary/SJSWordNode.m"
+                  timestampString = "415003807.139076"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "309"
+                  endingLineNumber = "309"
+                  offsetFromSymbolStart = "54">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SJSWordNode growRecursively]"
+                  moduleName = "VisualDictionary"
+                  urlString = "file:///Users/shad/Dropbox/ObjectiveC/VisualDictionary/VisualDictionary/SJSWordNode.m"
+                  timestampString = "415003807.139274"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "309"
+                  endingLineNumber = "309"
+                  offsetFromSymbolStart = "557">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VisualDictionary/SJSWordNode.m"
+            timestampString = "415004423.992299"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "272"
+            endingLineNumber = "272"
+            landmarkName = "-grow"
+            landmarkType = "5">
+            <Locations>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SJSWordNode grow]"
+                  moduleName = "VisualDictionary"
+                  urlString = "file:///Users/shad/Dropbox/ObjectiveC/VisualDictionary/VisualDictionary/SJSWordNode.m"
+                  timestampString = "415003807.139428"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "286"
+                  endingLineNumber = "286"
+                  offsetFromSymbolStart = "54">
+               </Location>
+               <Location
+                  shouldBeEnabled = "No"
+                  ignoreCount = "0"
+                  continueAfterRunningActions = "No"
+                  symbolName = "-[SJSWordNode grow]"
+                  moduleName = "VisualDictionary"
+                  urlString = "file:///Users/shad/Dropbox/ObjectiveC/VisualDictionary/VisualDictionary/SJSWordNode.m"
+                  timestampString = "415003807.139571"
+                  startingColumnNumber = "9223372036854775807"
+                  endingColumnNumber = "9223372036854775807"
+                  startingLineNumber = "286"
+                  endingLineNumber = "286"
+                  offsetFromSymbolStart = "1503">
+               </Location>
+            </Locations>
+         </BreakpointContent>
+      </BreakpointProxy>
+      <BreakpointProxy
+         BreakpointExtensionID = "Xcode.Breakpoint.FileBreakpoint">
+         <BreakpointContent
+            shouldBeEnabled = "No"
+            ignoreCount = "0"
+            continueAfterRunningActions = "No"
+            filePath = "VisualDictionary/SJSWordNode.m"
+            timestampString = "415003806.863964"
+            startingColumnNumber = "9223372036854775807"
+            endingColumnNumber = "9223372036854775807"
+            startingLineNumber = "221"
+            endingLineNumber = "221"
+            landmarkName = "-updateDistances"
             landmarkType = "5">
          </BreakpointContent>
       </BreakpointProxy>
