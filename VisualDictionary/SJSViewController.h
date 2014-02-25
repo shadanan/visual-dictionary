@@ -8,7 +8,6 @@
 
 #import <UIKit/UIKit.h>
 #import <SpriteKit/SpriteKit.h>
-#import "SJSWordNetDB.h"
 
 @interface SJSViewController : UIViewController
 

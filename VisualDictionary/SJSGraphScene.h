@@ -16,7 +16,6 @@
 
 @property BOOL contentCreated;
 @property NSTimeInterval lastTime;
-@property SJSWordNetDB *wordNetDb;
 @property SJSWordNode *root;
 @property SJSWordNode *currentNode;
 @property BOOL dragging;
@@ -29,6 +28,8 @@
 @property SJSDefinitionsView *definitionsView;
 
 @property CGFloat scale;
+
++ (SJSWordNetDB *)wordNetDb;
 
 - (void)setMessage:(NSString *)message;
 

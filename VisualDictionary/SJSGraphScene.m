@@ -15,9 +15,23 @@ CGFloat springLength = 60;
 CGFloat definitionsHeightIPhone = 100;
 CGFloat definitionsHeightIPad = 200;
 
+static SJSWordNetDB *wordNetDb = nil;
+
 @implementation SJSGraphScene {
     CGFloat _anchorRadius;
     CGFloat _springLength;
+}
+
++ (void)initialize
+{
+    if (!wordNetDb) {
+        wordNetDb = [[SJSWordNetDB alloc] init];
+    }
+}
+
++ (SJSWordNetDB *)wordNetDb
+{
+    return wordNetDb;
 }
 
 - (void)didMoveToView:(SKView *)view
@@ -256,7 +270,7 @@ CGFloat definitionsHeightIPad = 200;
 
 - (void)createSceneForWord:(NSString *)word
 {
-    if (![self.wordNetDb containsWord:word]) {
+    if (![wordNetDb containsWord:word]) {
         [self setMessage:[word stringByAppendingString:@" not found in dictionary"] withDuration:5.0];
         return;
     }
@@ -287,7 +301,7 @@ CGFloat definitionsHeightIPad = 200;
         for (int j = i + 1; j < wordNodes.children.count; j++) {
             SJSWordNode *them = [wordNodes.children objectAtIndex:j];
             
-            if ((me.type != WordType && them.type == WordType && [self.wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [self.wordNetDb word:me.name isConnectedToMeaning:them.name])) {
+            if ((me.type != WordType && them.type == WordType && [wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [wordNetDb word:me.name isConnectedToMeaning:them.name])) {
                 SJSEdgeNode *edge = [[SJSEdgeNode alloc] initWithNodeA:me withNodeB:them];
                 [edgeNodes addChild:edge];
             }
@@ -298,11 +312,11 @@ CGFloat definitionsHeightIPad = 200;
 - (BOOL)node:(SJSWordNode *)node1 isConnectedTo:(SJSWordNode *)node2
 {
     if (node1.type != WordType && node2.type == WordType) {
-        return [self.wordNetDb word:node2.name isConnectedToMeaning:node1.name];
+        return [wordNetDb word:node2.name isConnectedToMeaning:node1.name];
     }
     
     if (node1.type == WordType && node2.type != WordType) {
-        return [self.wordNetDb word:node1.name isConnectedToMeaning:node2.name];
+        return [wordNetDb word:node1.name isConnectedToMeaning:node2.name];
     }
     
     return false;

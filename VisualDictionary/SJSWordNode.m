@@ -159,11 +159,10 @@ CGFloat circleRadius = 16;
 - (NSArray *)neighbourNames
 {
     if (_neighbourNames == nil) {
-        SJSGraphScene *scene = (SJSGraphScene *)self.scene;
         if (self.type == WordType) {
-            _neighbourNames = [scene.wordNetDb meaningsForWord:self.name];
+            _neighbourNames = [SJSGraphScene.wordNetDb meaningsForWord:self.name];
         } else {
-            _neighbourNames = [scene.wordNetDb wordsForMeaning:self.name];
+            _neighbourNames = [SJSGraphScene.wordNetDb wordsForMeaning:self.name];
         }
     }
     return _neighbourNames;
@@ -373,10 +372,9 @@ CGFloat circleRadius = 16;
 
 - (NSString *)getDefinition
 {
-    SJSGraphScene *scene = (SJSGraphScene *)self.scene;
     if (self.type != WordType) {
         return [NSString stringWithFormat:@"(%@) %@",
-                [self getTypeAsString], [scene.wordNetDb definitionOfMeaning:self.name]];
+                [self getTypeAsString], [SJSGraphScene.wordNetDb definitionOfMeaning:self.name]];
     }
     
     if (self.type == WordType) {

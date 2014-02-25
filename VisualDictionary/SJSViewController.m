@@ -41,12 +41,6 @@
     [skView addGestureRecognizer:recognizer];
     
     [skView presentScene:wordScene];
-    
-    [self performSelectorInBackground:@selector(loadWordNetDb:) withObject:wordScene];
-}
-
-- (void)viewWillAppear:(BOOL)animated
-{
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
@@ -59,11 +53,6 @@
     
     wordScene.scale = _scaleStart * recognizer.scale;
     
-}
-
-- (void)loadWordNetDb:(SJSGraphScene *)wordScene
-{
-    wordScene.wordNetDb = [SJSWordNetDB new];
 }
 
 - (void)didReceiveMemoryWarning
