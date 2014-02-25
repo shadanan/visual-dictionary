@@ -10,9 +10,8 @@
 #import "SJSGraphScene.h"
 #import "SJSDefinitionsView.h"
 
-@interface SJSViewController ()
-
-@end
+CGFloat maxScale = 2.5;
+CGFloat minScale = 0.25;
 
 @implementation SJSViewController {
     CGFloat _scaleStart;
@@ -43,6 +42,17 @@
     [skView presentScene:wordScene];
 }
 
+CGFloat limitScale(CGFloat scale)
+{
+    if (scale > maxScale) {
+        return maxScale;
+    } else if (scale < minScale) {
+        return minScale;
+    } else {
+        return scale;
+    }
+}
+
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
     SKView *skView = (SKView *) self.view;
     SJSGraphScene *wordScene = (SJSGraphScene *)skView.scene;
@@ -51,8 +61,7 @@
         _scaleStart = wordScene.scale;
     }
     
-    wordScene.scale = _scaleStart * recognizer.scale;
-    
+    wordScene.scale = limitScale(_scaleStart * recognizer.scale);
 }
 
 - (void)didReceiveMemoryWarning

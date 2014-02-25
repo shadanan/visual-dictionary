@@ -27,9 +27,10 @@
 
 @property SJSDefinitionsView *definitionsView;
 
-@property CGFloat scale;
-
 + (SJSWordNetDB *)wordNetDb;
+
+- (CGFloat)scale;
+- (void)setScale:(CGFloat)scale;
 
 - (void)setMessage:(NSString *)message;
 

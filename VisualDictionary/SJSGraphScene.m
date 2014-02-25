@@ -20,6 +20,7 @@ static SJSWordNetDB *wordNetDb = nil;
 @implementation SJSGraphScene {
     CGFloat _anchorRadius;
     CGFloat _springLength;
+    CGFloat _scale;
 }
 
 + (void)initialize
@@ -56,10 +57,7 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)createSceneContents
 {
-    NSLog(@"Scale: %f", self.scale);
-    
-    _anchorRadius = anchorRadius * self.scale;
-    _springLength = springLength * self.scale;
+    NSLog(@"Scale: %f", _scale);
     
     self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
     self.scaleMode = SKSceneScaleModeResizeFill;
@@ -92,7 +90,7 @@ static SJSWordNetDB *wordNetDb = nil;
     self.searchIcon = [SKLabelNode new];
     self.searchIcon.name = @"searchIcon";
     self.searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    self.searchIcon.fontSize = searchIconSize * self.scale;
+    self.searchIcon.fontSize = searchIconSize * _scale;
     self.searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     self.searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     self.searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
@@ -130,6 +128,24 @@ static SJSWordNetDB *wordNetDb = nil;
     }
     
     [self.view addSubview:self.definitionsView];
+}
+
+- (CGFloat)scale
+{
+    return _scale;
+}
+
+- (void)setScale:(CGFloat)scale
+{
+    _scale = scale;
+    _anchorRadius = anchorRadius * _scale;
+    _springLength = springLength * _scale;
+    
+    SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
+    CGMutablePathRef path = CGPathCreateMutable();
+    CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
+    anchorPoint.path = path;
+    CGPathRelease(path);
 }
 
 - (void)openSearchPane
@@ -326,15 +342,15 @@ static SJSWordNetDB *wordNetDb = nil;
 {
     SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
     
-    double r0 = _springLength * self.scale;
-    double ka = 1 * self.scale;
-    double kp = 10000 * self.scale;
+    double r0 = _springLength * _scale;
+    double ka = 1 * _scale;
+    double kp = 10000 * _scale;
     
     for (SJSWordNode *me in wordNodes.children) {
         double x1 = me.position.x;
         double y1 = me.position.y;
         
-        [me setScale:self.scale];
+        [me setScale:_scale];
         
         // No forces on the root
         if (me == self.root) {
