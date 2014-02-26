@@ -15,7 +15,6 @@
 @property enum NodeType type;
 @property NSInteger distance;
 @property (readonly) NSArray *neighbourNames;
-@property CGFloat defaultScale;
 
 - (id)initWordWithName:(NSString *)name;
 - (id)initMeaningWithName:(NSString *)name;

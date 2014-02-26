@@ -13,10 +13,6 @@
 
 @interface SJSWordNetDB : NSObject
 
-@property FMDatabaseQueue *queue;
-@property NSMutableSet *connected;
-@property NSMutableSet *disconnected;
-
 - (NSArray *)meaningsForWord:(NSString *)word;
 - (NSArray *)wordsForMeaning:(NSString *)meaning;
 - (NSString *)definitionOfMeaning:(NSString *)meaning;

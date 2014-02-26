@@ -67,13 +67,6 @@ CGFloat circleRadius = 16;
     self.zPosition = 100.0;
     self.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     
-    self.defaultScale = 1;
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.defaultScale = 2;
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.defaultScale = 1;
-    }
-    
     _theme = DevelTheme;
     _neighbourNames = nil;
     _circle = [SKShapeNode new];

@@ -8,17 +8,21 @@
 
 #import "SJSWordNetDB.h"
 
-@implementation SJSWordNetDB
+@implementation SJSWordNetDB {
+    FMDatabaseQueue *_queue;
+    NSMutableSet *_connected;
+    NSMutableSet *_disconnected;
+}
 
 - (id)init
 {
-    self.connected = [NSMutableSet new];
-    self.disconnected = [NSMutableSet new];
+    _connected = [NSMutableSet new];
+    _disconnected = [NSMutableSet new];
     
     NSString *dbFile = [[NSBundle mainBundle] pathForResource:@"wordnet.sqlite" ofType:nil];
     NSLog(@"Sqlite Db: %@", dbFile);
     
-    self.queue = [FMDatabaseQueue databaseQueueWithPath:dbFile];
+    _queue = [FMDatabaseQueue databaseQueueWithPath:dbFile];
     
     return self;
 }
@@ -27,7 +31,7 @@
 {
     __block NSMutableArray *meanings = [NSMutableArray new];
     
-    [self.queue inDatabase:^(FMDatabase *db) {
+    [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT meaning FROM words_meanings WHERE word = ?", word];
         
         while ([rs next]) {
@@ -39,7 +43,7 @@
     
     for (NSString *meaning in meanings) {
         NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
-        [self.connected addObject:wordMeaningKey];
+        [_connected addObject:wordMeaningKey];
     }
     
     return meanings;
@@ -49,7 +53,7 @@
 {
     __block NSMutableArray *words = [NSMutableArray new];
     
-    [self.queue inDatabase:^(FMDatabase *db) {
+    [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT word FROM words_meanings WHERE meaning = ?", meaning];
         
         while ([rs next]) {
@@ -61,7 +65,7 @@
     
     for (NSString *word in words) {
         NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
-        [self.connected addObject:wordMeaningKey];
+        [_connected addObject:wordMeaningKey];
     }
     
     return words;
@@ -71,7 +75,7 @@
 {
     __block NSString *result = nil;
     
-    [self.queue inDatabase:^(FMDatabase *db) {
+    [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT definition FROM definitions WHERE meaning = ?", meaning];
         
         if ([rs next]) {
@@ -90,7 +94,7 @@
 {
     __block BOOL result;
     
-    [self.queue inDatabase:^(FMDatabase *db) {
+    [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT word FROM words_meanings WHERE word = ?", word];
         result = [rs next];
         [rs close];
@@ -102,7 +106,7 @@
 - (BOOL)word:(NSString *)word isConnectedToMeaning:(NSString *)meaning
 {
     NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
-    return [self.connected containsObject:wordMeaningKey];
+    return [_connected containsObject:wordMeaningKey];
 }
 
 @end

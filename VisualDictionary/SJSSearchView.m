@@ -20,12 +20,12 @@
     self = [super initWithFrame:frame];
     if (self) {
         _closed = NO;
-        self.center = CGPointMake(self.center.x, frame.size.height / 2);
+        self.center = CGPointMake(self.center.x, self.height / 2);
         self.backgroundColor = [SKColor whiteColor];
         self.alpha = 0.8;
         
         _searchField = [UITextField new];
-        _searchField.frame = CGRectMake(20, self.frame.size.height - 48, self.frame.size.width - 40, 32);
+        _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
         _searchField.borderStyle = UITextBorderStyleRoundedRect;
         _searchField.textColor = [UIColor blackColor];
         _searchField.font = [UIFont systemFontOfSize:16.0];
@@ -40,14 +40,25 @@
     return self;
 }
 
+- (void)setFrame:(CGRect)frame
+{
+    [super setFrame:frame];
+    _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
+}
+
 - (void)setDelegate:(id)delegate
 {
     _searchField.delegate = delegate;
 }
 
-- (void)updateWidth:(CGFloat)width
+- (CGFloat)width
 {
-//    self.frame = 
+    return self.frame.size.width;
+}
+
+- (CGFloat)height
+{
+    return self.frame.size.height;
 }
 
 - (void)setTheme:(Theme)theme
@@ -59,7 +70,7 @@
 {
     if (_closed) {
         [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, self.frame.size.height / 2);
+            self.center = CGPointMake(self.center.x, self.center.y + self.height);
             _closed = NO;
         }];
     }
@@ -71,7 +82,7 @@
 {
     if (!_closed) {
         [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, -self.frame.size.height / 2);
+            self.center = CGPointMake(self.center.x, self.center.y - self.height);
             _closed = YES;
         }];
     }

@@ -11,9 +11,6 @@
 
 @interface SJSEdgeNode : SKShapeNode
 
-@property SJSWordNode *nodeA;
-@property SJSWordNode *nodeB;
-
 - (id)initWithNodeA:(SJSWordNode *)nodeA withNodeB:(SJSWordNode *)nodeB;
 
 - (void)updatePath;

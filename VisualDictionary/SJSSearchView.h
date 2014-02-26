@@ -15,8 +15,6 @@
 
 - (void)setDelegate:(id)delegate;
 
-- (void)updateWidth:(CGFloat)width;
-
 - (void)setTheme:(Theme)theme;
 
 - (void)open;

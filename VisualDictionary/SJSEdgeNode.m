@@ -9,14 +9,17 @@
 #import "SJSEdgeNode.h"
 #import "SJSGraphScene.h"
 
-@implementation SJSEdgeNode
+@implementation SJSEdgeNode {
+    SJSWordNode *_nodeA;
+    SJSWordNode *_nodeB;
+}
 
 - (id)initWithNodeA:(SJSWordNode *)nodeA withNodeB:(SJSWordNode *)nodeB
 {
     self = [super init];
     
-    self.nodeA = nodeA;
-    self.nodeB = nodeB;
+    _nodeA = nodeA;
+    _nodeB = nodeB;
     
     [self updatePath];
     
@@ -30,8 +33,8 @@
 - (void)updatePath
 {
     CGMutablePathRef path = CGPathCreateMutable();
-    CGPathMoveToPoint(path, nil, self.nodeA.position.x, self.nodeA.position.y);
-    CGPathAddLineToPoint(path, nil, self.nodeB.position.x, self.nodeB.position.y);
+    CGPathMoveToPoint(path, nil, _nodeA.position.x, _nodeA.position.y);
+    CGPathAddLineToPoint(path, nil, _nodeB.position.x, _nodeB.position.y);
     
     self.path = path;
     

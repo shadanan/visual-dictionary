@@ -17,14 +17,6 @@
 
 @interface SJSGraphScene : SKScene
 
-@property BOOL contentCreated;
-@property NSTimeInterval lastTime;
-@property SJSWordNode *root;
-@property SJSWordNode *currentNode;
-@property BOOL dragging;
-
-@property SJSDefinitionsView *definitionsView;
-
 + (SJSWordNetDB *)wordNetDb;
 
 - (CGFloat)scale;

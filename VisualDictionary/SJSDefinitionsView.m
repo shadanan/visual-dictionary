@@ -11,59 +11,73 @@
 CGFloat definitionFontSize = 14;
 
 @implementation SJSDefinitionsView {
-    CGFloat _height;
+    BOOL _closed;
+    UILabel *_definitionsLabel;
+    UIScrollView *_scrollView;
 }
 
 - (id)initWithFrame:(CGRect)frame
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _height = frame.size.height;
-        
         self.backgroundColor = [UIColor whiteColor];
         self.alpha = 0.8;
-        self.closed = YES;
+        _closed = YES;
         
-        self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
+        _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.width, self.height)];
         
-        self.definitionsLabel = [[UILabel alloc] init];
-        self.definitionsLabel.textColor = [UIColor blackColor];
-        self.definitionsLabel.font = [UIFont fontWithName:@"Avenir-Book" size:definitionFontSize];
-        self.definitionsLabel.numberOfLines = 0;
+        _definitionsLabel = [[UILabel alloc] init];
+        _definitionsLabel.textColor = [UIColor blackColor];
+        _definitionsLabel.font = [UIFont fontWithName:@"Avenir-Book" size:definitionFontSize];
+        _definitionsLabel.numberOfLines = 0;
         
-        self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.definitionsLabel.frame.size.height + 10);
-        [self.scrollView addSubview:self.definitionsLabel];
+        [_scrollView addSubview:_definitionsLabel];
         
-        [self addSubview:self.scrollView];
+        [self addSubview:_scrollView];
     }
     return self;
 }
 
-- (void)setText:(NSString *)text
+- (void)setFrame:(CGRect)frame
 {
-    NSLog(@"Definition: %@", text);
-    self.definitionsLabel.text = text;
-    self.definitionsLabel.frame = CGRectMake(10, 5, self.frame.size.width - 20, self.frame.size.height - 20);
-    [self.definitionsLabel sizeToFit];
-    self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.definitionsLabel.frame.size.height + 10);
+    [super setFrame:frame];
+    _scrollView.frame = frame;
 }
 
-- (void)close
+- (CGFloat)width
 {
-    if (!self.closed) {
-        [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, self.center.y + _height);
-            self.closed = YES;
-        }];
-    }
+    return self.frame.size.width;
+}
+
+- (CGFloat)height
+{
+    return self.frame.size.height;
+}
+
+- (void)setText:(NSString *)text
+{
+    _definitionsLabel.text = text;
+    _definitionsLabel.frame = CGRectMake(10, 5, self.width - 20, self.height - 20);
+    [_definitionsLabel sizeToFit];
+    _scrollView.contentSize = CGSizeMake(_scrollView.contentSize.width, _definitionsLabel.frame.size.height + 10);
 }
 
 - (void)open
 {
-    if (self.closed) {
+    if (_closed) {
         [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, self.center.y - _height);
-            self.closed = NO;
+            self.center = CGPointMake(self.center.x, self.center.y - self.height);
+            _closed = NO;
+        }];
+    }
+}
+
+- (void)close
+{
+    if (!_closed) {
+        [UIView animateWithDuration:0.2 animations:^{
+            self.center = CGPointMake(self.center.x, self.center.y + self.height);
+            _closed = YES;
         }];
     }
 }

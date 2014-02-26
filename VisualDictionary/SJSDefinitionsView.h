@@ -10,14 +10,10 @@
 
 @interface SJSDefinitionsView : UIView
 
-@property BOOL closed;
-@property UILabel *definitionsLabel;
-@property UIScrollView *scrollView;
-
-- (void)close;
+- (void)setText:(NSString *)text;
 
 - (void)open;
 
-- (void)setText:(NSString *)text;
+- (void)close;
 
 @end

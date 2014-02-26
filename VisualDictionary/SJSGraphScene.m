@@ -21,6 +21,8 @@ CGFloat definitionsHeightIPad = 200;
 static SJSWordNetDB *wordNetDb = nil;
 
 @implementation SJSGraphScene {
+    BOOL _dragging;
+    BOOL _contentCreated;
     CGFloat _anchorRadius;
     CGFloat _springLength;
     CGFloat _scale;
@@ -29,7 +31,11 @@ static SJSWordNetDB *wordNetDb = nil;
     SKNode *_edgeNodes;
     SKNode *_wordNodes;
     
+    SJSWordNode *_currentNode;
+    SJSWordNode *_root;
+    
     SJSSearchView *_searchView;
+    SJSDefinitionsView *_definitionsView;
     SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
     SKShapeNode *_anchorPoint;
@@ -49,21 +55,35 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)didMoveToView:(SKView *)view
 {
-    if (!self.contentCreated) {
-        self.contentCreated = true;
+    if (!_contentCreated) {
+        _contentCreated = true;
         [self createSceneContents];
     }
 }
 
 - (void)didChangeSize:(CGSize)oldSize
 {
-    if (_searchView != nil) {
-        [_searchView updateWidth:self.frame.size.width];
+    _searchView.frame = CGRectMake(0, 0, self.width, searchHeight);
+    
+    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
+        _definitionsView.frame = CGRectMake(0, self.height, self.width, definitionsHeightIPhone);
+    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
+        _definitionsView.frame = CGRectMake(0, self.height, self.width, definitionsHeightIPad);
     }
     
-    if (self.root != nil) {
-        self.root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    if (_root != nil) {
+        _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     }
+}
+
+- (CGFloat)width
+{
+    return self.frame.size.width;
+}
+
+- (CGFloat)height
+{
+    return self.frame.size.height;
 }
 
 - (void)createSceneContents
@@ -79,7 +99,7 @@ static SJSWordNetDB *wordNetDb = nil;
     self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
     self.physicsBody.friction = 0;
     
-    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, searchHeight)];
+    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, searchHeight)];
     _searchView.delegate = self;
     [self.view addSubview:_searchView];
     
@@ -130,12 +150,12 @@ static SJSWordNetDB *wordNetDb = nil;
     [self addChild:_wordNodes];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPhone)];
+        _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPhone)];
     } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPad)];
+        _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPad)];
     }
     
-    [self.view addSubview:self.definitionsView];
+    [self.view addSubview:_definitionsView];
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
@@ -181,54 +201,50 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (self.root != nil) {
+    if (_root != nil) {
         [self closeSearchPane];
     }
     
-    [self.definitionsView close];
+    [_definitionsView close];
     
     CGPoint start = [[touches anyObject] locationInNode:self];
     
-    self.currentNode = nil;
+    _currentNode = nil;
     for (SKNode *node in [self nodesAtPoint:start]) {
         if ([node isKindOfClass:[SJSWordNode class]]) {
-            self.dragging = NO;
-            self.currentNode = (SJSWordNode *)node;
-            [self.currentNode disableDynamic];
+            _dragging = NO;
+            _currentNode = (SJSWordNode *)node;
+            [_currentNode disableDynamic];
         }
         
         if ([node.name isEqualToString:@"searchIcon"]) {
             [self openSearchPane];
         }
     }
-    
-    if (self.currentNode != nil) {
-        NSLog(@"Node name: %@", self.currentNode.name);
-    }
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (self.currentNode != nil) {
-        self.dragging = YES;
+    if (_currentNode != nil) {
+        _dragging = YES;
         CGPoint point = [[touches anyObject] locationInNode:self];
-        self.currentNode.position = point;
+        _currentNode.position = point;
         
         if (![_anchorPoint hasActions]) {
-            if (_anchorPoint.alpha != 0.4 && [_anchorPoint containsPoint:self.currentNode.position]) {
+            if (_anchorPoint.alpha != 0.4 && [_anchorPoint containsPoint:_currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
                 [_anchorPoint runAction:fadeIn];
-            } else if (_anchorPoint.alpha != 0.2 && ![_anchorPoint containsPoint:self.currentNode.position]) {
+            } else if (_anchorPoint.alpha != 0.2 && ![_anchorPoint containsPoint:_currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
                 [_anchorPoint runAction:fadeIn];
             }
         }
         
         if (![_pruneIcon hasActions]) {
-            if (_pruneIcon.alpha != 0.4 && [_pruneIcon containsPoint:self.currentNode.position]) {
+            if (_pruneIcon.alpha != 0.4 && [_pruneIcon containsPoint:_currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
                 [_pruneIcon runAction:fadeIn];
-            } else if (_pruneIcon.alpha != 0.2 && ![_pruneIcon containsPoint:self.currentNode.position]) {
+            } else if (_pruneIcon.alpha != 0.2 && ![_pruneIcon containsPoint:_currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
                 [_pruneIcon runAction:fadeIn];
             }
@@ -238,35 +254,35 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (self.currentNode != nil) {
-        [self.currentNode enableDynamic];
+    if (_currentNode != nil) {
+        [_currentNode enableDynamic];
         
-        if (!self.dragging) {
-            [self.currentNode grow];
+        if (!_dragging) {
+            [_currentNode grow];
             [self updateScene];
             
-            [self.definitionsView open];
-            [self.definitionsView setText:[self.currentNode getDefinition]];
+            [_definitionsView open];
+            [_definitionsView setText:[_currentNode getDefinition]];
         }
         
         SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
         [_anchorPoint runAction:fadeOut];
         [_pruneIcon runAction:fadeOut];
         
-        if (self.dragging && [_anchorPoint containsPoint:self.currentNode.position]) {
-            [self.root enableDynamic];
-            [self.currentNode disableDynamic];
+        if (_dragging && [_anchorPoint containsPoint:_currentNode.position]) {
+            [_root enableDynamic];
+            [_currentNode disableDynamic];
             
-            self.root = self.currentNode;
-            [self.root promoteToRoot];
+            _root = _currentNode;
+            [_root promoteToRoot];
             [self updateScene];
             SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
-            [self.root runAction:moveToCentre];
+            [_root runAction:moveToCentre];
         }
         
-        if (self.dragging && [_pruneIcon containsPoint:self.currentNode.position]) {
-            [self prune:self.currentNode];
-            self.currentNode = nil;
+        if (_dragging && [_pruneIcon containsPoint:_currentNode.position]) {
+            [self prune:_currentNode];
+            _currentNode = nil;
         }
     }
 }
@@ -325,25 +341,25 @@ static SJSWordNetDB *wordNetDb = nil;
     
     [_wordNodes removeAllChildren];
     
-    self.root = [[SJSWordNode alloc] initWordWithName:word];
-    self.root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    [self.root disableDynamic];
-    [_wordNodes addChild:self.root];
+    _root = [[SJSWordNode alloc] initWordWithName:word];
+    _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    [_root disableDynamic];
+    [_wordNodes addChild:_root];
     
-    [self.root promoteToRoot];
+    [_root promoteToRoot];
     [self updateScene];
 }
 
 - (void)prune:(SJSWordNode *)node
 {
-    if (node == self.root) {
+    if (node == _root) {
         [self clearScene];
         [_searchView open];
         return;
     }
     
     [node removeFromParent];
-    [self.root updateDistances];
+    [_root updateDistances];
     
     for (SJSWordNode *child in _wordNodes.children) {
         if (child.distance == -1) {
@@ -410,7 +426,7 @@ static SJSWordNetDB *wordNetDb = nil;
         [me setScale:_scale];
         
         // No forces on the root
-        if (me == self.root) {
+        if (me == _root) {
             continue;
         }
         
