@@ -27,7 +27,6 @@ CGFloat definitionFontSize = 14;
         self.scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, frame.size.width, frame.size.height)];
         
         self.definitionsLabel = [[UILabel alloc] init];
-        self.definitionsLabel.frame = CGRectMake(10, 5, frame.size.width - 20, frame.size.height - 20);
         self.definitionsLabel.textColor = [UIColor blackColor];
         self.definitionsLabel.font = [UIFont fontWithName:@"Avenir-Book" size:definitionFontSize];
         self.definitionsLabel.numberOfLines = 0;
@@ -44,7 +43,7 @@ CGFloat definitionFontSize = 14;
 {
     NSLog(@"Definition: %@", text);
     self.definitionsLabel.text = text;
-//    [self.definitionsLabel setNeedsLayout];
+    self.definitionsLabel.frame = CGRectMake(10, 5, self.frame.size.width - 20, self.frame.size.height - 20);
     [self.definitionsLabel sizeToFit];
     self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.definitionsLabel.frame.size.height + 10);
 }
