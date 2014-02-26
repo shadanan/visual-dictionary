@@ -22,7 +22,7 @@
 
 - (void)setTheme:(Theme)theme;
 
-- (CGFloat)distanceTo:(SKNode *)node;
+- (void)updateDistances;
 
 - (void)disableDynamic;
 
@@ -31,6 +31,8 @@
 - (void)promoteToRoot;
 
 - (NSArray *)neighbourNodes;
+
+- (void)updateCanGrow;
 
 - (void)grow;
 

@@ -10,6 +10,7 @@
 
 NSInteger searchAreaOpen = 40;
 CGFloat searchIconSize = 30;
+CGFloat pruneIconSize = 60;
 CGFloat anchorRadius = 60;
 CGFloat springLength = 60;
 
@@ -26,6 +27,9 @@ static SJSWordNetDB *wordNetDb = nil;
     Theme _theme;
     
     SJSSearchView *_searchView;
+    SKLabelNode *_searchIcon;
+    SKLabelNode *_pruneIcon;
+    SKShapeNode *_anchorPoint;
 }
 
 + (void)initialize
@@ -75,30 +79,42 @@ static SJSWordNetDB *wordNetDb = nil;
     _searchView.delegate = self;
     [self.view addSubview:_searchView];
     
-    self.searchIcon = [SKLabelNode new];
-    self.searchIcon.name = @"searchIcon";
-    self.searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    self.searchIcon.fontSize = searchIconSize * _scale;
-    self.searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
-    self.searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
-    self.searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
-    self.searchIcon.zPosition = 200;
-    self.searchIcon.hidden = YES;
-    [self addChild:self.searchIcon];
+    _searchIcon = [SKLabelNode new];
+    _searchIcon.name = @"searchIcon";
+    _searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
+    _searchIcon.fontSize = searchIconSize * _scale;
+    _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
+    _searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
+    _searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
+    _searchIcon.zPosition = 200;
+    _searchIcon.hidden = YES;
+    [self addChild:_searchIcon];
     
-    SKShapeNode *anchorPoint = [SKShapeNode new];
+    _pruneIcon = [SKLabelNode new];
+    _pruneIcon.name = @"pruneIcon";
+    _pruneIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x99\xBC"];
+    _pruneIcon.color = [SKColor whiteColor];
+    _pruneIcon.alpha = 0;
+    _pruneIcon.fontSize = pruneIconSize * _scale;
+    _pruneIcon.position = CGPointMake(4, 4);
+    _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
+    _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
+    _pruneIcon.zPosition = 200;
+    [self addChild:_pruneIcon];
+    
+    _anchorPoint = [SKShapeNode new];
     
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
-    anchorPoint.path = path;
+    _anchorPoint.path = path;
     CGPathRelease(path);
     
-    anchorPoint.name = @"anchorPoint";
-    anchorPoint.fillColor = [SKColor whiteColor];
-    anchorPoint.alpha = 0;
-    anchorPoint.glowWidth = 1;
-    anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    [self addChild:anchorPoint];
+    _anchorPoint.name = @"anchorPoint";
+    _anchorPoint.fillColor = [SKColor whiteColor];
+    _anchorPoint.alpha = 0;
+    _anchorPoint.glowWidth = 1;
+    _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    [self addChild:_anchorPoint];
     
     
     SKNode *edgeNodes = [[SKNode alloc] init];
@@ -135,10 +151,9 @@ static SJSWordNetDB *wordNetDb = nil;
     _anchorRadius = anchorRadius * _scale;
     _springLength = springLength * _scale;
     
-    SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
-    anchorPoint.path = path;
+    _anchorPoint.path = path;
     CGPathRelease(path);
 }
 
@@ -151,13 +166,13 @@ static SJSWordNetDB *wordNetDb = nil;
 - (void)openSearchPane
 {
     [_searchView open];
-    self.searchIcon.hidden = YES;
+    _searchIcon.hidden = YES;
 }
 
 - (void)closeSearchPane
 {
     [_searchView close];
-    self.searchIcon.hidden = NO;
+    _searchIcon.hidden = NO;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -195,14 +210,23 @@ static SJSWordNetDB *wordNetDb = nil;
         CGPoint point = [[touches anyObject] locationInNode:self];
         self.currentNode.position = point;
         
-        SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
-        if (![anchorPoint hasActions]) {
-            if (anchorPoint.alpha != 0.4 && [self.currentNode distanceTo:anchorPoint] < _anchorRadius) {
+        if (![_anchorPoint hasActions]) {
+            if (_anchorPoint.alpha != 0.4 && [_anchorPoint containsPoint:self.currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
-                [anchorPoint runAction:fadeIn];
-            } else if (anchorPoint.alpha != 0.2 && [self.currentNode distanceTo:anchorPoint] >= _anchorRadius) {
+                [_anchorPoint runAction:fadeIn];
+            } else if (_anchorPoint.alpha != 0.2 && ![_anchorPoint containsPoint:self.currentNode.position]) {
                 SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
-                [anchorPoint runAction:fadeIn];
+                [_anchorPoint runAction:fadeIn];
+            }
+        }
+        
+        if (![_pruneIcon hasActions]) {
+            if (_pruneIcon.alpha != 0.4 && [_pruneIcon containsPoint:self.currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
+                [_pruneIcon runAction:fadeIn];
+            } else if (_pruneIcon.alpha != 0.2 && ![_pruneIcon containsPoint:self.currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
+                [_pruneIcon runAction:fadeIn];
             }
         }
     }
@@ -215,23 +239,30 @@ static SJSWordNetDB *wordNetDb = nil;
         
         if (!self.dragging) {
             [self.currentNode grow];
-            [self buildEdgeNodes];
+            [self updateScene];
             
             [self.definitionsView open];
             [self.definitionsView setText:[self.currentNode getDefinition]];
         }
         
-        SKShapeNode *anchorPoint = (SKShapeNode *)[self childNodeWithName:@"anchorPoint"];
         SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
-        [anchorPoint runAction:fadeOut];
+        [_anchorPoint runAction:fadeOut];
+        [_pruneIcon runAction:fadeOut];
         
-        if (self.dragging && [self.currentNode distanceTo:anchorPoint] < _anchorRadius) {
+        if (self.dragging && [_anchorPoint containsPoint:self.currentNode.position]) {
             [self.root enableDynamic];
             [self.currentNode disableDynamic];
             
-            [self.currentNode promoteToRoot];
+            self.root = self.currentNode;
+            [self.root promoteToRoot];
+            [self updateScene];
             SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
             [self.root runAction:moveToCentre];
+        }
+        
+        if (self.dragging && [_pruneIcon containsPoint:self.currentNode.position]) {
+            [self prune:self.currentNode];
+            self.currentNode = nil;
         }
     }
 }
@@ -292,9 +323,39 @@ static SJSWordNetDB *wordNetDb = nil;
     [wordNodes addChild:self.root];
     
     [self.root promoteToRoot];
+    [self updateScene];
 }
 
-- (void)buildEdgeNodes
+- (void)prune:(SJSWordNode *)node
+{
+    [node removeFromParent];
+    [self.root updateDistances];
+    
+    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
+    for (SJSWordNode *child in wordNodes.children) {
+        if (child.distance == -1) {
+            [child removeFromParent];
+        }
+    }
+    
+    [self updateScene];
+}
+
+- (void)updateScene
+{
+    [self rebuildEdgeNodes];
+    [self updateCanGrow];
+}
+
+- (void)updateCanGrow
+{
+    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
+    for (SJSWordNode *node in wordNodes.children) {
+        [node updateCanGrow];
+    }
+}
+
+- (void)rebuildEdgeNodes
 {
     SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
     

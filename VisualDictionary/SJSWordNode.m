@@ -119,7 +119,7 @@ CGFloat circleRadius = 16;
 {
     _theme = theme;
     _circle.fillColor = [SKColor colorByNodeType:self.type withTheme:_theme];
-    [self updateShapeNodePath];
+    [self updateCanGrow];
 }
 
 - (NSArray *)neighbourNames
@@ -132,11 +132,6 @@ CGFloat circleRadius = 16;
         }
     }
     return _neighbourNames;
-}
-
-- (CGFloat)distanceTo:(SKNode *)node
-{
-    return sqrt(pow(self.position.x - node.position.x, 2) + pow(self.position.y - node.position.y, 2));
 }
 
 - (void)disableDynamic
@@ -155,14 +150,11 @@ CGFloat circleRadius = 16;
 
 - (void)promoteToRoot
 {
-    SJSGraphScene *scene = (SJSGraphScene *)self.scene;
-    scene.root = self;
     _circle.fillColor = [SKColor rootNodeColorWithTheme:_theme];
     
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
     [self growRecursively];
-    [scene buildEdgeNodes];
 }
 
 - (void)updateDistances
@@ -188,19 +180,6 @@ CGFloat circleRadius = 16;
     }
 }
 
-- (void)pruneWithMaxDepth:(NSUInteger)depth
-{
-    for (SJSWordNode *node in [self.parent children]) {
-        if (node.distance > depth) {
-            [node removeFromParent];
-        }
-    }
-    
-    for (SJSWordNode *node in [self.parent children]) {
-        [self updateShapeNodePath];
-    }
-}
-
 - (NSArray *)neighbourNodes
 {
     if (self.neighbourNames == nil)
@@ -218,30 +197,7 @@ CGFloat circleRadius = 16;
     return neighbourNodes;
 }
 
-- (void)grow
-{
-    for (NSString *neighbourName in self.neighbourNames) {
-        SJSWordNode *neighbour = (SJSWordNode *)[self.parent childNodeWithName:neighbourName];
-        
-        if (neighbour == nil) {
-            if (self.type == WordType) {
-                neighbour = [[SJSWordNode alloc] initMeaningWithName:neighbourName];
-            } else {
-                neighbour = [[SJSWordNode alloc] initWordWithName:neighbourName];
-            }
-            
-            neighbour.position = CGPointMake(((int)arc4random() % 40) - 20 + self.scene.size.width / 2,
-                                             ((int)arc4random() % 40) - 20 + self.scene.size.height / 2);
-            [self.parent addChild:neighbour];
-            [neighbour updateShapeNodePath];
-        }
-    }
-    
-    [self updateShapeNodePath];
-    self.physicsBody.mass = self.neighbourNames.count;
-}
-
-- (void)updateShapeNodePath
+- (void)updateCanGrow
 {
     if ([self canGrow]) {
         _circle.strokeColor = [SKColor canGrowEdgeColorWithTheme:_theme];
@@ -260,6 +216,27 @@ CGFloat circleRadius = 16;
         }
     }
     return false;
+}
+
+- (void)grow
+{
+    for (NSString *neighbourName in self.neighbourNames) {
+        SJSWordNode *neighbour = (SJSWordNode *)[self.parent childNodeWithName:neighbourName];
+        
+        if (neighbour == nil) {
+            if (self.type == WordType) {
+                neighbour = [[SJSWordNode alloc] initMeaningWithName:neighbourName];
+            } else {
+                neighbour = [[SJSWordNode alloc] initWordWithName:neighbourName];
+            }
+            
+            neighbour.position = CGPointMake(((int)arc4random() % 40) - 20 + self.scene.size.width / 2,
+                                             ((int)arc4random() % 40) - 20 + self.scene.size.height / 2);
+            [self.parent addChild:neighbour];
+        }
+    }
+    
+    self.physicsBody.mass = self.neighbourNames.count;
 }
 
 - (void)growRecursively
@@ -282,6 +259,15 @@ CGFloat circleRadius = 16;
                 child.distance = node.distance + 1;
                 [queue addObject:child];
             }
+        }
+    }
+}
+
+- (void)pruneWithMaxDepth:(NSUInteger)depth
+{
+    for (SJSWordNode *node in [self.parent children]) {
+        if (node.distance > depth) {
+            [node removeFromParent];
         }
     }
 }

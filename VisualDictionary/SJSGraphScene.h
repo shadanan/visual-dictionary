@@ -23,8 +23,6 @@
 @property SJSWordNode *currentNode;
 @property BOOL dragging;
 
-@property SKLabelNode *searchIcon;
-
 @property SJSDefinitionsView *definitionsView;
 
 + (SJSWordNetDB *)wordNetDb;
@@ -40,6 +38,6 @@
 
 - (void)createSceneForWord:(NSString *)word;
 
-- (void)buildEdgeNodes;
+- (void)rebuildEdgeNodes;
 
 @end
