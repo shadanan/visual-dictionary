@@ -12,6 +12,8 @@ NSInteger searchAreaOpen = 40;
 CGFloat searchIconSize = 30;
 CGFloat anchorRadius = 60;
 CGFloat springLength = 60;
+
+CGFloat searchHeight = 80;
 CGFloat definitionsHeightIPhone = 100;
 CGFloat definitionsHeightIPad = 200;
 
@@ -21,6 +23,9 @@ static SJSWordNetDB *wordNetDb = nil;
     CGFloat _anchorRadius;
     CGFloat _springLength;
     CGFloat _scale;
+    Theme _theme;
+    
+    SJSSearchView *_searchView;
 }
 
 + (void)initialize
@@ -45,9 +50,8 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)didChangeSize:(CGSize)oldSize
 {
-    if (self.searchArea != nil && self.searchField != nil) {
-        self.searchArea.frame = CGRectMake(0, 0, self.frame.size.width, searchAreaOpen * 2);
-        self.searchField.frame = CGRectMake(20, self.searchArea.frame.size.height - 48, self.searchArea.frame.size.width - 40, 32);
+    if (_searchView != nil) {
+        [_searchView updateWidth:self.frame.size.width];
     }
     
     if (self.root != nil) {
@@ -59,7 +63,7 @@ static SJSWordNetDB *wordNetDb = nil;
 {
     NSLog(@"Scale: %f", _scale);
     
-    self.backgroundColor = [SKColor colorWithRed:0.15 green:0.15 blue:0.3 alpha:1.0];
+    _theme = DevelTheme;
     self.scaleMode = SKSceneScaleModeResizeFill;
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
@@ -67,25 +71,9 @@ static SJSWordNetDB *wordNetDb = nil;
     self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
     self.physicsBody.friction = 0;
     
-    self.searchArea = [UIView new];
-    self.searchArea.frame = CGRectMake(0, 0, self.frame.size.width, searchAreaOpen * 2);
-    self.searchArea.backgroundColor = [SKColor colorWithRed:0.85 green:0.92 blue:0.98 alpha:0.75];
-    self.searchAreaState = searchAreaOpen;
-    self.searchArea.center = CGPointMake(self.searchArea.center.x, self.searchAreaState);
-    [self.view addSubview:self.searchArea];
-    
-    self.searchField = [UITextField new];
-    self.searchField.frame = CGRectMake(20, self.searchArea.frame.size.height - 48, self.searchArea.frame.size.width - 40, 32);
-    self.searchField.borderStyle = UITextBorderStyleRoundedRect;
-    self.searchField.textColor = [UIColor blackColor];
-    self.searchField.font = [UIFont systemFontOfSize:16.0];
-    self.searchField.placeholder = @"Search for Words";
-    self.searchField.backgroundColor = [SKColor whiteColor];
-    self.searchField.autocorrectionType = UITextAutocorrectionTypeYes;
-    self.searchField.keyboardType = UIKeyboardTypeDefault;
-    self.searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
-    self.searchField.delegate = (id)self;
-    [self.searchArea addSubview:self.searchField];
+    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.frame.size.width, searchHeight)];
+    _searchView.delegate = self;
+    [self.view addSubview:_searchView];
     
     self.searchIcon = [SKLabelNode new];
     self.searchIcon.name = @"searchIcon";
@@ -130,6 +118,12 @@ static SJSWordNetDB *wordNetDb = nil;
     [self.view addSubview:self.definitionsView];
 }
 
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    NSString *word = [[textField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self createSceneForWord:word];
+    return NO;
+}
+
 - (CGFloat)scale
 {
     return _scale;
@@ -148,27 +142,22 @@ static SJSWordNetDB *wordNetDb = nil;
     CGPathRelease(path);
 }
 
+- (void)setTheme:(Theme)theme
+{
+    _theme = theme;
+    self.backgroundColor = [SKColor backgroundColorWithTheme:_theme];
+}
+
 - (void)openSearchPane
 {
-    self.searchAreaState = searchAreaOpen;
-    self.searchArea.center = CGPointMake(self.searchArea.center.x, self.searchAreaState);
-    [self.searchField becomeFirstResponder];
+    [_searchView open];
     self.searchIcon.hidden = YES;
 }
 
 - (void)closeSearchPane
 {
-    self.searchAreaState = -searchAreaOpen;
-    self.searchArea.center = CGPointMake(self.searchArea.center.x, self.searchAreaState);
-    [self.searchField resignFirstResponder];
+    [_searchView close];
     self.searchIcon.hidden = NO;
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    if (textField == self.searchField) {
-        [self createSceneForWord:[[self.searchField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]]];
-    }
-    return false;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event

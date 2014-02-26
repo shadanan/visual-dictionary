@@ -11,6 +11,9 @@
 #import "SJSEdgeNode.h"
 #import "SJSWordNetDB.h"
 #import "SJSDefinitionsView.h"
+#import "SJSSearchView.h"
+#import "SJSColor.h"
+#import "SJSEnums.h"
 
 @interface SJSGraphScene : SKScene
 
@@ -20,9 +23,6 @@
 @property SJSWordNode *currentNode;
 @property BOOL dragging;
 
-@property NSInteger searchAreaState;
-@property UIView *searchArea;
-@property UITextField *searchField;
 @property SKLabelNode *searchIcon;
 
 @property SJSDefinitionsView *definitionsView;
@@ -32,9 +32,13 @@
 - (CGFloat)scale;
 - (void)setScale:(CGFloat)scale;
 
+- (void)setTheme:(Theme)theme;
+
 - (void)setMessage:(NSString *)message;
 
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
+
+- (void)createSceneForWord:(NSString *)word;
 
 - (void)buildEdgeNodes;
 

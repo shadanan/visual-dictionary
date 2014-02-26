@@ -7,16 +7,10 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import "SJSColor.h"
+#import "SJSEnums.h"
 
 @interface SJSWordNode : SKLabelNode
-
-typedef NS_ENUM(NSInteger, NodeType) {
-    WordType,
-    AdverbType,
-    AdjectiveType,
-    NounType,
-    VerbType
-};
 
 @property enum NodeType type;
 @property NSInteger distance;
@@ -25,6 +19,8 @@ typedef NS_ENUM(NSInteger, NodeType) {
 
 - (id)initWordWithName:(NSString *)name;
 - (id)initMeaningWithName:(NSString *)name;
+
+- (void)setTheme:(Theme)theme;
 
 - (CGFloat)distanceTo:(SKNode *)node;
 

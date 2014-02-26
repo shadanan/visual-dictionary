@@ -44,6 +44,7 @@ CGFloat definitionFontSize = 14;
 {
     NSLog(@"Definition: %@", text);
     self.definitionsLabel.text = text;
+//    [self.definitionsLabel setNeedsLayout];
     [self.definitionsLabel sizeToFit];
     self.scrollView.contentSize = CGSizeMake(self.scrollView.contentSize.width, self.definitionsLabel.frame.size.height + 10);
 }

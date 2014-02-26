@@ -18,71 +18,10 @@ NSString *meaningFont = @"AvenirNextCondensed-Italic";
 CGFloat meaningFontSize = 16;
 CGFloat circleRadius = 16;
 
-@implementation SKColor (Extensions)
-
-+ (SKColor *)rootNodeColor
-{
-    return [SKColor colorWithRed:0 green:0.3 blue:0.3 alpha:1];
-}
-
-+ (SKColor *)wordNodeColor
-{
-    return [SKColor colorWithRed:0.2 green:0.2 blue:0.2 alpha:1];
-}
-
-+ (SKColor *)adverbNodeColor
-{
-    return [SKColor colorWithRed:0 green:0.6 blue:0 alpha:1];
-}
-
-+ (SKColor *)adjectiveNodeColor
-{
-    return [SKColor colorWithRed:0 green:0 blue:0.6 alpha:1];
-}
-
-+ (SKColor *)nounNodeColor
-{
-    return [SKColor colorWithRed:0.3 green:0 blue:0.3 alpha:1];
-}
-
-+ (SKColor *)verbNodeColor
-{
-    return [SKColor colorWithRed:0.3 green:0.3 blue:0 alpha:1];
-}
-
-+ (SKColor *)colorByNodeType:(NodeType)type
-{
-    if (type == WordType) {
-        return [SKColor wordNodeColor];
-    } else if (type == AdverbType) {
-        return [SKColor adverbNodeColor];
-    } else if (type == AdjectiveType) {
-        return [SKColor adjectiveNodeColor];
-    } else if (type == NounType) {
-        return [SKColor nounNodeColor];
-    } else if (type == VerbType) {
-        return [SKColor verbNodeColor];
-    } else {
-        return nil;
-    }
-}
-
-+ (SKColor *)canGrowEdgeColor
-{
-    return [SKColor colorWithRed:0.8 green:0.8 blue:0 alpha:1];
-}
-
-+ (SKColor *)cannotGrowEdgeColor
-{
-    return [SKColor lightGrayColor];
-}
-
-@end
-
-
 @implementation SJSWordNode {
     NSArray *_neighbourNames;
     SKShapeNode *_circle;
+    Theme _theme;
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -135,8 +74,8 @@ CGFloat circleRadius = 16;
         self.defaultScale = 1;
     }
     
+    _theme = DevelTheme;
     _neighbourNames = nil;
-    
     _circle = [SKShapeNode new];
     
     CGMutablePathRef circlePath = CGPathCreateMutable();
@@ -145,7 +84,7 @@ CGFloat circleRadius = 16;
     _circle.name = @"circle";
     _circle.path = circlePath;
     _circle.lineWidth = lineWidth;
-    _circle.fillColor = [SKColor colorByNodeType:type];
+    _circle.fillColor = [SKColor colorByNodeType:type withTheme:_theme];
     _circle.zPosition = 0.0;
 
     CGPathRelease(circlePath);
@@ -160,6 +99,27 @@ CGFloat circleRadius = 16;
     [self addChild:_circle];
     
     return self;
+}
+
+- (void)setScale:(CGFloat)scale
+{
+    if (self.type == WordType) {
+        self.fontSize = wordFontSize * scale;
+    } else {
+        self.fontSize = meaningFontSize * scale;
+    }
+    
+    CGMutablePathRef circlePath = CGPathCreateMutable();
+    CGPathAddArc(circlePath, nil, 0, 0, circleRadius * scale, 0, M_PI*2, true);
+    _circle.path = circlePath;
+    CGPathRelease(circlePath);
+}
+
+- (void)setTheme:(Theme)theme
+{
+    _theme = theme;
+    _circle.fillColor = [SKColor colorByNodeType:self.type withTheme:_theme];
+    [self updateShapeNodePath];
 }
 
 - (NSArray *)neighbourNames
@@ -197,7 +157,7 @@ CGFloat circleRadius = 16;
 {
     SJSGraphScene *scene = (SJSGraphScene *)self.scene;
     scene.root = self;
-    _circle.fillColor = [SKColor rootNodeColor];
+    _circle.fillColor = [SKColor rootNodeColorWithTheme:_theme];
     
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
@@ -239,20 +199,6 @@ CGFloat circleRadius = 16;
     for (SJSWordNode *node in [self.parent children]) {
         [self updateShapeNodePath];
     }
-}
-
-- (void)setScale:(CGFloat)scale
-{
-    if (self.type == WordType) {
-        self.fontSize = wordFontSize * scale;
-    } else {
-        self.fontSize = meaningFontSize * scale;
-    }
-
-    CGMutablePathRef circlePath = CGPathCreateMutable();
-    CGPathAddArc(circlePath, nil, 0, 0, circleRadius * scale, 0, M_PI*2, true);
-    _circle.path = circlePath;
-    CGPathRelease(circlePath);
 }
 
 - (NSArray *)neighbourNodes
@@ -298,9 +244,9 @@ CGFloat circleRadius = 16;
 - (void)updateShapeNodePath
 {
     if ([self canGrow]) {
-        _circle.strokeColor = [SKColor canGrowEdgeColor];
+        _circle.strokeColor = [SKColor canGrowEdgeColorWithTheme:_theme];
     } else {
-        _circle.strokeColor = [SKColor cannotGrowEdgeColor];
+        _circle.strokeColor = [SKColor cannotGrowEdgeColorWithTheme:_theme];
     }
 }
 

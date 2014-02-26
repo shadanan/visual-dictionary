@@ -8,7 +8,6 @@
 
 #import "SJSViewController.h"
 #import "SJSGraphScene.h"
-#import "SJSDefinitionsView.h"
 
 CGFloat maxScale = 2.5;
 CGFloat minScale = 0.25;
