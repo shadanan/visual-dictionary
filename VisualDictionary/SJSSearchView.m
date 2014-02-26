@@ -21,7 +21,8 @@
     if (self) {
         _closed = NO;
         self.center = CGPointMake(self.center.x, frame.size.height / 2);
-        self.backgroundColor = [SKColor blackColor];
+        self.backgroundColor = [SKColor whiteColor];
+        self.alpha = 0.8;
         
         _searchField = [UITextField new];
         _searchField.frame = CGRectMake(20, self.frame.size.height - 48, self.frame.size.width - 40, 32);

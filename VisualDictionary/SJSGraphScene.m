@@ -26,6 +26,9 @@ static SJSWordNetDB *wordNetDb = nil;
     CGFloat _scale;
     Theme _theme;
     
+    SKNode *_edgeNodes;
+    SKNode *_wordNodes;
+    
     SJSSearchView *_searchView;
     SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
@@ -69,6 +72,7 @@ static SJSWordNetDB *wordNetDb = nil;
     
     _theme = DevelTheme;
     self.scaleMode = SKSceneScaleModeResizeFill;
+    self.backgroundColor = [SKColor backgroundColorWithTheme:_theme];
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
@@ -117,13 +121,13 @@ static SJSWordNetDB *wordNetDb = nil;
     [self addChild:_anchorPoint];
     
     
-    SKNode *edgeNodes = [[SKNode alloc] init];
-    edgeNodes.name = @"edgeNodes";
-    [self addChild:edgeNodes];
+    _edgeNodes = [[SKNode alloc] init];
+    _edgeNodes.name = @"edgeNodes";
+    [self addChild:_edgeNodes];
     
-    SKNode *wordNodes = [[SKNode alloc] init];
-    wordNodes.name = @"wordNodes";
-    [self addChild:wordNodes];
+    _wordNodes = [[SKNode alloc] init];
+    _wordNodes.name = @"wordNodes";
+    [self addChild:_wordNodes];
     
     if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
         self.definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPhone)];
@@ -304,6 +308,12 @@ static SJSWordNetDB *wordNetDb = nil;
     [statusNode runAction:sequence];
 }
 
+- (void)clearScene
+{
+    [_wordNodes removeAllChildren];
+    [self updateScene];
+}
+
 - (void)createSceneForWord:(NSString *)word
 {
     if (![wordNetDb containsWord:word]) {
@@ -313,14 +323,12 @@ static SJSWordNetDB *wordNetDb = nil;
     
     [self closeSearchPane];
     
-    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
-    
-    [wordNodes removeAllChildren];
+    [_wordNodes removeAllChildren];
     
     self.root = [[SJSWordNode alloc] initWordWithName:word];
     self.root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self.root disableDynamic];
-    [wordNodes addChild:self.root];
+    [_wordNodes addChild:self.root];
     
     [self.root promoteToRoot];
     [self updateScene];
@@ -328,11 +336,16 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)prune:(SJSWordNode *)node
 {
+    if (node == self.root) {
+        [self clearScene];
+        [_searchView open];
+        return;
+    }
+    
     [node removeFromParent];
     [self.root updateDistances];
     
-    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
-    for (SJSWordNode *child in wordNodes.children) {
+    for (SJSWordNode *child in _wordNodes.children) {
         if (child.distance == -1) {
             [child removeFromParent];
         }
@@ -349,27 +362,23 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)updateCanGrow
 {
-    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
-    for (SJSWordNode *node in wordNodes.children) {
+    for (SJSWordNode *node in _wordNodes.children) {
         [node updateCanGrow];
     }
 }
 
 - (void)rebuildEdgeNodes
 {
-    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
+    [_edgeNodes removeAllChildren];
     
-    SKNode *edgeNodes = [self childNodeWithName:@"edgeNodes"];
-    [edgeNodes removeAllChildren];
-    
-    for (int i = 0; i < wordNodes.children.count; i++) {
-        SJSWordNode *me = [wordNodes.children objectAtIndex:i];
-        for (int j = i + 1; j < wordNodes.children.count; j++) {
-            SJSWordNode *them = [wordNodes.children objectAtIndex:j];
+    for (int i = 0; i < _wordNodes.children.count; i++) {
+        SJSWordNode *me = [_wordNodes.children objectAtIndex:i];
+        for (int j = i + 1; j < _wordNodes.children.count; j++) {
+            SJSWordNode *them = [_wordNodes.children objectAtIndex:j];
             
             if ((me.type != WordType && them.type == WordType && [wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [wordNetDb word:me.name isConnectedToMeaning:them.name])) {
                 SJSEdgeNode *edge = [[SJSEdgeNode alloc] initWithNodeA:me withNodeB:them];
-                [edgeNodes addChild:edge];
+                [_edgeNodes addChild:edge];
             }
         }
     }
@@ -390,13 +399,11 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)update:(NSTimeInterval)currentTime
 {
-    SKNode *wordNodes = [self childNodeWithName:@"wordNodes"];
-    
     double r0 = _springLength * _scale;
     double ka = 1 * _scale;
     double kp = 10000 * _scale;
     
-    for (SJSWordNode *me in wordNodes.children) {
+    for (SJSWordNode *me in _wordNodes.children) {
         double x1 = me.position.x;
         double y1 = me.position.y;
         
@@ -410,7 +417,7 @@ static SJSWordNetDB *wordNetDb = nil;
         double fx = 0.0;
         double fy = 0.0;
         
-        for (SJSWordNode *them in wordNodes.children) {
+        for (SJSWordNode *them in _wordNodes.children) {
             if (me == them) {
                 continue;
             }
@@ -445,8 +452,7 @@ static SJSWordNetDB *wordNetDb = nil;
 
 - (void)didSimulatePhysics
 {
-    SKNode *edgeNodes = [self childNodeWithName:@"edgeNodes"];
-    for (SJSEdgeNode *edge in edgeNodes.children) {
+    for (SJSEdgeNode *edge in _edgeNodes.children) {
         [edge updatePath];
     }    
 }
