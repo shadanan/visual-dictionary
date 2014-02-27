@@ -10,7 +10,6 @@
 
 NSInteger searchAreaOpen = 40;
 CGFloat springLength = 60;
-CGFloat searchHeight = 80;
 
 static SJSWordNetDB *wordNetDb = nil;
 static SJSTheme *theme = nil;
@@ -69,7 +68,7 @@ static SJSTheme *theme = nil;
         _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     }
     
-    [self updateTheme];
+    [self update];
 }
 
 - (CGFloat)width
@@ -91,17 +90,14 @@ static SJSTheme *theme = nil;
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
-    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
-    self.physicsBody.friction = 0;
     
-    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, searchHeight)];
+    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, [theme searchHeight])];
     _searchView.delegate = self;
     [self.view addSubview:_searchView];
     
     _searchIcon = [SKLabelNode new];
     _searchIcon.name = @"searchIcon";
     _searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     _searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     _searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
     _searchIcon.zPosition = 200;
@@ -112,7 +108,6 @@ static SJSTheme *theme = nil;
     _pruneIcon.name = @"pruneIcon";
     _pruneIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x99\xBC"];
     _pruneIcon.alpha = 0;
-    _pruneIcon.position = CGPointMake(4, 4);
     _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
     _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
     _pruneIcon.zPosition = 200;
@@ -121,7 +116,6 @@ static SJSTheme *theme = nil;
     _anchorPoint = [SKShapeNode new];
     _anchorPoint.name = @"anchorPoint";
     _anchorPoint.alpha = 0;
-    _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:_anchorPoint];
     
     
@@ -134,10 +128,9 @@ static SJSTheme *theme = nil;
     [self addChild:_wordNodes];
     
     _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, [theme definitionsHeight])];
-    
     [self.view addSubview:_definitionsView];
     
-    [self updateTheme];
+    [self update];
 }
 
 - (CGFloat)scale
@@ -149,26 +142,31 @@ static SJSTheme *theme = nil;
 {
     _scale = scale;
     _springLength = springLength * _scale;
-    [self updateTheme];
+    [self update];
 }
 
 - (void)setTheme:(Theme)t
 {
     theme.theme = t;
-    [self updateTheme];
+    [self update];
 }
 
-- (void)updateTheme
+- (void)update
 {
     self.backgroundColor = [theme backgroundColor];
+    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
+    self.physicsBody.friction = 0;
     
     _searchIcon.fontSize = [theme searchIconSize];
+    _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     
     _pruneIcon.color = [theme pruneIconColor];
     _pruneIcon.fontSize = [theme pruneIconSize];
+    _pruneIcon.position = CGPointMake(4, 4);
     
     _anchorPoint.fillColor = [theme anchorPointColor];
     _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
+    _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     
     CGMutablePathRef path = CGPathCreateMutable();
     CGPathAddArc(path, nil, 0, 0, [theme anchorPointRadius] * _scale, 0, M_PI*2, YES);
@@ -177,6 +175,17 @@ static SJSTheme *theme = nil;
     
     [_definitionsView close];
     _definitionsView.frame = CGRectMake(0, self.height, self.width, [theme definitionsHeight]);
+    
+    _searchView.frame = CGRectMake(0, 0, self.width, [theme searchHeight]);
+    [_searchView open];
+    
+    for (SJSWordNode *node in _wordNodes.children) {
+        [node update];
+    }
+    
+    for (SJSEdgeNode *node in _edgeNodes.children) {
+        [node update];
+    }
 }
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {

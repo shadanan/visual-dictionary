@@ -73,7 +73,7 @@ NSInteger maxDepth = 3;
     
     [self addChild:_circle];
     
-    [self updateTheme];
+    [self update];
     
     return self;
 }
@@ -81,10 +81,10 @@ NSInteger maxDepth = 3;
 - (void)setScale:(CGFloat)scale
 {
     _scale = scale;
-    [self updateTheme];
+    [self update];
 }
 
-- (void)updateTheme
+- (void)update
 {
     if (self.distance == 0) {
         _circle.fillColor = [SJSGraphScene.theme rootNodeColor];
@@ -107,6 +107,7 @@ NSInteger maxDepth = 3;
     }
     
     [self updateCanGrow];
+    [self reposition];
 }
 
 - (NSArray *)neighbourNames
@@ -140,7 +141,7 @@ NSInteger maxDepth = 3;
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
     [self growRecursively];
-    [self updateTheme];
+    [self update];
 }
 
 - (void)updateDistances
@@ -216,8 +217,7 @@ NSInteger maxDepth = 3;
                 neighbour = [[SJSWordNode alloc] initWordWithName:neighbourName];
             }
             
-            neighbour.position = CGPointMake(((int)arc4random() % 40) - 20 + self.scene.size.width / 2,
-                                             ((int)arc4random() % 40) - 20 + self.scene.size.height / 2);
+            [neighbour reposition];
             [self.parent addChild:neighbour];
         }
     }
@@ -255,6 +255,15 @@ NSInteger maxDepth = 3;
         if (node.distance > depth) {
             [node removeFromParent];
         }
+    }
+}
+
+- (void)reposition
+{
+    if (self.position.x <= 0 || self.position.y <= 0 || self.position.x >= self.scene.size.width ||
+        self.position.y >= self.scene.size.height) {
+        self.position = CGPointMake(((int)arc4random() % 40) - 20 + self.scene.size.width / 2,
+                                    ((int)arc4random() % 40) - 20 + self.scene.size.height / 2);
     }
 }
 

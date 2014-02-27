@@ -39,6 +39,11 @@
     }
 }
 
+- (CGFloat)searchHeight
+{
+    return 80;
+}
+
 - (CGFloat)searchAlpha
 {
     return 0.8;

@@ -12,6 +12,8 @@
 
 - (void)setText:(NSString *)text;
 
+- (void)update;
+
 - (void)open;
 
 - (void)close;

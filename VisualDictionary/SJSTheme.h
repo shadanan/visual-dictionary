@@ -18,6 +18,7 @@
 
 - (SKColor *)backgroundColor;
 
+- (CGFloat)searchHeight;
 - (CGFloat)searchAlpha;
 - (UIColor *)searchBackgroundColor;
 - (UIFont *)searchFieldFont;

@@ -19,7 +19,7 @@
 - (id)initWordWithName:(NSString *)name;
 - (id)initMeaningWithName:(NSString *)name;
 
-- (void)updateTheme;
+- (void)update;
 
 - (void)updateDistances;
 
@@ -34,6 +34,8 @@
 - (void)updateCanGrow;
 
 - (void)grow;
+
+- (void)reposition;
 
 - (NSString *)getDefinition;
 

@@ -32,7 +32,7 @@
         
         [self addSubview:_searchField];
         
-        [self updateTheme];
+        [self update];
     }
     return self;
 }
@@ -43,7 +43,7 @@
     _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
 }
 
-- (void)updateTheme
+- (void)update
 {
     self.alpha = [SJSGraphScene.theme searchAlpha];
     self.backgroundColor = [SJSGraphScene.theme searchBackgroundColor];

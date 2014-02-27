@@ -28,7 +28,7 @@
         [_scrollView addSubview:_definitionsLabel];
         [self addSubview:_scrollView];
         
-        [self updateTheme];
+        [self update];
     }
     return self;
 }
@@ -38,10 +38,10 @@
     [super setFrame:frame];
     _scrollView.frame = CGRectMake(0, 0, self.width, self.height);
     
-    [self updateTheme];
+    [self update];
 }
 
-- (void)updateTheme
+- (void)update
 {
     self.alpha = [SJSGraphScene.theme definitionsAlpha];
     self.backgroundColor = [SJSGraphScene.theme definitionsBackgroundColor];

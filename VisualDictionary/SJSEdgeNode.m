@@ -24,12 +24,12 @@
     self.zPosition = 50;
     
     [self updatePath];
-    [self updateTheme];
+    [self update];
     
     return self;
 }
 
-- (void)updateTheme
+- (void)update
 {
     self.lineWidth = [SJSGraphScene.theme lineWidth];
     self.strokeColor = [SJSGraphScene.theme edgeColor];
