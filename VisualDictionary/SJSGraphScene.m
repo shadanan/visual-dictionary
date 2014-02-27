@@ -131,6 +131,7 @@ static SJSTheme *theme = nil;
     [self.view addSubview:_definitionsView];
     
     [self update];
+    [self openSearchPane];
 }
 
 - (CGFloat)scale
@@ -176,8 +177,8 @@ static SJSTheme *theme = nil;
     [_definitionsView close];
     _definitionsView.frame = CGRectMake(0, self.height, self.width, [theme definitionsHeight]);
     
-    _searchView.frame = CGRectMake(0, 0, self.width, [theme searchHeight]);
-    [_searchView open];
+    [self closeSearchPane];
+    _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);
     
     for (SJSWordNode *node in _wordNodes.children) {
         [node update];
@@ -185,6 +186,36 @@ static SJSTheme *theme = nil;
     
     for (SJSEdgeNode *node in _edgeNodes.children) {
         [node update];
+    }
+}
+
+- (void)updateScene
+{
+    [self rebuildEdgeNodes];
+    [self updateCanGrow];
+}
+
+- (void)updateCanGrow
+{
+    for (SJSWordNode *node in _wordNodes.children) {
+        [node updateCanGrow];
+    }
+}
+
+- (void)rebuildEdgeNodes
+{
+    [_edgeNodes removeAllChildren];
+    
+    for (int i = 0; i < _wordNodes.children.count; i++) {
+        SJSWordNode *me = [_wordNodes.children objectAtIndex:i];
+        for (int j = i + 1; j < _wordNodes.children.count; j++) {
+            SJSWordNode *them = [_wordNodes.children objectAtIndex:j];
+            
+            if ((me.type != WordType && them.type == WordType && [wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [wordNetDb word:me.name isConnectedToMeaning:them.name])) {
+                SJSEdgeNode *edge = [[SJSEdgeNode alloc] initWithNodeA:me withNodeB:them];
+                [_edgeNodes addChild:edge];
+            }
+        }
     }
 }
 
@@ -304,6 +335,7 @@ static SJSTheme *theme = nil;
     statusNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
     statusNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     statusNode.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 70);
+    statusNode.zPosition = 200;
     
     [self addChild:statusNode];
     
@@ -358,36 +390,6 @@ static SJSTheme *theme = nil;
     }
     
     [self updateScene];
-}
-
-- (void)updateScene
-{
-    [self rebuildEdgeNodes];
-    [self updateCanGrow];
-}
-
-- (void)updateCanGrow
-{
-    for (SJSWordNode *node in _wordNodes.children) {
-        [node updateCanGrow];
-    }
-}
-
-- (void)rebuildEdgeNodes
-{
-    [_edgeNodes removeAllChildren];
-    
-    for (int i = 0; i < _wordNodes.children.count; i++) {
-        SJSWordNode *me = [_wordNodes.children objectAtIndex:i];
-        for (int j = i + 1; j < _wordNodes.children.count; j++) {
-            SJSWordNode *them = [_wordNodes.children objectAtIndex:j];
-            
-            if ((me.type != WordType && them.type == WordType && [wordNetDb word:them.name isConnectedToMeaning:me.name]) || (me.type == WordType && them.type != WordType && [wordNetDb word:me.name isConnectedToMeaning:them.name])) {
-                SJSEdgeNode *edge = [[SJSEdgeNode alloc] initWithNodeA:me withNodeB:them];
-                [_edgeNodes addChild:edge];
-            }
-        }
-    }
 }
 
 - (BOOL)node:(SJSWordNode *)node1 isConnectedTo:(SJSWordNode *)node2
