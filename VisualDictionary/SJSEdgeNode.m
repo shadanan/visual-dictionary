@@ -21,17 +21,17 @@
     _nodeA = nodeA;
     _nodeB = nodeB;
     
-    [self updatePath];
-    
     self.zPosition = 50;
-    self.lineWidth = 0.1;
-    self.strokeColor = [UIColor lightGrayColor];
+    
+    [self updatePath];
+    [self updateTheme];
     
     return self;
 }
 
 - (void)updateTheme
 {
+    self.lineWidth = [SJSGraphScene.theme lineWidth];
     self.strokeColor = [SJSGraphScene.theme edgeColor];
 }
 

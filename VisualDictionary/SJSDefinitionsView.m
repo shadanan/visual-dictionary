@@ -7,8 +7,7 @@
 //
 
 #import "SJSDefinitionsView.h"
-
-CGFloat definitionFontSize = 14;
+#import "SJSGraphScene.h"
 
 @implementation SJSDefinitionsView {
     BOOL _closed;
@@ -20,20 +19,16 @@ CGFloat definitionFontSize = 14;
 {
     self = [super initWithFrame:frame];
     if (self) {
-        self.backgroundColor = [UIColor whiteColor];
-        self.alpha = 0.8;
         _closed = YES;
         
         _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.width, self.height)];
-        
         _definitionsLabel = [[UILabel alloc] init];
-        _definitionsLabel.textColor = [UIColor blackColor];
-        _definitionsLabel.font = [UIFont fontWithName:@"Avenir-Book" size:definitionFontSize];
         _definitionsLabel.numberOfLines = 0;
         
         [_scrollView addSubview:_definitionsLabel];
-        
         [self addSubview:_scrollView];
+        
+        [self updateTheme];
     }
     return self;
 }
@@ -41,7 +36,17 @@ CGFloat definitionFontSize = 14;
 - (void)setFrame:(CGRect)frame
 {
     [super setFrame:frame];
-    _scrollView.frame = frame;
+    _scrollView.frame = CGRectMake(0, 0, self.width, self.height);
+    
+    [self updateTheme];
+}
+
+- (void)updateTheme
+{
+    self.alpha = [SJSGraphScene.theme definitionsAlpha];
+    self.backgroundColor = [SJSGraphScene.theme definitionsBackgroundColor];
+    _definitionsLabel.textColor = [SJSGraphScene.theme definitionsColor];
+    _definitionsLabel.font = [UIFont fontWithName:[SJSGraphScene.theme definitionsFontName] size:[SJSGraphScene.theme definitionsFontSize]];
 }
 
 - (CGFloat)width

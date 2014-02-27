@@ -11,14 +11,9 @@
 
 NSInteger maxNodeThreshold = 20;
 NSInteger maxDepth = 3;
-CGFloat lineWidth = 0.1;
-NSString *wordFont = @"AvenirNextCondensed-DemiBold";
-CGFloat wordFontSize = 16;
-NSString *meaningFont = @"AvenirNextCondensed-Italic";
-CGFloat meaningFontSize = 16;
-CGFloat circleRadius = 16;
 
 @implementation SJSWordNode {
+    CGFloat _scale;
     NSArray *_neighbourNames;
     SKShapeNode *_circle;
 }
@@ -53,12 +48,8 @@ CGFloat circleRadius = 16;
     self.type = type;
     
     if (self.type == WordType) {
-        self.fontName = wordFont;
-        self.fontSize = wordFontSize;
         self.text = self.name;
     } else {
-        self.fontName = meaningFont;
-        self.fontSize = meaningFontSize;
         self.text = [self getTypeAsAbreviatedString];
     }
     
@@ -66,21 +57,14 @@ CGFloat circleRadius = 16;
     self.zPosition = 100.0;
     self.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     
+    _scale = 1;
     _neighbourNames = nil;
+    
     _circle = [SKShapeNode new];
-    
-    CGMutablePathRef circlePath = CGPathCreateMutable();
-    CGPathAddArc(circlePath, nil, 0, 0, circleRadius, 0, M_PI*2, true);
-    
     _circle.name = @"circle";
-    _circle.path = circlePath;
-    _circle.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
-    _circle.lineWidth = lineWidth;
     _circle.zPosition = 0.0;
 
-    CGPathRelease(circlePath);
-    
-    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:circleRadius];
+    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:[SJSGraphScene.theme nodeSize]];
     self.physicsBody.mass = 1;
     self.physicsBody.dynamic = YES;
     self.physicsBody.linearDamping = 0.2;
@@ -89,26 +73,39 @@ CGFloat circleRadius = 16;
     
     [self addChild:_circle];
     
+    [self updateTheme];
+    
     return self;
 }
 
 - (void)setScale:(CGFloat)scale
 {
-    if (self.type == WordType) {
-        self.fontSize = wordFontSize * scale;
-    } else {
-        self.fontSize = meaningFontSize * scale;
-    }
-    
-    CGMutablePathRef circlePath = CGPathCreateMutable();
-    CGPathAddArc(circlePath, nil, 0, 0, circleRadius * scale, 0, M_PI*2, true);
-    _circle.path = circlePath;
-    CGPathRelease(circlePath);
+    _scale = scale;
+    [self updateTheme];
 }
 
 - (void)updateTheme
 {
-    _circle.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
+    if (self.distance == 0) {
+        _circle.fillColor = [SJSGraphScene.theme rootNodeColor];
+    } else {
+        _circle.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
+    }
+    _circle.lineWidth = [SJSGraphScene.theme lineWidth];
+    
+    CGMutablePathRef circlePath = CGPathCreateMutable();
+    CGPathAddArc(circlePath, nil, 0, 0, [SJSGraphScene.theme nodeSize] * _scale, 0, M_PI*2, true);
+    _circle.path = circlePath;
+    CGPathRelease(circlePath);
+    
+    if (self.type == WordType) {
+        self.fontName = [SJSGraphScene.theme wordFontName];
+        self.fontSize = [SJSGraphScene.theme wordFontSize] * _scale;
+    } else {
+        self.fontName = [SJSGraphScene.theme meaningFontName];
+        self.fontSize = [SJSGraphScene.theme meaningFontSize] * _scale;
+    }
+    
     [self updateCanGrow];
 }
 
@@ -140,11 +137,10 @@ CGFloat circleRadius = 16;
 
 - (void)promoteToRoot
 {
-    _circle.fillColor = [SJSGraphScene.theme rootNodeColor];
-    
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
     [self growRecursively];
+    [self updateTheme];
 }
 
 - (void)updateDistances

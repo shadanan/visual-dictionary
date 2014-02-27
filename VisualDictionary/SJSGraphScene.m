@@ -9,14 +9,8 @@
 #import "SJSGraphScene.h"
 
 NSInteger searchAreaOpen = 40;
-CGFloat searchIconSize = 30;
-CGFloat pruneIconSize = 60;
-CGFloat anchorRadius = 60;
 CGFloat springLength = 60;
-
 CGFloat searchHeight = 80;
-CGFloat definitionsHeightIPhone = 100;
-CGFloat definitionsHeightIPad = 200;
 
 static SJSWordNetDB *wordNetDb = nil;
 static SJSTheme *theme = nil;
@@ -24,7 +18,6 @@ static SJSTheme *theme = nil;
 @implementation SJSGraphScene {
     BOOL _dragging;
     BOOL _contentCreated;
-    CGFloat _anchorRadius;
     CGFloat _springLength;
     CGFloat _scale;
     
@@ -38,7 +31,6 @@ static SJSTheme *theme = nil;
     SJSDefinitionsView *_definitionsView;
     SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
-    SKLabelNode *_messageLabel;
     SKShapeNode *_anchorPoint;
 }
 
@@ -58,12 +50,6 @@ static SJSTheme *theme = nil;
     return wordNetDb;
 }
 
-- (void)setTheme:(Theme)t
-{
-    theme.theme = t;
-    self.backgroundColor = [theme backgroundColor];
-}
-
 + (SJSTheme *)theme
 {
     return theme;
@@ -79,17 +65,11 @@ static SJSTheme *theme = nil;
 
 - (void)didChangeSize:(CGSize)oldSize
 {
-    _searchView.frame = CGRectMake(0, 0, self.width, searchHeight);
-    
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        _definitionsView.frame = CGRectMake(0, self.height, self.width, definitionsHeightIPhone);
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        _definitionsView.frame = CGRectMake(0, self.height, self.width, definitionsHeightIPad);
-    }
-    
     if (_root != nil) {
         _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     }
+    
+    [self updateTheme];
 }
 
 - (CGFloat)width
@@ -121,7 +101,6 @@ static SJSTheme *theme = nil;
     _searchIcon = [SKLabelNode new];
     _searchIcon.name = @"searchIcon";
     _searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    _searchIcon.fontSize = searchIconSize * _scale;
     _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
     _searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
     _searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
@@ -132,9 +111,7 @@ static SJSTheme *theme = nil;
     _pruneIcon = [SKLabelNode new];
     _pruneIcon.name = @"pruneIcon";
     _pruneIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x99\xBC"];
-    _pruneIcon.color = [SKColor whiteColor];
     _pruneIcon.alpha = 0;
-    _pruneIcon.fontSize = pruneIconSize * _scale;
     _pruneIcon.position = CGPointMake(4, 4);
     _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
     _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
@@ -142,16 +119,8 @@ static SJSTheme *theme = nil;
     [self addChild:_pruneIcon];
     
     _anchorPoint = [SKShapeNode new];
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
-    _anchorPoint.path = path;
-    CGPathRelease(path);
-    
     _anchorPoint.name = @"anchorPoint";
-    _anchorPoint.fillColor = [SKColor whiteColor];
     _anchorPoint.alpha = 0;
-    _anchorPoint.glowWidth = 1;
     _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     [self addChild:_anchorPoint];
     
@@ -164,27 +133,11 @@ static SJSTheme *theme = nil;
     _wordNodes.name = @"wordNodes";
     [self addChild:_wordNodes];
     
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPhone)];
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPad)];
-    }
-    
-    _messageLabel = [[SKLabelNode alloc] initWithFontNamed:@"Avenir-Light"];
-    _messageLabel.name = @"messageLabel";
-    _messageLabel.color = [theme messageLabelColor];
-    _messageLabel.alpha = 0;
-    _messageLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-    _messageLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-    _messageLabel.zPosition = 200;
+    _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, [theme definitionsHeight])];
     
     [self.view addSubview:_definitionsView];
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    NSString *word = [[textField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    [self createSceneForWord:word];
-    return NO;
+    
+    [self updateTheme];
 }
 
 - (CGFloat)scale
@@ -195,13 +148,41 @@ static SJSTheme *theme = nil;
 - (void)setScale:(CGFloat)scale
 {
     _scale = scale;
-    _anchorRadius = anchorRadius * _scale;
     _springLength = springLength * _scale;
+    [self updateTheme];
+}
+
+- (void)setTheme:(Theme)t
+{
+    theme.theme = t;
+    [self updateTheme];
+}
+
+- (void)updateTheme
+{
+    self.backgroundColor = [theme backgroundColor];
+    
+    _searchIcon.fontSize = [theme searchIconSize];
+    
+    _pruneIcon.color = [theme pruneIconColor];
+    _pruneIcon.fontSize = [theme pruneIconSize];
+    
+    _anchorPoint.fillColor = [theme anchorPointColor];
+    _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
     
     CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
+    CGPathAddArc(path, nil, 0, 0, [theme anchorPointRadius] * _scale, 0, M_PI*2, YES);
     _anchorPoint.path = path;
     CGPathRelease(path);
+    
+    [_definitionsView close];
+    _definitionsView.frame = CGRectMake(0, self.height, self.width, [theme definitionsHeight]);
+}
+
+- (BOOL)textFieldShouldReturn:(UITextField *)textField {
+    NSString *word = [[textField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
+    [self createSceneForWord:word];
+    return NO;
 }
 
 - (void)openSearchPane
@@ -304,27 +285,17 @@ static SJSTheme *theme = nil;
     }
 }
 
-- (SKLabelNode *)createStatusNode:(NSString *)message
-{
-    if ([self childNodeWithName:@"statusNode"] != nil) {
-        [[self childNodeWithName:@"statusNode"] removeFromParent];
-    }
-    
-    SKLabelNode *statusNode = [SKLabelNode labelNodeWithFontNamed:@"AvenirNext-Regular"];
-    statusNode.name = @"statusNode";
-    statusNode.text = message;
-    statusNode.fontSize = 16;
-    statusNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
-    statusNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
-    statusNode.position = CGPointMake(CGRectGetMinX(self.frame) + 16, CGRectGetMinY(self.frame) + 10);
-    
-    return statusNode;
-}
-
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration
 {
-    NSLog(@"setMessage: %@, duration: %f", message, duration);
-    SKLabelNode *statusNode = [self createStatusNode:message];
+    SKLabelNode *statusNode = [SKLabelNode new];
+    statusNode.text = message;
+    statusNode.color = [theme messageColor];
+    statusNode.fontName = [theme messageFontName];
+    statusNode.fontSize = [theme messageFontSize];
+    statusNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    statusNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    statusNode.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 70);
+    
     [self addChild:statusNode];
     
     SKAction *pause = [SKAction waitForDuration:duration];
@@ -343,7 +314,7 @@ static SJSTheme *theme = nil;
 - (void)createSceneForWord:(NSString *)word
 {
     if (![wordNetDb containsWord:word]) {
-        [self setMessage:[word stringByAppendingString:@" not found in dictionary"] withDuration:5.0];
+        [self setMessage:[word stringByAppendingString:@" not found in dictionary"] withDuration:2.0];
         return;
     }
     

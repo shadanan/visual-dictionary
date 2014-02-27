@@ -18,28 +18,51 @@
 
 - (SKColor *)backgroundColor;
 
-- (SKColor *)searchBackgroundColor;
+- (CGFloat)searchAlpha;
+- (UIColor *)searchBackgroundColor;
+- (UIFont *)searchFieldFont;
+- (UIColor *)searchFieldColor;
+- (UIColor *)searchFieldBackgroundColor;
 
 - (SKColor *)rootNodeColor;
-
 - (SKColor *)wordNodeColor;
-
 - (SKColor *)adverbNodeColor;
-
 - (SKColor *)adjectiveNodeColor;
-
 - (SKColor *)nounNodeColor;
-
 - (SKColor *)verbNodeColor;
+- (SKColor *)colorByNodeType:(NodeType)type;
+- (CGFloat)nodeSize;
+
+- (NSString *)wordFontName;
+- (CGFloat)wordFontSize;
+
+- (NSString *)meaningFontName;
+- (CGFloat)meaningFontSize;
 
 - (SKColor *)edgeColor;
+- (CGFloat)lineWidth;
 
 - (SKColor *)canGrowEdgeColor;
-
 - (SKColor *)cannotGrowEdgeColor;
 
-- (SKColor *)messageLabelColor;
+- (SKColor *)messageColor;
+- (NSString *)messageFontName;
+- (CGFloat)messageFontSize;
 
-- (SKColor *)colorByNodeType:(NodeType)type;
+- (SKColor *)anchorPointColor;
+- (CGFloat)anchorPointGlowWidth;
+- (CGFloat)anchorPointRadius;
+
+- (SKColor *)pruneIconColor;
+- (CGFloat)pruneIconSize;
+
+- (CGFloat)searchIconSize;
+
+- (CGFloat)definitionsHeight;
+- (CGFloat)definitionsAlpha;
+- (UIColor *)definitionsBackgroundColor;
+- (UIColor *)definitionsColor;
+- (NSString *)definitionsFontName;
+- (CGFloat)definitionsFontSize;
 
 @end

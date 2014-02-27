@@ -21,21 +21,18 @@
     if (self) {
         _closed = NO;
         self.center = CGPointMake(self.center.x, self.height / 2);
-        self.backgroundColor = [SKColor whiteColor];
-        self.alpha = 0.8;
         
         _searchField = [UITextField new];
         _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
         _searchField.borderStyle = UITextBorderStyleRoundedRect;
-        _searchField.textColor = [UIColor blackColor];
-        _searchField.font = [UIFont systemFontOfSize:16.0];
         _searchField.placeholder = @"Search for Words";
-        _searchField.backgroundColor = [SKColor whiteColor];
         _searchField.autocorrectionType = UITextAutocorrectionTypeYes;
         _searchField.keyboardType = UIKeyboardTypeDefault;
         _searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
         
         [self addSubview:_searchField];
+        
+        [self updateTheme];
     }
     return self;
 }
@@ -44,6 +41,15 @@
 {
     [super setFrame:frame];
     _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
+}
+
+- (void)updateTheme
+{
+    self.alpha = [SJSGraphScene.theme searchAlpha];
+    self.backgroundColor = [SJSGraphScene.theme searchBackgroundColor];
+    _searchField.font = [SJSGraphScene.theme searchFieldFont];
+    _searchField.textColor = [SJSGraphScene.theme searchFieldColor];
+    _searchField.backgroundColor = [SJSGraphScene.theme searchFieldBackgroundColor];
 }
 
 - (void)setDelegate:(id)delegate
@@ -59,11 +65,6 @@
 - (CGFloat)height
 {
     return self.frame.size.height;
-}
-
-- (void)updateTheme
-{
-    self.backgroundColor = [SJSGraphScene.theme searchBackgroundColor];
 }
 
 - (void)open

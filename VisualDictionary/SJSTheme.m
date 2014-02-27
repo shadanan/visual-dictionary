@@ -10,12 +10,16 @@
 
 @implementation SJSTheme {
     Theme _theme;
+    UIUserInterfaceIdiom _idiom;
 }
 
 - (id)initWithTheme:(Theme)theme
 {
     self = [super init];
-    _theme = theme;
+    if (self) {
+        _theme = theme;
+        _idiom = [[UIDevice currentDevice] userInterfaceIdiom];
+    }
     return self;
 }
 
@@ -35,15 +39,35 @@
     }
 }
 
-- (SKColor *)searchBackgroundColor
+- (CGFloat)searchAlpha
+{
+    return 0.8;
+}
+
+- (UIColor *)searchBackgroundColor
 {
     if (_theme == LightTheme) {
         return nil;
     } else if (_theme == DarkTheme) {
         return nil;
     } else {
-        return [SKColor colorWithRed:0.85 green:0.92 blue:0.98 alpha:0.75];
+        return [UIColor colorWithRed:0.85 green:0.92 blue:0.98 alpha:0.75];
     }
+}
+
+- (UIFont *)searchFieldFont
+{
+    return [UIFont systemFontOfSize:16];
+}
+
+- (UIColor *)searchFieldColor
+{
+    return [UIColor blackColor];
+}
+
+- (UIColor *)searchFieldBackgroundColor
+{
+    return [UIColor whiteColor];
 }
 
 - (SKColor *)rootNodeColor
@@ -112,6 +136,67 @@
     }
 }
 
+- (SKColor *)colorByNodeType:(NodeType)type
+{
+    if (type == WordType) {
+        return [self wordNodeColor];
+    } else if (type == AdverbType) {
+        return [self adverbNodeColor];
+    } else if (type == AdjectiveType) {
+        return [self adjectiveNodeColor];
+    } else if (type == NounType) {
+        return [self nounNodeColor];
+    } else if (type == VerbType) {
+        return [self verbNodeColor];
+    } else {
+        return nil;
+    }
+}
+
+- (NSString *)wordFontName
+{
+    if (_theme == LightTheme) {
+        return nil;
+    } else if (_theme == DarkTheme) {
+        return nil;
+    } else {
+        return @"AvenirNextCondensed-DemiBold";
+    }
+}
+
+- (CGFloat)wordFontSize
+{
+    if (_theme == LightTheme) {
+        return 16;
+    } else if (_theme == DarkTheme) {
+        return 16;
+    } else {
+        return 16;
+    }
+}
+
+- (NSString *)meaningFontName
+{
+    if (_theme == LightTheme) {
+        return nil;
+    } else if (_theme == DarkTheme) {
+        return nil;
+    } else {
+        return @"AvenirNextCondensed-Italic";
+    }
+}
+
+- (CGFloat)meaningFontSize
+{
+    if (_theme == LightTheme) {
+        return 16;
+    } else if (_theme == DarkTheme) {
+        return 16;
+    } else {
+        return 16;
+    }
+}
+
 - (SKColor *)edgeColor
 {
     if (_theme == LightTheme) {
@@ -120,6 +205,28 @@
         return nil;
     } else {
         return [SKColor lightGrayColor];
+    }
+}
+
+- (CGFloat)lineWidth
+{
+    if (_theme == LightTheme) {
+        return 0.1;
+    } else if (_theme == DarkTheme) {
+        return 0.1;
+    } else {
+        return 0.1;
+    }
+}
+
+- (CGFloat)nodeSize
+{
+    if (_theme == LightTheme) {
+        return 16;
+    } else if (_theme == DarkTheme) {
+        return 16;
+    } else {
+        return 16;
     }
 }
 
@@ -145,7 +252,7 @@
     }
 }
 
-- (SKColor *)messageLabelColor
+- (SKColor *)messageColor
 {
     if (_theme == LightTheme) {
         return nil;
@@ -156,21 +263,161 @@
     }
 }
 
-- (SKColor *)colorByNodeType:(NodeType)type 
+- (NSString *)messageFontName
 {
-    if (type == WordType) {
-        return [self wordNodeColor];
-    } else if (type == AdverbType) {
-        return [self adverbNodeColor];
-    } else if (type == AdjectiveType) {
-        return [self adjectiveNodeColor];
-    } else if (type == NounType) {
-        return [self nounNodeColor];
-    } else if (type == VerbType) {
-        return [self verbNodeColor];
+    return @"AvenirNext-Regular";
+}
+
+- (CGFloat)messageFontSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        return 16;
     } else {
-        return nil;
+        return 24;
     }
 }
+   
+- (SKColor *)anchorPointColor
+{
+    if (_theme == LightTheme) {
+        return nil;
+    } else if (_theme == DarkTheme) {
+        return nil;
+    } else {
+        return [SKColor whiteColor];
+    }
+}
+
+- (CGFloat)anchorPointGlowWidth
+{
+    if (_theme == LightTheme) {
+        return 0.1;
+    } else if (_theme == DarkTheme) {
+        return 0.1;
+    } else {
+        return 0.1;
+    }
+}
+
+- (CGFloat)anchorPointRadius
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        if (_theme == LightTheme) {
+            return 60;
+        } else if (_theme == DarkTheme) {
+            return 60;
+        } else {
+            return 60;
+        }
+    } else {
+        if (_theme == LightTheme) {
+            return 100;
+        } else if (_theme == DarkTheme) {
+            return 100;
+        } else {
+            return 100;
+        }
+    }
+}
+
+- (SKColor *)pruneIconColor
+{
+    if (_theme == LightTheme) {
+        return [SKColor whiteColor];
+    } else if (_theme == DarkTheme) {
+        return [SKColor whiteColor];
+    } else {
+        return [SKColor whiteColor];
+    }
+}
+
+- (CGFloat)pruneIconSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        if (_theme == LightTheme) {
+            return 60;
+        } else if (_theme == DarkTheme) {
+            return 60;
+        } else {
+            return 60;
+        }
+    } else {
+        if (_theme == LightTheme) {
+            return 100;
+        } else if (_theme == DarkTheme) {
+            return 100;
+        } else {
+            return 100;
+        }
+    }
+}
+
+- (CGFloat)searchIconSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        if (_theme == LightTheme) {
+            return 30;
+        } else if (_theme == DarkTheme) {
+            return 30;
+        } else {
+            return 30;
+        }
+    } else {
+        if (_theme == LightTheme) {
+            return 45;
+        } else if (_theme == DarkTheme) {
+            return 45;
+        } else {
+            return 45;
+        }
+    }
+}
+
+- (CGFloat)definitionsHeight
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        if (_theme == LightTheme) {
+            return 100;
+        } else if (_theme == DarkTheme) {
+            return 100;
+        } else {
+            return 100;
+        }
+    } else {
+        if (_theme == LightTheme) {
+            return 200;
+        } else if (_theme == DarkTheme) {
+            return 200;
+        } else {
+            return 200;
+        }
+    }
+}
+
+- (CGFloat)definitionsAlpha
+{
+    return 0.8;
+}
+
+- (UIColor *)definitionsBackgroundColor
+{
+    return [UIColor whiteColor];
+}
+
+- (UIColor *)definitionsColor
+{
+    return [UIColor blackColor];
+}
+
+- (NSString *)definitionsFontName
+{
+    return @"Avenir-Book";
+}
+
+- (CGFloat)definitionsFontSize
+{
+    return 14;
+}
+
 
 @end
