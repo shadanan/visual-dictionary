@@ -21,7 +21,6 @@ CGFloat circleRadius = 16;
 @implementation SJSWordNode {
     NSArray *_neighbourNames;
     SKShapeNode *_circle;
-    Theme _theme;
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -67,7 +66,6 @@ CGFloat circleRadius = 16;
     self.zPosition = 100.0;
     self.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     
-    _theme = DevelTheme;
     _neighbourNames = nil;
     _circle = [SKShapeNode new];
     
@@ -76,8 +74,8 @@ CGFloat circleRadius = 16;
     
     _circle.name = @"circle";
     _circle.path = circlePath;
+    _circle.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
     _circle.lineWidth = lineWidth;
-    _circle.fillColor = [SKColor colorByNodeType:type withTheme:_theme];
     _circle.zPosition = 0.0;
 
     CGPathRelease(circlePath);
@@ -108,10 +106,9 @@ CGFloat circleRadius = 16;
     CGPathRelease(circlePath);
 }
 
-- (void)setTheme:(Theme)theme
+- (void)updateTheme
 {
-    _theme = theme;
-    _circle.fillColor = [SKColor colorByNodeType:self.type withTheme:_theme];
+    _circle.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
     [self updateCanGrow];
 }
 
@@ -143,7 +140,7 @@ CGFloat circleRadius = 16;
 
 - (void)promoteToRoot
 {
-    _circle.fillColor = [SKColor rootNodeColorWithTheme:_theme];
+    _circle.fillColor = [SJSGraphScene.theme rootNodeColor];
     
     [self updateDistances];
     [self pruneWithMaxDepth:maxDepth];
@@ -193,9 +190,9 @@ CGFloat circleRadius = 16;
 - (void)updateCanGrow
 {
     if ([self canGrow]) {
-        _circle.strokeColor = [SKColor canGrowEdgeColorWithTheme:_theme];
+        _circle.strokeColor = [SJSGraphScene.theme canGrowEdgeColor];
     } else {
-        _circle.strokeColor = [SKColor cannotGrowEdgeColorWithTheme:_theme];
+        _circle.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
     }
 }
 

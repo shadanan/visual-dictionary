@@ -7,7 +7,7 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
-#import "SJSColor.h"
+#import "SJSTheme.h"
 #import "SJSEnums.h"
 
 @interface SJSWordNode : SKLabelNode
@@ -19,7 +19,7 @@
 - (id)initWordWithName:(NSString *)name;
 - (id)initMeaningWithName:(NSString *)name;
 
-- (void)setTheme:(Theme)theme;
+- (void)updateTheme;
 
 - (void)updateDistances;
 

@@ -61,9 +61,9 @@
     return self.frame.size.height;
 }
 
-- (void)setTheme:(Theme)theme
+- (void)updateTheme
 {
-    self.backgroundColor = [SKColor searchBackgroundColorWithTheme:theme];
+    self.backgroundColor = [SJSGraphScene.theme searchBackgroundColor];
 }
 
 - (void)open

@@ -15,7 +15,7 @@
 
 - (void)setDelegate:(id)delegate;
 
-- (void)setTheme:(Theme)theme;
+- (void)updateTheme;
 
 - (void)open;
 

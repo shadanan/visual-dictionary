@@ -12,19 +12,18 @@
 #import "SJSWordNetDB.h"
 #import "SJSDefinitionsView.h"
 #import "SJSSearchView.h"
-#import "SJSColor.h"
+#import "SJSTheme.h"
 #import "SJSEnums.h"
 
 @interface SJSGraphScene : SKScene
 
 + (SJSWordNetDB *)wordNetDb;
++ (SJSTheme *)theme;
 
 - (CGFloat)scale;
 - (void)setScale:(CGFloat)scale;
 
 - (void)setTheme:(Theme)theme;
-
-- (void)setMessage:(NSString *)message;
 
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
 

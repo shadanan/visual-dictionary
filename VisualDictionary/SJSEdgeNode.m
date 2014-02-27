@@ -10,8 +10,8 @@
 #import "SJSGraphScene.h"
 
 @implementation SJSEdgeNode {
-    SJSWordNode *_nodeA;
-    SJSWordNode *_nodeB;
+    SJSWordNode __weak *_nodeA;
+    SJSWordNode __weak *_nodeB;
 }
 
 - (id)initWithNodeA:(SJSWordNode *)nodeA withNodeB:(SJSWordNode *)nodeB
@@ -28,6 +28,11 @@
     self.strokeColor = [UIColor lightGrayColor];
     
     return self;
+}
+
+- (void)updateTheme
+{
+    self.strokeColor = [SJSGraphScene.theme edgeColor];
 }
 
 - (void)updatePath

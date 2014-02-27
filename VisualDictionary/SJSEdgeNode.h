@@ -13,6 +13,8 @@
 
 - (id)initWithNodeA:(SJSWordNode *)nodeA withNodeB:(SJSWordNode *)nodeB;
 
+- (void)updateTheme;
+
 - (void)updatePath;
 
 @end

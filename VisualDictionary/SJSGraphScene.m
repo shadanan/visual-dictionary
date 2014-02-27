@@ -19,6 +19,7 @@ CGFloat definitionsHeightIPhone = 100;
 CGFloat definitionsHeightIPad = 200;
 
 static SJSWordNetDB *wordNetDb = nil;
+static SJSTheme *theme = nil;
 
 @implementation SJSGraphScene {
     BOOL _dragging;
@@ -26,7 +27,6 @@ static SJSWordNetDB *wordNetDb = nil;
     CGFloat _anchorRadius;
     CGFloat _springLength;
     CGFloat _scale;
-    Theme _theme;
     
     SKNode *_edgeNodes;
     SKNode *_wordNodes;
@@ -38,6 +38,7 @@ static SJSWordNetDB *wordNetDb = nil;
     SJSDefinitionsView *_definitionsView;
     SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
+    SKLabelNode *_messageLabel;
     SKShapeNode *_anchorPoint;
 }
 
@@ -46,11 +47,26 @@ static SJSWordNetDB *wordNetDb = nil;
     if (!wordNetDb) {
         wordNetDb = [[SJSWordNetDB alloc] init];
     }
+    
+    if (!theme) {
+        theme = [[SJSTheme alloc] initWithTheme:DevelTheme];
+    }
 }
 
 + (SJSWordNetDB *)wordNetDb
 {
     return wordNetDb;
+}
+
+- (void)setTheme:(Theme)t
+{
+    theme.theme = t;
+    self.backgroundColor = [theme backgroundColor];
+}
+
++ (SJSTheme *)theme
+{
+    return theme;
 }
 
 - (void)didMoveToView:(SKView *)view
@@ -90,9 +106,8 @@ static SJSWordNetDB *wordNetDb = nil;
 {
     NSLog(@"Scale: %f", _scale);
     
-    _theme = DevelTheme;
     self.scaleMode = SKSceneScaleModeResizeFill;
-    self.backgroundColor = [SKColor backgroundColorWithTheme:_theme];
+    self.backgroundColor = [theme backgroundColor];
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
@@ -155,6 +170,14 @@ static SJSWordNetDB *wordNetDb = nil;
         _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, definitionsHeightIPad)];
     }
     
+    _messageLabel = [[SKLabelNode alloc] initWithFontNamed:@"Avenir-Light"];
+    _messageLabel.name = @"messageLabel";
+    _messageLabel.color = [theme messageLabelColor];
+    _messageLabel.alpha = 0;
+    _messageLabel.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    _messageLabel.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    _messageLabel.zPosition = 200;
+    
     [self.view addSubview:_definitionsView];
 }
 
@@ -179,12 +202,6 @@ static SJSWordNetDB *wordNetDb = nil;
     CGPathAddArc(path, nil, 0, 0, _anchorRadius, 0, M_PI*2, YES);
     _anchorPoint.path = path;
     CGPathRelease(path);
-}
-
-- (void)setTheme:(Theme)theme
-{
-    _theme = theme;
-    self.backgroundColor = [SKColor backgroundColorWithTheme:_theme];
 }
 
 - (void)openSearchPane
@@ -302,13 +319,6 @@ static SJSWordNetDB *wordNetDb = nil;
     statusNode.position = CGPointMake(CGRectGetMinX(self.frame) + 16, CGRectGetMinY(self.frame) + 10);
     
     return statusNode;
-}
-
-- (void)setMessage:(NSString *)message
-{
-    NSLog(@"setMessage: %@", message);
-    SKLabelNode *statusNode = [self createStatusNode:message];
-    [self addChild:statusNode];
 }
 
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration
