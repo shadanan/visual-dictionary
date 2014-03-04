@@ -31,8 +31,6 @@
 
 - (NSArray *)neighbourNodes;
 
-- (void)updateCanGrow;
-
 - (void)grow;
 
 - (void)reposition;

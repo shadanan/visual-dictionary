@@ -357,24 +357,74 @@
     }
 }
 
+- (SKColor *)backIconDisabledColor
+{
+    if (_theme == LightTheme) {
+        return [SKColor grayColor];
+    } else if (_theme == DarkTheme) {
+        return [SKColor grayColor];
+    } else {
+        return [SKColor grayColor];
+    }
+}
+
+- (SKColor *)backIconEnabledColor
+{
+    if (_theme == LightTheme) {
+        return [SKColor whiteColor];
+    } else if (_theme == DarkTheme) {
+        return [SKColor whiteColor];
+    } else {
+        return [SKColor whiteColor];
+    }
+}
+
+- (CGFloat)backIconSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        return 30;
+    } else {
+        return 45;
+    }
+}
+
+- (SKColor *)forwardIconDisabledColor
+{
+    if (_theme == LightTheme) {
+        return [SKColor grayColor];
+    } else if (_theme == DarkTheme) {
+        return [SKColor grayColor];
+    } else {
+        return [SKColor grayColor];
+    }
+}
+
+- (SKColor *)forwardIconEnabledColor
+{
+    if (_theme == LightTheme) {
+        return [SKColor whiteColor];
+    } else if (_theme == DarkTheme) {
+        return [SKColor whiteColor];
+    } else {
+        return [SKColor whiteColor];
+    }
+}
+
+- (CGFloat)forwardIconSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        return 30;
+    } else {
+        return 45;
+    }
+}
+
 - (CGFloat)searchIconSize
 {
     if (_idiom == UIUserInterfaceIdiomPhone) {
-        if (_theme == LightTheme) {
-            return 30;
-        } else if (_theme == DarkTheme) {
-            return 30;
-        } else {
-            return 30;
-        }
+        return 30;
     } else {
-        if (_theme == LightTheme) {
-            return 45;
-        } else if (_theme == DarkTheme) {
-            return 45;
-        } else {
-            return 45;
-        }
+        return 45;
     }
 }
 

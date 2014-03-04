@@ -106,7 +106,12 @@ NSInteger maxDepth = 3;
         self.fontSize = [SJSGraphScene.theme meaningFontSize] * _scale;
     }
     
-    [self updateCanGrow];
+    if ([self canGrow]) {
+        _circle.strokeColor = [SJSGraphScene.theme canGrowEdgeColor];
+    } else {
+        _circle.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
+    }
+    
     [self reposition];
 }
 
@@ -182,15 +187,6 @@ NSInteger maxDepth = 3;
     }
     
     return neighbourNodes;
-}
-
-- (void)updateCanGrow
-{
-    if ([self canGrow]) {
-        _circle.strokeColor = [SJSGraphScene.theme canGrowEdgeColor];
-    } else {
-        _circle.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
-    }
 }
 
 - (BOOL)canGrow

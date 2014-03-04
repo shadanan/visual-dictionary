@@ -27,8 +27,4 @@
 
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
 
-- (void)createSceneForWord:(NSString *)word;
-
-- (void)rebuildEdgeNodes;
-
 @end

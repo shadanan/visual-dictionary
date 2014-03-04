@@ -57,6 +57,14 @@
 - (SKColor *)pruneIconColor;
 - (CGFloat)pruneIconSize;
 
+- (SKColor *)backIconDisabledColor;
+- (SKColor *)backIconEnabledColor;
+- (CGFloat)backIconSize;
+
+- (SKColor *)forwardIconDisabledColor;
+- (SKColor *)forwardIconEnabledColor;
+- (CGFloat)forwardIconSize;
+
 - (CGFloat)searchIconSize;
 
 - (CGFloat)definitionsHeight;

@@ -15,6 +15,4 @@
 
 - (void)update;
 
-- (void)updatePath;
-
 @end

@@ -8,7 +8,6 @@
 
 #import "SJSGraphScene.h"
 
-NSInteger searchAreaOpen = 40;
 CGFloat springLength = 60;
 
 static SJSWordNetDB *wordNetDb = nil;
@@ -17,8 +16,10 @@ static SJSTheme *theme = nil;
 @implementation SJSGraphScene {
     BOOL _dragging;
     BOOL _contentCreated;
-    CGFloat _springLength;
     CGFloat _scale;
+    
+    NSInteger _histpos;
+    NSMutableArray *_history;
     
     SKNode *_edgeNodes;
     SKNode *_wordNodes;
@@ -28,6 +29,8 @@ static SJSTheme *theme = nil;
     
     SJSSearchView *_searchView;
     SJSDefinitionsView *_definitionsView;
+    SKLabelNode *_backIcon;
+    SKLabelNode *_forwardIcon;
     SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
     SKShapeNode *_anchorPoint;
@@ -83,17 +86,38 @@ static SJSTheme *theme = nil;
 
 - (void)createSceneContents
 {
-    NSLog(@"Scale: %f", _scale);
-    
     self.scaleMode = SKSceneScaleModeResizeFill;
     self.backgroundColor = [theme backgroundColor];
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
     
+    _history = [[NSMutableArray alloc] init];
+    _histpos = -1;
+    
     _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, [theme searchHeight])];
     _searchView.delegate = self;
     [self.view addSubview:_searchView];
+    
+    _backIcon = [SKLabelNode new];
+    _backIcon.name = @"backIcon";
+    _backIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x87\xA7"];
+    _backIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    _backIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    _backIcon.zPosition = 200;
+    _backIcon.zRotation = M_PI_2;
+    _backIcon.hidden = YES;
+    [self addChild:_backIcon];
+    
+    _forwardIcon = [SKLabelNode new];
+    _forwardIcon.name = @"forwardIcon";
+    _forwardIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x87\xA7"];
+    _forwardIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    _forwardIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    _forwardIcon.zPosition = 200;
+    _forwardIcon.zRotation = -M_PI_2;
+    _forwardIcon.hidden = YES;
+    [self addChild:_forwardIcon];
     
     _searchIcon = [SKLabelNode new];
     _searchIcon.name = @"searchIcon";
@@ -142,7 +166,6 @@ static SJSTheme *theme = nil;
 - (void)setScale:(CGFloat)scale
 {
     _scale = scale;
-    _springLength = springLength * _scale;
     [self update];
 }
 
@@ -157,6 +180,28 @@ static SJSTheme *theme = nil;
     self.backgroundColor = [theme backgroundColor];
     self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
     self.physicsBody.friction = 0;
+    
+    if (_histpos <= 0) {
+        _backIcon.color = [theme backIconDisabledColor];
+        NSLog(@"Back Disabled");
+    } else {
+        _backIcon.color = [theme backIconEnabledColor];
+        NSLog(@"Back Enabled");
+    }
+    _backIcon.fontSize = [theme backIconSize];
+    _backIcon.position = CGPointMake(CGRectGetMinX(self.frame) + [theme backIconSize] / 2 + 8,
+                                     CGRectGetMaxY(self.frame) - 34);
+    
+    if (_histpos == _history.count - 1) {
+        _forwardIcon.color = [theme backIconDisabledColor];
+        NSLog(@"Forward Disabled");
+    } else {
+        _forwardIcon.color = [theme backIconEnabledColor];
+        NSLog(@"Forward Enabled");
+    }
+    _forwardIcon.fontSize = [theme forwardIconSize];
+    _forwardIcon.position = CGPointMake(CGRectGetMinX(self.frame) + [theme backIconSize] * 3 / 2 + 18,
+                                        CGRectGetMaxY(self.frame) - 34);
     
     _searchIcon.fontSize = [theme searchIconSize];
     _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
@@ -184,26 +229,6 @@ static SJSTheme *theme = nil;
         [node update];
     }
     
-    for (SJSEdgeNode *node in _edgeNodes.children) {
-        [node update];
-    }
-}
-
-- (void)updateScene
-{
-    [self rebuildEdgeNodes];
-    [self updateCanGrow];
-}
-
-- (void)updateCanGrow
-{
-    for (SJSWordNode *node in _wordNodes.children) {
-        [node updateCanGrow];
-    }
-}
-
-- (void)rebuildEdgeNodes
-{
     [_edgeNodes removeAllChildren];
     
     for (int i = 0; i < _wordNodes.children.count; i++) {
@@ -221,19 +246,59 @@ static SJSTheme *theme = nil;
 
 - (BOOL)textFieldShouldReturn:(UITextField *)textField {
     NSString *word = [[textField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    [self createSceneForWord:word];
+    
+    if (![wordNetDb containsWord:word]) {
+        [self setMessage:[word stringByAppendingString:@" not found in dictionary"] withDuration:2.0];
+    } else {
+        [self closeSearchPane];
+        [self createSceneForWord:word];
+        [self historyAppend:word];
+    }
+    
     return NO;
+}
+
+- (void)historyAppend:(NSString *)word
+{
+    _histpos += 1;
+    while (_histpos < _history.count) {
+        [_history removeLastObject];
+    }
+    
+    [_history addObject:word];
+}
+
+- (NSString *)historyPrevious
+{
+    if (_histpos > 0) {
+        _histpos -= 1;
+        return [_history objectAtIndex:_histpos];
+    }
+    return nil;
+}
+
+- (NSString *)historyNext
+{
+    if (_histpos < _history.count - 1) {
+        _histpos += 1;
+        return [_history objectAtIndex:_histpos];
+    }
+    return nil;
 }
 
 - (void)openSearchPane
 {
     [_searchView open];
+    _backIcon.hidden = YES;
+    _forwardIcon.hidden = YES;
     _searchIcon.hidden = YES;
 }
 
 - (void)closeSearchPane
 {
     [_searchView close];
+    _backIcon.hidden = NO;
+    _forwardIcon.hidden = NO;
     _searchIcon.hidden = NO;
 }
 
@@ -243,20 +308,15 @@ static SJSTheme *theme = nil;
         [self closeSearchPane];
     }
     
+    _currentNode = nil;
+    _dragging = NO;
     [_definitionsView close];
     
     CGPoint start = [[touches anyObject] locationInNode:self];
-    
-    _currentNode = nil;
     for (SKNode *node in [self nodesAtPoint:start]) {
         if ([node isKindOfClass:[SJSWordNode class]]) {
-            _dragging = NO;
             _currentNode = (SJSWordNode *)node;
             [_currentNode disableDynamic];
-        }
-        
-        if ([node.name isEqualToString:@"searchIcon"]) {
-            [self openSearchPane];
         }
     }
 }
@@ -292,35 +352,68 @@ static SJSTheme *theme = nil;
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    if (_currentNode != nil) {
-        [_currentNode enableDynamic];
+    CGPoint end = [[touches anyObject] locationInNode:self];
+    
+    if (_dragging) {
+        if (_currentNode != nil) {
+            [_currentNode enableDynamic];
+            
+            SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
+            [_anchorPoint runAction:fadeOut];
+            [_pruneIcon runAction:fadeOut];
+
+            if ([_anchorPoint containsPoint:end]) {
+                [_root enableDynamic];
+                [_currentNode disableDynamic];
+                
+                _root = _currentNode;
+                [_root promoteToRoot];
+                [self update];
+                [self historyAppend:_root.name];
+                
+                SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
+                [_root runAction:moveToCentre];
+                
+                return;
+            }
+            
+            if ([_pruneIcon containsPoint:end]) {
+                [self prune:_currentNode];
+                _currentNode = nil;
+                
+                return;
+            }
+        }
+    } else {
+        if ([_searchIcon containsPoint:end]) {
+            [self openSearchPane];
+            return;
+        }
         
-        if (!_dragging) {
+        if ([_backIcon containsPoint:end]) {
+            NSString *previous = [self historyPrevious];
+            if (previous != nil) {
+                [self createSceneForWord:previous];
+            }
+
+            return;
+        }
+        
+        if ([_forwardIcon containsPoint:end]) {
+            NSString *next = [self historyNext];
+            if (next != nil) {
+                [self createSceneForWord:next];
+            }
+            
+            return;
+        }
+        
+        if (_currentNode != nil) {
             [_currentNode grow];
-            [self updateScene];
+            [self update];
             
             [_definitionsView open];
             [_definitionsView setText:[_currentNode getDefinition]];
-        }
-        
-        SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
-        [_anchorPoint runAction:fadeOut];
-        [_pruneIcon runAction:fadeOut];
-        
-        if (_dragging && [_anchorPoint containsPoint:_currentNode.position]) {
-            [_root enableDynamic];
-            [_currentNode disableDynamic];
-            
-            _root = _currentNode;
-            [_root promoteToRoot];
-            [self updateScene];
-            SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
-            [_root runAction:moveToCentre];
-        }
-        
-        if (_dragging && [_pruneIcon containsPoint:_currentNode.position]) {
-            [self prune:_currentNode];
-            _currentNode = nil;
         }
     }
 }
@@ -349,18 +442,11 @@ static SJSTheme *theme = nil;
 - (void)clearScene
 {
     [_wordNodes removeAllChildren];
-    [self updateScene];
+    [self update];
 }
 
 - (void)createSceneForWord:(NSString *)word
 {
-    if (![wordNetDb containsWord:word]) {
-        [self setMessage:[word stringByAppendingString:@" not found in dictionary"] withDuration:2.0];
-        return;
-    }
-    
-    [self closeSearchPane];
-    
     [_wordNodes removeAllChildren];
     
     _root = [[SJSWordNode alloc] initWordWithName:word];
@@ -369,7 +455,7 @@ static SJSTheme *theme = nil;
     [_wordNodes addChild:_root];
     
     [_root promoteToRoot];
-    [self updateScene];
+    [self update];
 }
 
 - (void)prune:(SJSWordNode *)node
@@ -389,7 +475,7 @@ static SJSTheme *theme = nil;
         }
     }
     
-    [self updateScene];
+    [self update];
 }
 
 - (BOOL)node:(SJSWordNode *)node1 isConnectedTo:(SJSWordNode *)node2
@@ -407,7 +493,7 @@ static SJSTheme *theme = nil;
 
 - (void)update:(NSTimeInterval)currentTime
 {
-    double r0 = _springLength * _scale;
+    double r0 = springLength * pow(_scale, 2);
     double ka = 1 * _scale;
     double kp = 10000 * _scale;
     
@@ -461,7 +547,7 @@ static SJSTheme *theme = nil;
 - (void)didSimulatePhysics
 {
     for (SJSEdgeNode *edge in _edgeNodes.children) {
-        [edge updatePath];
+        [edge update];
     }    
 }
 
