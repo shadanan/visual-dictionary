@@ -10,7 +10,7 @@
 
 @interface SJSDefinitionsView : UIView
 
-- (void)setText:(NSString *)text;
+- (void)setText:(NSAttributedString *)text;
 
 - (void)update;
 

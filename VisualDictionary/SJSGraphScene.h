@@ -7,6 +7,9 @@
 //
 
 #import <SpriteKit/SpriteKit.h>
+#import "SJSIconButton.h"
+#import "SJSTextButton.h"
+#import "SJSSearchButton.h"
 #import "SJSWordNode.h"
 #import "SJSEdgeNode.h"
 #import "SJSWordNetDB.h"

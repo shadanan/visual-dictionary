@@ -19,6 +19,7 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
+        self.alpha = 0;
         _closed = YES;
         
         _scrollView = [[UIScrollView alloc] initWithFrame:CGRectMake(0, 0, self.width, self.height)];
@@ -43,10 +44,7 @@
 
 - (void)update
 {
-    self.alpha = [SJSGraphScene.theme definitionsAlpha];
     self.backgroundColor = [SJSGraphScene.theme definitionsBackgroundColor];
-    _definitionsLabel.textColor = [SJSGraphScene.theme definitionsColor];
-    _definitionsLabel.font = [UIFont fontWithName:[SJSGraphScene.theme definitionsFontName] size:[SJSGraphScene.theme definitionsFontSize]];
 }
 
 - (CGFloat)width
@@ -59,19 +57,20 @@
     return self.frame.size.height;
 }
 
-- (void)setText:(NSString *)text
+- (void)setText:(NSAttributedString *)text
 {
-    _definitionsLabel.text = text;
+    _definitionsLabel.attributedText = text;
     _definitionsLabel.frame = CGRectMake(10, 5, self.width - 20, self.height - 20);
     [_definitionsLabel sizeToFit];
     _scrollView.contentSize = CGSizeMake(_scrollView.contentSize.width, _definitionsLabel.frame.size.height + 10);
+    [_scrollView setContentOffset:CGPointZero animated:YES];
 }
 
 - (void)open
 {
     if (_closed) {
         [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, self.center.y - self.height);
+            self.alpha = 1;
             _closed = NO;
         }];
     }
@@ -81,7 +80,7 @@
 {
     if (!_closed) {
         [UIView animateWithDuration:0.2 animations:^{
-            self.center = CGPointMake(self.center.x, self.center.y + self.height);
+            self.alpha = 0;
             _closed = YES;
         }];
     }

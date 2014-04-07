@@ -12,6 +12,11 @@ typedef NS_ENUM(NSInteger, Theme) {
     DarkTheme
 };
 
+typedef NS_ENUM(NSInteger, NodeStyle) {
+    CircleStyle,
+    RoundedRectStyle
+};
+
 typedef NS_ENUM(NSInteger, NodeType) {
     WordType,
     AdverbType,

@@ -35,6 +35,8 @@
 
 - (void)reposition;
 
-- (NSString *)getDefinition;
+- (NSMutableAttributedString *)getDefinition;
+
+- (void)removeFromParent;
 
 @end

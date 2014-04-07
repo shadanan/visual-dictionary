@@ -24,16 +24,22 @@ static SJSTheme *theme = nil;
     SKNode *_edgeNodes;
     SKNode *_wordNodes;
     
+    SJSWordNode *_activeNode;
     SJSWordNode *_currentNode;
     SJSWordNode *_root;
     
     SJSSearchView *_searchView;
     SJSDefinitionsView *_definitionsView;
-    SKLabelNode *_backIcon;
-    SKLabelNode *_forwardIcon;
-    SKLabelNode *_searchIcon;
     SKLabelNode *_pruneIcon;
     SKShapeNode *_anchorPoint;
+    SKSpriteNode *_backgroundSprite;
+
+    SKShapeNode *_buttonBar;
+    SJSIconButton *_backButton;
+    SJSIconButton *_forwardButton;
+    SJSTextButton *_helpButton;
+    SJSIconButton *_settingsButton;
+    SJSSearchButton *_searchButton;
 }
 
 + (void)initialize
@@ -87,7 +93,10 @@ static SJSTheme *theme = nil;
 - (void)createSceneContents
 {
     self.scaleMode = SKSceneScaleModeResizeFill;
-    self.backgroundColor = [theme backgroundColor];
+    _backgroundSprite = [[SKSpriteNode alloc] init];
+    _backgroundSprite.zPosition = -100;
+    _backgroundSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    [self addChild:_backgroundSprite];
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
     self.physicsWorld.speed = 4;
@@ -99,34 +108,36 @@ static SJSTheme *theme = nil;
     _searchView.delegate = self;
     [self.view addSubview:_searchView];
     
-    _backIcon = [SKLabelNode new];
-    _backIcon.name = @"backIcon";
-    _backIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x87\xA7"];
-    _backIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-    _backIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-    _backIcon.zPosition = 200;
-    _backIcon.zRotation = M_PI_2;
-    _backIcon.hidden = YES;
-    [self addChild:_backIcon];
+    _buttonBar = [[SKShapeNode alloc] init];
+    _buttonBar.name = @"buttonBar";
+    _buttonBar.zPosition = 200;
+    [self addChild:_buttonBar];
     
-    _forwardIcon = [SKLabelNode new];
-    _forwardIcon.name = @"forwardIcon";
-    _forwardIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x87\xA7"];
-    _forwardIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-    _forwardIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-    _forwardIcon.zPosition = 200;
-    _forwardIcon.zRotation = -M_PI_2;
-    _forwardIcon.hidden = YES;
-    [self addChild:_forwardIcon];
+    _backButton = [[SJSIconButton alloc] init];
+    _backButton.text = @"BACK";
+    [_backButton setIcon:@"backward_enabled.png"];
+    [_backButton setDisabledIcon:@"backward_disabled.png"];
+    [_buttonBar addChild:_backButton];
     
-    _searchIcon = [SKLabelNode new];
-    _searchIcon.name = @"searchIcon";
-    _searchIcon.text = [[NSString alloc] initWithUTF8String:"\xF0\x9F\x94\x8D"];
-    _searchIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeRight;
-    _searchIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeTop;
-    _searchIcon.zPosition = 200;
-    _searchIcon.hidden = YES;
-    [self addChild:_searchIcon];
+    _forwardButton = [[SJSIconButton alloc] init];
+    _forwardButton.text = @"FORWARD";
+    [_forwardButton setIcon:@"forward_enabled.png"];
+    [_forwardButton setDisabledIcon:@"forward_disabled.png"];
+    [_buttonBar addChild:_forwardButton];
+    
+    _helpButton = [[SJSTextButton alloc] init];
+    [_helpButton setLabelText:@"HELP"];
+    [_helpButton setIconText:[theme helpButtonIconText]];
+    [_helpButton setIconFontName:[theme helpButtonFontName]];
+    [_buttonBar addChild:_helpButton];
+    
+    _settingsButton = [[SJSIconButton alloc] init];
+    _settingsButton.text = @"SETTINGS";
+    [_settingsButton setIcon:@"cog.png"];
+    [_buttonBar addChild:_settingsButton];
+    
+    _searchButton = [[SJSSearchButton alloc] init];
+    [_buttonBar addChild:_searchButton];
     
     _pruneIcon = [SKLabelNode new];
     _pruneIcon.name = @"pruneIcon";
@@ -151,7 +162,10 @@ static SJSTheme *theme = nil;
     _wordNodes.name = @"wordNodes";
     [self addChild:_wordNodes];
     
-    _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:CGRectMake(0, self.view.frame.size.height, self.view.frame.size.width, [theme definitionsHeight])];
+    CGRect definitionsFrame = CGRectMake(0, self.view.frame.size.height - [theme definitionsHeight] - [theme buttonBarHeight], self.view.frame.size.width, [theme definitionsHeight]);
+    NSLog(@"%f", self.view.frame.size.height);
+    NSLog(@"Rect: %f %f %f %f", definitionsFrame.origin.x, definitionsFrame.origin.y, definitionsFrame.size.width, definitionsFrame.size.height);
+    _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:definitionsFrame];
     [self.view addSubview:_definitionsView];
     
     [self update];
@@ -177,41 +191,47 @@ static SJSTheme *theme = nil;
 
 - (void)update
 {
-    self.backgroundColor = [theme backgroundColor];
-    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:self.frame];
+    [theme updateBackgroundSprite:_backgroundSprite];
+    
+    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, [theme buttonBarHeight], self.frame.size.width, self.frame.size.height - [theme buttonBarHeight])];
     self.physicsBody.friction = 0;
     
+    CGMutablePathRef buttonBarPath = CGPathCreateMutable();
+    CGPathAddRect(buttonBarPath, nil, CGRectMake(-1, -1, self.frame.size.width + 2, [theme buttonBarHeight] + 1));
+    _buttonBar.path = buttonBarPath;
+    CGPathRelease(buttonBarPath);
+    
+    _buttonBar.strokeColor = [theme buttonBarStrokeColor];
+    _buttonBar.lineWidth = 1;
+    _buttonBar.fillColor = [theme buttonBarFillColor];
+    _buttonBar.antialiased = NO;
+    
+    _backButton.frame = [theme backButtonFrameInFrame:_buttonBar.frame];
+    _forwardButton.frame = [theme forwardButtonFrameInFrame:_buttonBar.frame];
+    _helpButton.frame = [theme helpButtonFrameInFrame:_buttonBar.frame];
+    _settingsButton.frame = [theme settingsButtonFrameInFrame:_buttonBar.frame];
+    _searchButton.frame = [theme searchButtonFrameInFrame:_buttonBar.frame];
+    
     if (_histpos <= 0) {
-        _backIcon.color = [theme backIconDisabledColor];
-        NSLog(@"Back Disabled");
+        [_backButton disable];
     } else {
-        _backIcon.color = [theme backIconEnabledColor];
-        NSLog(@"Back Enabled");
+        [_backButton enable];
     }
-    _backIcon.fontSize = [theme backIconSize];
-    _backIcon.position = CGPointMake(CGRectGetMinX(self.frame) + [theme backIconSize] / 2 + 8,
-                                     CGRectGetMaxY(self.frame) - 34);
     
     if (_histpos == _history.count - 1) {
-        _forwardIcon.color = [theme backIconDisabledColor];
-        NSLog(@"Forward Disabled");
+        [_forwardButton disable];
     } else {
-        _forwardIcon.color = [theme backIconEnabledColor];
-        NSLog(@"Forward Enabled");
+        [_forwardButton enable];
     }
-    _forwardIcon.fontSize = [theme forwardIconSize];
-    _forwardIcon.position = CGPointMake(CGRectGetMinX(self.frame) + [theme backIconSize] * 3 / 2 + 18,
-                                        CGRectGetMaxY(self.frame) - 34);
     
-    _searchIcon.fontSize = [theme searchIconSize];
-    _searchIcon.position = CGPointMake(CGRectGetMaxX(self.frame) - 4, CGRectGetMaxY(self.frame) - 20);
-    
-    _pruneIcon.color = [theme pruneIconColor];
+    _pruneIcon.fontColor = [theme pruneIconColor];
     _pruneIcon.fontSize = [theme pruneIconSize];
-    _pruneIcon.position = CGPointMake(4, 4);
+    _pruneIcon.alpha = [theme disabledAlpha];
+    _pruneIcon.position = CGPointMake(4, 4 + [theme buttonBarHeight]);
     
     _anchorPoint.fillColor = [theme anchorPointColor];
     _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
+    _anchorPoint.alpha = [theme disabledAlpha];
     _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     
     CGMutablePathRef path = CGPathCreateMutable();
@@ -220,7 +240,6 @@ static SJSTheme *theme = nil;
     CGPathRelease(path);
     
     [_definitionsView close];
-    _definitionsView.frame = CGRectMake(0, self.height, self.width, [theme definitionsHeight]);
     
     [self closeSearchPane];
     _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);
@@ -289,17 +308,11 @@ static SJSTheme *theme = nil;
 - (void)openSearchPane
 {
     [_searchView open];
-    _backIcon.hidden = YES;
-    _forwardIcon.hidden = YES;
-    _searchIcon.hidden = YES;
 }
 
 - (void)closeSearchPane
 {
     [_searchView close];
-    _backIcon.hidden = NO;
-    _forwardIcon.hidden = NO;
-    _searchIcon.hidden = NO;
 }
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
@@ -325,25 +338,33 @@ static SJSTheme *theme = nil;
 {
     if (_currentNode != nil) {
         _dragging = YES;
+        
         CGPoint point = [[touches anyObject] locationInNode:self];
-        _currentNode.position = point;
+        if (point.y < [theme buttonBarHeight]) {
+            _currentNode.position = CGPointMake(point.x, [theme buttonBarHeight]);
+        } else {
+            _currentNode.position = point;
+        }
+        
+        CGFloat activeAlpha = [theme activeAlpha];
+        CGFloat inactiveAlpha = [theme inactiveAlpha];
         
         if (![_anchorPoint hasActions]) {
-            if (_anchorPoint.alpha != 0.4 && [_anchorPoint containsPoint:_currentNode.position]) {
-                SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
+            if (_anchorPoint.alpha != activeAlpha && [_anchorPoint containsPoint:_currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:activeAlpha duration:0.2];
                 [_anchorPoint runAction:fadeIn];
-            } else if (_anchorPoint.alpha != 0.2 && ![_anchorPoint containsPoint:_currentNode.position]) {
-                SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
+            } else if (_anchorPoint.alpha != inactiveAlpha && ![_anchorPoint containsPoint:_currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:inactiveAlpha duration:0.2];
                 [_anchorPoint runAction:fadeIn];
             }
         }
         
         if (![_pruneIcon hasActions]) {
-            if (_pruneIcon.alpha != 0.4 && [_pruneIcon containsPoint:_currentNode.position]) {
-                SKAction *fadeIn = [SKAction fadeAlphaTo:0.4 duration:0.2];
+            if (_pruneIcon.alpha != activeAlpha && [_pruneIcon containsPoint:_currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:activeAlpha duration:0.2];
                 [_pruneIcon runAction:fadeIn];
-            } else if (_pruneIcon.alpha != 0.2 && ![_pruneIcon containsPoint:_currentNode.position]) {
-                SKAction *fadeIn = [SKAction fadeAlphaTo:0.2 duration:0.2];
+            } else if (_pruneIcon.alpha != inactiveAlpha && ![_pruneIcon containsPoint:_currentNode.position]) {
+                SKAction *fadeIn = [SKAction fadeAlphaTo:inactiveAlpha duration:0.2];
                 [_pruneIcon runAction:fadeIn];
             }
         }
@@ -353,12 +374,15 @@ static SJSTheme *theme = nil;
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
     CGPoint end = [[touches anyObject] locationInNode:self];
+    NSLog(@"Touch Ended:  %f %f", end.x, end.y);
+    
+    if (_currentNode != nil) {
+        [_currentNode enableDynamic];
+    }
     
     if (_dragging) {
         if (_currentNode != nil) {
-            [_currentNode enableDynamic];
-            
-            SKAction *fadeOut = [SKAction fadeAlphaTo:0 duration:0.2];
+            SKAction *fadeOut = [SKAction fadeAlphaTo:[theme disabledAlpha] duration:0.2];
             [_anchorPoint runAction:fadeOut];
             [_pruneIcon runAction:fadeOut];
 
@@ -385,12 +409,7 @@ static SJSTheme *theme = nil;
             }
         }
     } else {
-        if ([_searchIcon containsPoint:end]) {
-            [self openSearchPane];
-            return;
-        }
-        
-        if ([_backIcon containsPoint:end]) {
+        if ([_backButton containsPoint:end]) {
             NSString *previous = [self historyPrevious];
             if (previous != nil) {
                 [self createSceneForWord:previous];
@@ -399,12 +418,27 @@ static SJSTheme *theme = nil;
             return;
         }
         
-        if ([_forwardIcon containsPoint:end]) {
+        if ([_forwardButton containsPoint:end]) {
             NSString *next = [self historyNext];
             if (next != nil) {
                 [self createSceneForWord:next];
             }
             
+            return;
+        }
+        
+        if ([_helpButton containsPoint:end]) {
+            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.google.com"]];
+            return;
+        }
+        
+        if ([_settingsButton containsPoint:end]) {
+            NSLog(@"Settings clicked!");
+            return;
+        }
+        
+        if ([_searchButton containsPoint:end]) {
+            [self openSearchPane];
             return;
         }
         

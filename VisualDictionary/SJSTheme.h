@@ -16,7 +16,7 @@
 
 - (void)setTheme:(Theme)theme;
 
-- (SKColor *)backgroundColor;
+- (void)updateBackgroundSprite:(SKSpriteNode *)background;
 
 - (CGFloat)searchHeight;
 - (CGFloat)searchAlpha;
@@ -25,53 +25,87 @@
 - (UIColor *)searchFieldColor;
 - (UIColor *)searchFieldBackgroundColor;
 
-- (SKColor *)rootNodeColor;
-- (SKColor *)wordNodeColor;
-- (SKColor *)adverbNodeColor;
-- (SKColor *)adjectiveNodeColor;
-- (SKColor *)nounNodeColor;
-- (SKColor *)verbNodeColor;
-- (SKColor *)colorByNodeType:(NodeType)type;
+- (UIColor *)rootNodeColor;
+- (UIColor *)wordNodeColor;
+- (UIColor *)adverbNodeColor;
+- (UIColor *)adjectiveNodeColor;
+- (UIColor *)nounNodeColor;
+- (UIColor *)verbNodeColor;
+- (UIColor *)colorByNodeType:(NodeType)type;
+
+- (UIColor *)rootNodeFontColor;
+- (UIColor *)wordNodeFontColor;
+- (UIColor *)adverbNodeFontColor;
+- (UIColor *)adjectiveNodeFontColor;
+- (UIColor *)nounNodeFontColor;
+- (UIColor *)verbNodeFontColor;
+- (UIColor *)fontColorByNodeType:(NodeType)type;
+
+- (CGFloat)rootNodeFontSize;
+- (CGFloat)fontSizeByNodeType:(NodeType)type;
+
+- (NSString *)rootNodeFontNameByNodeType:(NodeType)type;
+- (NSString *)fontNameByNodeType:(NodeType)type;
+
+- (NodeStyle)nodeStyleByNodeType:(NodeType)type;
+
 - (CGFloat)nodeSize;
+- (CGFloat)roundedRectMarginX;
+- (CGFloat)roundedRectMarginY;
+- (CGFloat)roundedRectRadius;
 
-- (NSString *)wordFontName;
-- (CGFloat)wordFontSize;
-
-- (NSString *)meaningFontName;
-- (CGFloat)meaningFontSize;
-
-- (SKColor *)edgeColor;
+- (UIColor *)edgeColor;
 - (CGFloat)lineWidth;
 
-- (SKColor *)canGrowEdgeColor;
-- (SKColor *)cannotGrowEdgeColor;
+- (UIColor *)canGrowEdgeColor;
+- (UIColor *)cannotGrowEdgeColor;
 
-- (SKColor *)messageColor;
+- (UIColor *)messageColor;
 - (NSString *)messageFontName;
 - (CGFloat)messageFontSize;
 
-- (SKColor *)anchorPointColor;
+- (CGFloat)activeAlpha;
+- (CGFloat)inactiveAlpha;
+- (CGFloat)disabledAlpha;
+
+- (UIColor *)anchorPointColor;
 - (CGFloat)anchorPointGlowWidth;
 - (CGFloat)anchorPointRadius;
 
-- (SKColor *)pruneIconColor;
+- (UIColor *)pruneIconColor;
 - (CGFloat)pruneIconSize;
 
-- (SKColor *)backIconDisabledColor;
-- (SKColor *)backIconEnabledColor;
-- (CGFloat)backIconSize;
-
-- (SKColor *)forwardIconDisabledColor;
-- (SKColor *)forwardIconEnabledColor;
-- (CGFloat)forwardIconSize;
-
-- (CGFloat)searchIconSize;
+- (UIFont *)typeFont;
+- (UIFont *)definitionFont;
+- (UIColor *)typeColor;
+- (UIColor *)definitionColor;
 
 - (CGFloat)definitionsHeight;
-- (CGFloat)definitionsAlpha;
 - (UIColor *)definitionsBackgroundColor;
-- (UIColor *)definitionsColor;
-- (NSString *)definitionsFontName;
-- (CGFloat)definitionsFontSize;
+
+- (CGFloat)buttonBarHeight;
+- (UIColor *)buttonBarStrokeColor;
+- (UIColor *)buttonBarFillColor;
+- (UIColor *)buttonBarFontColor;
+- (NSString *)buttonBarFontName;
+- (CGFloat)buttonBarFontSize;
+- (UIColor *)buttonBarIconColor;
+
+- (CGFloat)textButtonFontSize;
+- (CGFloat)iconButtonIconHeight;
+
+- (NSString *)helpButtonIconText;
+- (NSString *)helpButtonFontName;
+
+- (UIColor *)searchButtonFillColor;
+- (UIColor *)searchButtonFontColor;
+- (NSString *)searchButtonFontName;
+- (CGFloat)searchButtonFontSize;
+
+- (CGRect)backButtonFrameInFrame:(CGRect)frame;
+- (CGRect)forwardButtonFrameInFrame:(CGRect)frame;
+- (CGRect)helpButtonFrameInFrame:(CGRect)frame;
+- (CGRect)settingsButtonFrameInFrame:(CGRect)frame;
+- (CGRect)searchButtonFrameInFrame:(CGRect)frame;
 
 @end
