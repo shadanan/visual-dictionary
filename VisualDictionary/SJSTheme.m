@@ -59,7 +59,7 @@
 
 - (UIColor *)searchBackgroundColor
 {
-    return [UIColor blackColor];
+    return [UIColor lightGrayColor];
 }
 
 - (UIFont *)searchFieldFont

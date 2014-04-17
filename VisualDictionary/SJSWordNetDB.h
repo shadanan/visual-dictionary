@@ -18,5 +18,6 @@
 - (NSString *)definitionOfMeaning:(NSString *)meaning;
 - (BOOL)word:(NSString *)word isConnectedToMeaning:(NSString *)meaning;
 - (BOOL)containsWord:(NSString *)word;
+- (NSString *)getRandomWord;
 
 @end

@@ -33,10 +33,9 @@
 
 - (void)grow;
 
-- (void)reposition;
-
 - (NSMutableAttributedString *)getDefinition;
 
-- (void)removeFromParent;
+- (void)setRemove:(BOOL)remove;
+- (BOOL)remove;
 
 @end

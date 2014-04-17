@@ -16,6 +16,7 @@ NSInteger maxDepth = 3;
     CGFloat _scale;
     NSArray *_neighbourNames;
     SKShapeNode *_nodeFrame;
+    BOOL _remove;
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -54,16 +55,15 @@ NSInteger maxDepth = 3;
     }
     
     self.distance = -1;
-    self.zPosition = 100.0;
     self.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     
     _scale = 1;
     _neighbourNames = nil;
+    _remove = NO;
     
     _nodeFrame = [SKShapeNode new];
-    _nodeFrame.name = @"circle";
-    _nodeFrame.zPosition = 0.0;
-
+    _nodeFrame.zPosition = -0.5;
+    
     self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:[SJSGraphScene.theme nodeSize]];
     self.physicsBody.mass = 1;
     self.physicsBody.dynamic = YES;
@@ -84,7 +84,17 @@ NSInteger maxDepth = 3;
     [self update];
 }
 
-- (CGPathRef) newPathForRoundedRect:(CGRect)rect radius:(CGFloat)radius
+- (void)setRemove:(BOOL)remove
+{
+    _remove = remove;
+}
+
+- (BOOL)remove
+{
+    return _remove;
+}
+
+- (CGPathRef)newPathForRoundedRect:(CGRect)rect radius:(CGFloat)radius
 {
 	CGMutablePathRef retPath = CGPathCreateMutable();
     
@@ -152,7 +162,11 @@ NSInteger maxDepth = 3;
         _nodeFrame.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
     }
     
-    [self reposition];
+    if (self.position.x <= 0 || self.position.x >= self.scene.size.width ||
+        self.position.y <= [SJSGraphScene.theme buttonBarHeight] || self.position.y >= self.scene.size.height) {
+        self.position = CGPointMake(MIN(MAX(self.position.x, 1), self.scene.size.width - 1),
+                                    MIN(MAX(self.position.y, [SJSGraphScene.theme buttonBarHeight] + 1), self.scene.size.height - 1));
+    }
 }
 
 - (NSArray *)neighbourNames
@@ -184,9 +198,21 @@ NSInteger maxDepth = 3;
 - (void)promoteToRoot
 {
     [self updateDistances];
-    [self pruneWithMaxDepth:maxDepth];
+    
+    for (SJSWordNode *node in [self.parent children]) {
+        if (node.distance > maxDepth) {
+            node.remove = YES;
+        }
+    }
+    
     [self growRecursively];
     [self update];
+    
+    for (SJSWordNode *node in [self.parent children]) {
+        if (node.remove == YES) {
+            [node removeFromParent];
+        }
+    }
 }
 
 - (void)updateDistances
@@ -241,6 +267,19 @@ NSInteger maxDepth = 3;
     return false;
 }
 
+- (NSInteger)countNodes
+{
+    NSInteger count = 0;
+    
+    for (SJSWordNode *node in [self.parent children]) {
+        if (node.remove == NO) {
+            count++;
+        }
+    }
+    
+    return count;
+}
+
 - (void)grow
 {
     for (NSString *neighbourName in self.neighbourNames) {
@@ -253,8 +292,13 @@ NSInteger maxDepth = 3;
                 neighbour = [[SJSWordNode alloc] initWordWithName:neighbourName];
             }
             
-            [neighbour reposition];
             [self.parent addChild:neighbour];
+            
+            CGFloat x = self.position.x + arc4random_uniform(40) - 20;
+            CGFloat y = self.position.y + arc4random_uniform(40) - 20;
+            neighbour.position = CGPointMake(x, y);
+        } else {
+            neighbour.remove = NO;
         }
     }
     
@@ -267,39 +311,26 @@ NSInteger maxDepth = 3;
         node.distance = -1;
     }
     
+    CGFloat zPos = -1;
+    self.zPosition = zPos--;
+    
     NSMutableArray *queue = [NSMutableArray new];
     self.distance = 0;
     [queue addObject:self];
     
-    while (queue.count > 0 && self.parent.children.count < maxNodeThreshold) {
+    while (queue.count > 0 && [self countNodes] < maxNodeThreshold) {
         SJSWordNode *node = [queue objectAtIndex:0];
         [queue removeObjectAtIndex:0];
         
         [node grow];
         for (SJSWordNode *child in [node neighbourNodes]) {
+            child.zPosition = zPos--;
+            
             if (child.distance == -1) {
                 child.distance = node.distance + 1;
                 [queue addObject:child];
             }
         }
-    }
-}
-
-- (void)pruneWithMaxDepth:(NSUInteger)depth
-{
-    for (SJSWordNode *node in [self.parent children]) {
-        if (node.distance > depth) {
-            [node removeFromParent];
-        }
-    }
-}
-
-- (void)reposition
-{
-    if (self.position.x <= 0 || self.position.y <= [SJSGraphScene.theme buttonBarHeight] ||
-        self.position.x >= self.scene.size.width || self.position.y >= self.scene.size.height) {
-        self.position = CGPointMake(((int)arc4random() % 40) - 20 + self.scene.size.width / 2,
-                                    ((int)arc4random() % 40) - 20 + self.scene.size.height / 2);
     }
 }
 
@@ -372,14 +403,6 @@ NSInteger maxDepth = 3;
     }
     
     return nil;
-}
-
-- (void)removeFromParent
-{
-    [_nodeFrame removeFromParent];
-    _nodeFrame = nil;
-    
-    [super removeFromParent];
 }
 
 @end

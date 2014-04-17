@@ -8,7 +8,7 @@
 
 #import "SJSGraphScene.h"
 
-CGFloat springLength = 60;
+CGFloat springLength = 80;
 
 static SJSWordNetDB *wordNetDb = nil;
 static SJSTheme *theme = nil;
@@ -110,7 +110,7 @@ static SJSTheme *theme = nil;
     
     _buttonBar = [[SKShapeNode alloc] init];
     _buttonBar.name = @"buttonBar";
-    _buttonBar.zPosition = 200;
+    _buttonBar.zPosition = 10000;
     [self addChild:_buttonBar];
     
     _backButton = [[SJSIconButton alloc] init];
@@ -145,26 +145,27 @@ static SJSTheme *theme = nil;
     _pruneIcon.alpha = 0;
     _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
     _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
-    _pruneIcon.zPosition = 200;
+    _pruneIcon.zPosition = 50;
     [self addChild:_pruneIcon];
     
     _anchorPoint = [SKShapeNode new];
     _anchorPoint.name = @"anchorPoint";
     _anchorPoint.alpha = 0;
+    _anchorPoint.zPosition = 50;
     [self addChild:_anchorPoint];
     
     
     _edgeNodes = [[SKNode alloc] init];
     _edgeNodes.name = @"edgeNodes";
+    _edgeNodes.zPosition = 50;
     [self addChild:_edgeNodes];
     
     _wordNodes = [[SKNode alloc] init];
     _wordNodes.name = @"wordNodes";
+    _wordNodes.zPosition = 1000;
     [self addChild:_wordNodes];
     
     CGRect definitionsFrame = CGRectMake(0, self.view.frame.size.height - [theme definitionsHeight] - [theme buttonBarHeight], self.view.frame.size.width, [theme definitionsHeight]);
-    NSLog(@"%f", self.view.frame.size.height);
-    NSLog(@"Rect: %f %f %f %f", definitionsFrame.origin.x, definitionsFrame.origin.y, definitionsFrame.size.width, definitionsFrame.size.height);
     _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:definitionsFrame];
     [self.view addSubview:_definitionsView];
     
@@ -179,6 +180,7 @@ static SJSTheme *theme = nil;
 
 - (void)setScale:(CGFloat)scale
 {
+    NSLog(@"Scale: %f", scale);
     _scale = scale;
     [self update];
 }
@@ -428,7 +430,7 @@ static SJSTheme *theme = nil;
         }
         
         if ([_helpButton containsPoint:end]) {
-            [[UIApplication sharedApplication] openURL:[NSURL URLWithString:@"http://www.google.com"]];
+            [[NSNotificationCenter defaultCenter] postNotificationName:@"GoToAboutViewController" object:self];
             return;
         }
         
@@ -475,13 +477,21 @@ static SJSTheme *theme = nil;
 
 - (void)clearScene
 {
-    [_wordNodes removeAllChildren];
+    for (SJSWordNode *child in _wordNodes.children) {
+        [child removeFromParent];
+    }
+    
     [self update];
+}
+
+- (void)createSceneForRandomWord
+{
+    [self createSceneForWord:[wordNetDb getRandomWord]];
 }
 
 - (void)createSceneForWord:(NSString *)word
 {
-    [_wordNodes removeAllChildren];
+    [self clearScene];
     
     _root = [[SJSWordNode alloc] initWordWithName:word];
     _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
@@ -527,16 +537,14 @@ static SJSTheme *theme = nil;
 
 - (void)update:(NSTimeInterval)currentTime
 {
-    double r0 = springLength * pow(_scale, 2);
+    double r0 = springLength * _scale;
     double ka = 1 * _scale;
     double kp = 10000 * _scale;
     
     for (SJSWordNode *me in _wordNodes.children) {
         double x1 = me.position.x;
         double y1 = me.position.y;
-        
-        [me setScale:_scale];
-        
+                
         // No forces on the root
         if (me == _root) {
             continue;

@@ -14,31 +14,33 @@ CGFloat minScale = 0.25;
 
 @implementation SJSViewController {
     CGFloat _scaleStart;
+    SJSGraphScene *_wordScene;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     
+    [[NSNotificationCenter defaultCenter]
+     addObserver:self
+     selector:@selector(goToAboutViewController:)
+     name:@"GoToAboutViewController"
+     object:nil];
+    
+    [self becomeFirstResponder];
+    
     SKView *skView = (SKView *) self.view;
     skView.ignoresSiblingOrder = YES;
 
-    SJSGraphScene *wordScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
-    
-    if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPhone) {
-        _scaleStart = 1;
-    } else if ([[UIDevice currentDevice] userInterfaceIdiom] == UIUserInterfaceIdiomPad) {
-        _scaleStart = 1.5;
-    }
-    
-    wordScene.scaleMode = SKSceneScaleModeAspectFill;
-    wordScene.scale = _scaleStart;
-    
     UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
     recognizer.delegate = (id)self;
     [skView addGestureRecognizer:recognizer];
     
-    [skView presentScene:wordScene];
+    _wordScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
+    _wordScene.scaleMode = SKSceneScaleModeAspectFill;
+    _wordScene.scale = 1;
+    
+    [skView presentScene:_wordScene];
 }
 
 CGFloat limitScale(CGFloat scale)
@@ -53,20 +55,28 @@ CGFloat limitScale(CGFloat scale)
 }
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
-    SKView *skView = (SKView *) self.view;
-    SJSGraphScene *wordScene = (SJSGraphScene *)skView.scene;
-    
     if ([recognizer state] == UIGestureRecognizerStateBegan) {
-        _scaleStart = wordScene.scale;
+        _scaleStart = _wordScene.scale;
     }
     
-    wordScene.scale = limitScale(_scaleStart * recognizer.scale);
+    _wordScene.scale = limitScale(_scaleStart * recognizer.scale);
 }
 
-- (void)didReceiveMemoryWarning
+- (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
-    [super didReceiveMemoryWarning];
-    // Dispose of any resources that can be recreated.
+    if (event.type == UIEventSubtypeMotionShake) {
+        [_wordScene createSceneForRandomWord];
+    }
+}
+
+- (void)goToAboutViewController:(NSNotification *) notification
+{
+    [self performSegueWithIdentifier:@"AboutSegue" sender:self];
+}
+
+- (void)dealloc
+{
+    [[NSNotificationCenter defaultCenter] removeObserver:self];
 }
 
 @end

@@ -21,7 +21,6 @@
     if (self) {
         _nodeA = nodeA;
         _nodeB = nodeB;
-        self.zPosition = 50;
         [self update];
     }
     

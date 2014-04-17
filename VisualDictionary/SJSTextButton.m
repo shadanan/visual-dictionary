@@ -70,7 +70,6 @@
 - (void)setIconText:(NSString *)text
 {
     _icon.text = text;
-    NSLog(@"%f, %f", [_icon calculateAccumulatedFrame].size.width, [_icon calculateAccumulatedFrame].size.height);
 }
 
 - (void)setIconFontName:(NSString *)fontName

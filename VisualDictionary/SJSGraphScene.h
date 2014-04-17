@@ -30,4 +30,6 @@
 
 - (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
 
+- (void)createSceneForRandomWord;
+
 @end

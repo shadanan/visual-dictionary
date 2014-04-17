@@ -109,4 +109,22 @@
     return [_connected containsObject:wordMeaningKey];
 }
 
+- (NSString *)getRandomWord
+{
+    __block NSString *result = nil;
+    
+    [_queue inDatabase:^(FMDatabase *db) {
+        FMResultSet *rs = [db executeQuery:@"SELECT word FROM words_meanings ORDER BY RANDOM() LIMIT 1"];
+        if ([rs next]) {
+            result = [rs stringForColumnIndex:0];
+        }
+        
+        NSLog(@"Random word: %@", result);
+        
+        [rs close];
+    }];
+    
+    return result;
+}
+
 @end
