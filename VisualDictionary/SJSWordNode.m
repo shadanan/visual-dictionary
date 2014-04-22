@@ -12,11 +12,22 @@
 NSInteger maxNodeThreshold = 20;
 NSInteger maxDepth = 3;
 
+// Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
+// Causes memory leak!
+static NSMutableArray *oldLabelNodes = nil;
+
 @implementation SJSWordNode {
-    CGFloat _scale;
     NSArray *_neighbourNames;
     SKShapeNode *_nodeFrame;
     BOOL _remove;
+}
+
+// Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
++ (void)initialize
+{
+    if (!oldLabelNodes) {
+        oldLabelNodes = [[NSMutableArray alloc] init];
+    }
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -57,31 +68,26 @@ NSInteger maxDepth = 3;
     self.distance = -1;
     self.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
     
-    _scale = 1;
     _neighbourNames = nil;
     _remove = NO;
     
     _nodeFrame = [SKShapeNode new];
     _nodeFrame.zPosition = -0.5;
+    [self addChild:_nodeFrame];
     
-    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:[SJSGraphScene.theme nodeSize]];
+    // Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
+    [oldLabelNodes addObject:_nodeFrame];
+    
+    CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
+    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:nodeSize];;
     self.physicsBody.mass = 1;
     self.physicsBody.dynamic = YES;
     self.physicsBody.linearDamping = 0.2;
     self.physicsBody.friction = 0;
     self.physicsBody.allowsRotation = NO;
     
-    [self addChild:_nodeFrame];
-    
     [self update];
-    
     return self;
-}
-
-- (void)setScale:(CGFloat)scale
-{
-    _scale = scale;
-    [self update];
 }
 
 - (void)setRemove:(BOOL)remove
@@ -94,64 +100,37 @@ NSInteger maxDepth = 3;
     return _remove;
 }
 
-- (CGPathRef)newPathForRoundedRect:(CGRect)rect radius:(CGFloat)radius
-{
-	CGMutablePathRef retPath = CGPathCreateMutable();
-    
-	CGRect innerRect = CGRectInset(rect, radius, radius);
-    
-	CGFloat inside_right = innerRect.origin.x + innerRect.size.width;
-	CGFloat outside_right = rect.origin.x + rect.size.width;
-	CGFloat inside_bottom = innerRect.origin.y + innerRect.size.height;
-	CGFloat outside_bottom = rect.origin.y + rect.size.height;
-    
-	CGFloat inside_top = innerRect.origin.y;
-	CGFloat outside_top = rect.origin.y;
-	CGFloat outside_left = rect.origin.x;
-    
-	CGPathMoveToPoint(retPath, NULL, innerRect.origin.x, outside_top);
-    
-	CGPathAddLineToPoint(retPath, NULL, inside_right, outside_top);
-	CGPathAddArcToPoint(retPath, NULL, outside_right, outside_top, outside_right, inside_top, radius);
-	CGPathAddLineToPoint(retPath, NULL, outside_right, inside_bottom);
-	CGPathAddArcToPoint(retPath, NULL,  outside_right, outside_bottom, inside_right, outside_bottom, radius);
-    
-	CGPathAddLineToPoint(retPath, NULL, innerRect.origin.x, outside_bottom);
-	CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_bottom, outside_left, inside_bottom, radius);
-	CGPathAddLineToPoint(retPath, NULL, outside_left, inside_top);
-	CGPathAddArcToPoint(retPath, NULL,  outside_left, outside_top, innerRect.origin.x, outside_top, radius);
-    
-	CGPathCloseSubpath(retPath);
-    
-	return retPath;
-}
-
 - (void)update
 {
     if (self.distance == 0) {
         _nodeFrame.fillColor = [SJSGraphScene.theme rootNodeColor];
-        self.fontSize = [SJSGraphScene.theme rootNodeFontSize] * _scale;
+        self.fontSize = [SJSGraphScene.theme rootNodeFontSize] * SJSGraphScene.scale;
         self.fontName = [SJSGraphScene.theme rootNodeFontNameByNodeType:self.type];
         self.fontColor = [SJSGraphScene.theme rootNodeFontColor];
     } else {
         _nodeFrame.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
-        self.fontSize = [SJSGraphScene.theme fontSizeByNodeType:self.type] * _scale;
+        self.fontSize = [SJSGraphScene.theme fontSizeByNodeType:self.type] * SJSGraphScene.scale;
         self.fontName = [SJSGraphScene.theme fontNameByNodeType:self.type];
         self.fontColor = [SJSGraphScene.theme fontColorByNodeType:self.type];
     }
     
     _nodeFrame.lineWidth = [SJSGraphScene.theme lineWidth];
     
+    CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
+    
     if ([SJSGraphScene.theme nodeStyleByNodeType:self.type] == CircleStyle) {
         CGMutablePathRef circlePath = CGPathCreateMutable();
-        CGPathAddArc(circlePath, nil, 0, 0, [SJSGraphScene.theme nodeSize] * _scale, 0, M_PI*2, true);
+        CGPathAddArc(circlePath, nil, 0, 0, nodeSize, 0, M_PI*2, true);
         _nodeFrame.path = circlePath;
         CGPathRelease(circlePath);
     } else if ([SJSGraphScene.theme nodeStyleByNodeType:self.type] == RoundedRectStyle) {
         CGRect wordFrame = [self calculateAccumulatedFrame];
-        CGFloat width = wordFrame.size.width + [SJSGraphScene.theme roundedRectMarginX] * 2 * _scale;
-        CGFloat height = wordFrame.size.height + [SJSGraphScene.theme roundedRectMarginY] * 2 * _scale;
-        CGPathRef path = [self newPathForRoundedRect:CGRectMake(-width/2, -height/2, width, height) radius:[SJSGraphScene.theme roundedRectRadius]];
+        CGFloat width = wordFrame.size.width + [SJSGraphScene.theme roundedRectMarginX] * 2 * SJSGraphScene.scale;
+        CGFloat height = wordFrame.size.height + [SJSGraphScene.theme roundedRectMarginY] * 2 * SJSGraphScene.scale;
+        
+        CGRect rect = CGRectMake(-width/2, -height/2, width, height);
+        CGFloat radius = [SJSGraphScene.theme roundedRectRadius];
+        CGPathRef path = [SJSGraphScene newPathForRoundedRect:rect radius:radius];
         _nodeFrame.path = path;
         CGPathRelease(path);
     }

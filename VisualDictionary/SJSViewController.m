@@ -9,12 +9,8 @@
 #import "SJSViewController.h"
 #import "SJSGraphScene.h"
 
-CGFloat maxScale = 2.5;
-CGFloat minScale = 0.25;
-
 @implementation SJSViewController {
-    CGFloat _scaleStart;
-    SJSGraphScene *_wordScene;
+    SJSGraphScene *_graphScene;
 }
 
 - (void)viewDidLoad
@@ -32,40 +28,20 @@ CGFloat minScale = 0.25;
     SKView *skView = (SKView *) self.view;
     skView.ignoresSiblingOrder = YES;
 
-    UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:self action:@selector(handlePinch:)];
-    recognizer.delegate = (id)self;
+    _graphScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
+    _graphScene.scaleMode = SKSceneScaleModeAspectFill;
+    
+    UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:_graphScene action:@selector(handlePinch:)];
+    recognizer.delegate = (id)_graphScene;
     [skView addGestureRecognizer:recognizer];
     
-    _wordScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
-    _wordScene.scaleMode = SKSceneScaleModeAspectFill;
-    _wordScene.scale = 1;
-    
-    [skView presentScene:_wordScene];
-}
-
-CGFloat limitScale(CGFloat scale)
-{
-    if (scale > maxScale) {
-        return maxScale;
-    } else if (scale < minScale) {
-        return minScale;
-    } else {
-        return scale;
-    }
-}
-
-- (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
-    if ([recognizer state] == UIGestureRecognizerStateBegan) {
-        _scaleStart = _wordScene.scale;
-    }
-    
-    _wordScene.scale = limitScale(_scaleStart * recognizer.scale);
+    [skView presentScene:_graphScene];
 }
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
 {
     if (event.type == UIEventSubtypeMotionShake) {
-        [_wordScene createSceneForRandomWord];
+        [_graphScene createSceneForRandomWord];
     }
 }
 

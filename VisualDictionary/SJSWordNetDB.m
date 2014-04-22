@@ -114,16 +114,24 @@
     __block NSString *result = nil;
     
     [_queue inDatabase:^(FMDatabase *db) {
-        FMResultSet *rs = [db executeQuery:@"SELECT word FROM words_meanings ORDER BY RANDOM() LIMIT 1"];
-        if ([rs next]) {
-            result = [rs stringForColumnIndex:0];
+        FMResultSet *countRs = [db executeQuery:@"SELECT COUNT(*) FROM words_meanings"];
+        if ([countRs next]) {
+            int count = [countRs intForColumnIndex:0];
+            int offset = arc4random_uniform(count);
+            
+            FMResultSet *wordRs = [db executeQuery:@"SELECT word FROM words_meanings LIMIT 1 OFFSET ?",
+                                   [NSString stringWithFormat:@"%d", offset]];
+            if ([wordRs next]) {
+                result = [wordRs stringForColumnIndex:0];
+            }
+            
+            [wordRs close];
         }
         
-        NSLog(@"Random word: %@", result);
-        
-        [rs close];
+        [countRs close];
     }];
     
+    NSLog(@"Random word: %@", result);
     return result;
 }
 

@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>IDESourceControlProjectFavoriteDictionaryKey</key>
+	<false/>
+	<key>IDESourceControlProjectIdentifier</key>
+	<string>C500A924-D47A-4137-9650-1ADA5658D444</string>
+	<key>IDESourceControlProjectName</key>
+	<string>TheSaurus</string>
+	<key>IDESourceControlProjectOriginsDictionary</key>
+	<dict>
+		<key>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</key>
+		<string>ssh://github.com/shadanan/visual-dictionary.git</string>
+	</dict>
+	<key>IDESourceControlProjectPath</key>
+	<string>TheSaurus.xcodeproj/project.xcworkspace</string>
+	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
+	<dict>
+		<key>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</key>
+		<string>../..</string>
+	</dict>
+	<key>IDESourceControlProjectURL</key>
+	<string>ssh://github.com/shadanan/visual-dictionary.git</string>
+	<key>IDESourceControlProjectVersion</key>
+	<integer>110</integer>
+	<key>IDESourceControlProjectWCCIdentifier</key>
+	<string>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</string>
+	<key>IDESourceControlProjectWCConfigurations</key>
+	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</string>
+			<key>IDESourceControlWCCName</key>
+			<string>VisualDictionary</string>
+		</dict>
+	</array>
+</dict>
+</plist>

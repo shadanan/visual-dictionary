@@ -11,6 +11,4 @@
 
 @interface SJSViewController : UIViewController
 
-- (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
-
 @end

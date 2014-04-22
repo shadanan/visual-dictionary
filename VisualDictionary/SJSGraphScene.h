@@ -22,13 +22,12 @@
 
 + (SJSWordNetDB *)wordNetDb;
 + (SJSTheme *)theme;
++ (CGFloat)scale;
++ (CGPathRef)newPathForRoundedRect:(CGRect)rect radius:(CGFloat)radius;
 
-- (CGFloat)scale;
-- (void)setScale:(CGFloat)scale;
+- (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
 
 - (void)setTheme:(Theme)theme;
-
-- (void)setMessage:(NSString *)message withDuration:(NSTimeInterval)duration;
 
 - (void)createSceneForRandomWord;
 

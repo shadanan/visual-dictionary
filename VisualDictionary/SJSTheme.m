@@ -32,13 +32,7 @@
 
 - (void)updateBackgroundSprite:(SKSpriteNode *)background
 {
-    if (_theme == LightTheme) {
-        background.texture = [SKTexture textureWithImageNamed:@"thesaurus_bg_day.jpg"];
-    } else if (_theme == DarkTheme) {
-        background.texture = [SKTexture textureWithImageNamed:@"thesaurus_bg_night.jpg"];
-    } else {
-        background.texture = [SKTexture textureWithImageNamed:@"thesaurus_bg_day.jpg"];
-    }
+    background.texture = [SKTexture textureWithImageNamed:@"background_light.png"];
     
     if (_scale > 1.0) {
         background.size = CGSizeMake(background.texture.size.width / 2, background.texture.size.height / 2);
@@ -272,6 +266,31 @@
     return [self edgeColor];
 }
 
+- (UIColor *)wordColor
+{
+    if (_theme == LightTheme) {
+        return [UIColor blackColor];
+    } else if (_theme == DarkTheme) {
+        return [UIColor whiteColor];
+    } else {
+        return [UIColor colorWithRed:0.96 green:0.38 blue:0.31 alpha:1];
+    }
+}
+
+- (NSString *)wordFontName
+{
+    return @"Georgia-BoldItalic";
+}
+
+- (CGFloat)wordFontSize
+{
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        return 16;
+    } else {
+        return 24;
+    }
+}
+
 - (UIColor *)messageColor
 {
     if (_theme == LightTheme) {
@@ -283,9 +302,14 @@
     }
 }
 
+- (NSString *)theSaurusFontName
+{
+    return @"Futura-Medium";
+}
+
 - (NSString *)messageFontName
 {
-    return @"AvenirNext-Regular";
+    return @"Georgia-Regular";
 }
 
 - (CGFloat)messageFontSize
@@ -371,12 +395,12 @@
 
 - (UIFont *)typeFont
 {
-    return [UIFont fontWithName:@"Georgia-Italic" size:13];
+    return [UIFont fontWithName:@"Georgia-Italic" size:14];
 }
 
 - (UIFont *)definitionFont
 {
-    return [UIFont fontWithName:@"Georgia" size:11];
+    return [UIFont fontWithName:@"Georgia" size:12];
 }
 
 - (UIColor *)typeColor
@@ -417,7 +441,7 @@
 
 - (CGFloat)buttonBarHeight
 {
-    return 40;
+    return 44;
 }
 
 - (UIColor *)buttonBarStrokeColor
@@ -450,7 +474,7 @@
 }
 
 - (UIColor *)searchButtonFillColor {
-    return [UIColor colorWithRed:0.67 green:0.09 blue:0.13 alpha:1];
+    return [UIColor colorWithRed:0.96 green:0.38 blue:0.31 alpha:1];
 }
 
 - (CGFloat)textButtonFontSize {
@@ -496,14 +520,14 @@
     return [self rectWithIndex:2 withFrame:frame];
 }
 
-- (CGRect)settingsButtonFrameInFrame:(CGRect)frame
-{
-    return [self rectWithIndex:3 withFrame:frame];
-}
+//- (CGRect)settingsButtonFrameInFrame:(CGRect)frame
+//{
+//    return [self rectWithIndex:3 withFrame:frame];
+//}
 
 - (CGRect)searchButtonFrameInFrame:(CGRect)frame
 {
-    return [self rectWithIndex:4 withFrame:frame];
+    return [self rectWithIndex:3 withFrame:frame];
 }
 
 - (CGRect)rectWithIndex:(NSInteger)index withFrame:(CGRect)frame {
@@ -520,15 +544,15 @@
 
 - (CGFloat)widthWithIndex:(NSInteger)index withFrame:(CGRect)frame {
     if (index == 0) {
-        return 64;
+        return 72;
     } else if (index == 1) {
-        return 64;
+        return 72;
     } else if (index == 2) {
-        return 48;
-    } else if (index == 3) {
-        return 48;
+        return 64;
+//    } else if (index == 3) {
+//        return 48;
     } else {
-        return frame.size.width - [self positionWithIndex:4 withFrame:frame];
+        return frame.size.width - [self positionWithIndex:3 withFrame:frame];
     }
 }
 

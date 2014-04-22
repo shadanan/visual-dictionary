@@ -26,6 +26,7 @@
         _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
         _searchField.borderStyle = UITextBorderStyleRoundedRect;
         _searchField.placeholder = @"Search for Words";
+        _searchField.autocapitalizationType = UITextAutocapitalizationTypeNone;
         _searchField.autocorrectionType = UITextAutocorrectionTypeYes;
         _searchField.keyboardType = UIKeyboardTypeDefault;
         _searchField.clearButtonMode = UITextFieldViewModeWhileEditing;
@@ -76,6 +77,7 @@
         }];
     }
     
+    [_searchField selectAll:nil];
     [_searchField becomeFirstResponder];
 }
 

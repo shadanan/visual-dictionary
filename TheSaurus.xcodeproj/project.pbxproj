@@ -15,19 +15,20 @@
 		734EF9C518B3104C007A5BB2 /* FMResultSet.m in Sources */ = {isa = PBXBuildFile; fileRef = 734EF9C018B3104C007A5BB2 /* FMResultSet.m */; };
 		7350F66C18DFA47A0006FFC5 /* SJSSearchButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 7350F66B18DFA47A0006FFC5 /* SJSSearchButton.m */; };
 		7350F66F18E779F30006FFC5 /* SJSTextButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 7350F66E18E779F30006FFC5 /* SJSTextButton.m */; };
-		7350F67218E789040006FFC5 /* thesaurus_bg_day.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67018E789040006FFC5 /* thesaurus_bg_day.jpg */; };
-		7350F67318E789040006FFC5 /* thesaurus_bg_night.jpg in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67118E789040006FFC5 /* thesaurus_bg_night.jpg */; };
 		7350F67518E78B0F0006FFC5 /* cog.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67418E78B0F0006FFC5 /* cog.png */; };
 		7350F67A18E795E60006FFC5 /* backward_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67618E795E60006FFC5 /* backward_disabled.png */; };
 		7350F67B18E795E60006FFC5 /* backward_enabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67718E795E60006FFC5 /* backward_enabled.png */; };
 		7350F67C18E795E60006FFC5 /* forward_disabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67818E795E60006FFC5 /* forward_disabled.png */; };
 		7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67918E795E60006FFC5 /* forward_enabled.png */; };
 		7356ED1E18F39D5F0091862B /* SJSAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */; };
+		735F5BE719072C22007A15E3 /* background_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 735F5BE619072C22007A15E3 /* background_light.png */; };
+		735F5BE919072CDD007A15E3 /* launch_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 735F5BE819072CDD007A15E3 /* launch_image.png */; };
 		737F04DC18ADE33B005717F6 /* SJSWordNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04DB18ADE33B005717F6 /* SJSWordNode.m */; };
 		737F04DE18AE0744005717F6 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 737F04DD18AE0744005717F6 /* libsqlite3.0.dylib */; };
 		737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 737F04E518AE1180005717F6 /* wordnet.sqlite */; };
 		737F04E918B118AE005717F6 /* SJSEdgeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04E818B118AE005717F6 /* SJSEdgeNode.m */; };
 		737F04F618B1F39F005717F6 /* SJSDefinitionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */; };
+		73AD7F26190383BE00D40746 /* brontosaurus.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AD7F25190383BE00D40746 /* brontosaurus.png */; };
 		73BC6A0318A87107006E6898 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0218A87107006E6898 /* Foundation.framework */; };
 		73BC6A0518A87107006E6898 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0418A87107006E6898 /* CoreGraphics.framework */; };
 		73BC6A0718A87107006E6898 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0618A87107006E6898 /* UIKit.framework */; };
@@ -75,8 +76,6 @@
 		7350F66B18DFA47A0006FFC5 /* SJSSearchButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSSearchButton.m; sourceTree = "<group>"; };
 		7350F66D18E779F30006FFC5 /* SJSTextButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSTextButton.h; sourceTree = "<group>"; };
 		7350F66E18E779F30006FFC5 /* SJSTextButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSTextButton.m; sourceTree = "<group>"; };
-		7350F67018E789040006FFC5 /* thesaurus_bg_day.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = thesaurus_bg_day.jpg; sourceTree = "<group>"; };
-		7350F67118E789040006FFC5 /* thesaurus_bg_night.jpg */ = {isa = PBXFileReference; lastKnownFileType = image.jpeg; path = thesaurus_bg_night.jpg; sourceTree = "<group>"; };
 		7350F67418E78B0F0006FFC5 /* cog.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = cog.png; sourceTree = "<group>"; };
 		7350F67618E795E60006FFC5 /* backward_disabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backward_disabled.png; sourceTree = "<group>"; };
 		7350F67718E795E60006FFC5 /* backward_enabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = backward_enabled.png; sourceTree = "<group>"; };
@@ -84,6 +83,8 @@
 		7350F67918E795E60006FFC5 /* forward_enabled.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = forward_enabled.png; sourceTree = "<group>"; };
 		7356ED1C18F39D5F0091862B /* SJSAboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSAboutViewController.h; sourceTree = "<group>"; };
 		7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSAboutViewController.m; sourceTree = "<group>"; };
+		735F5BE619072C22007A15E3 /* background_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_light.png; sourceTree = "<group>"; };
+		735F5BE819072CDD007A15E3 /* launch_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch_image.png; sourceTree = "<group>"; };
 		737F04DA18ADE33B005717F6 /* SJSWordNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSWordNode.h; sourceTree = "<group>"; };
 		737F04DB18ADE33B005717F6 /* SJSWordNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSWordNode.m; sourceTree = "<group>"; };
 		737F04DD18AE0744005717F6 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -92,6 +93,7 @@
 		737F04E818B118AE005717F6 /* SJSEdgeNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSEdgeNode.m; sourceTree = "<group>"; };
 		737F04F418B1F39F005717F6 /* SJSDefinitionsView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSDefinitionsView.h; sourceTree = "<group>"; };
 		737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSDefinitionsView.m; sourceTree = "<group>"; };
+		73AD7F25190383BE00D40746 /* brontosaurus.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = brontosaurus.png; sourceTree = "<group>"; };
 		73BC69FF18A87107006E6898 /* TheSaurus.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = TheSaurus.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		73BC6A0218A87107006E6898 /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		73BC6A0418A87107006E6898 /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -228,13 +230,14 @@
 				73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */,
 				73BC6A0918A87107006E6898 /* Supporting Files */,
 				737F04E518AE1180005717F6 /* wordnet.sqlite */,
-				7350F67418E78B0F0006FFC5 /* cog.png */,
+				73AD7F25190383BE00D40746 /* brontosaurus.png */,
 				7350F67618E795E60006FFC5 /* backward_disabled.png */,
 				7350F67718E795E60006FFC5 /* backward_enabled.png */,
 				7350F67818E795E60006FFC5 /* forward_disabled.png */,
 				7350F67918E795E60006FFC5 /* forward_enabled.png */,
-				7350F67018E789040006FFC5 /* thesaurus_bg_day.jpg */,
-				7350F67118E789040006FFC5 /* thesaurus_bg_night.jpg */,
+				7350F67418E78B0F0006FFC5 /* cog.png */,
+				735F5BE619072C22007A15E3 /* background_light.png */,
+				735F5BE819072CDD007A15E3 /* launch_image.png */,
 			);
 			name = TheSaurus;
 			path = VisualDictionary;
@@ -331,14 +334,15 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				7350F67318E789040006FFC5 /* thesaurus_bg_night.jpg in Resources */,
+				735F5BE919072CDD007A15E3 /* launch_image.png in Resources */,
 				7350F67A18E795E60006FFC5 /* backward_disabled.png in Resources */,
+				73AD7F26190383BE00D40746 /* brontosaurus.png in Resources */,
 				7350F67B18E795E60006FFC5 /* backward_enabled.png in Resources */,
 				7350F67C18E795E60006FFC5 /* forward_disabled.png in Resources */,
 				7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */,
 				73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */,
 				7350F67518E78B0F0006FFC5 /* cog.png in Resources */,
-				7350F67218E789040006FFC5 /* thesaurus_bg_day.jpg in Resources */,
+				735F5BE719072C22007A15E3 /* background_light.png in Resources */,
 				73BC6A1E18A87107006E6898 /* Images.xcassets in Resources */,
 				73BC6A0D18A87107006E6898 /* InfoPlist.strings in Resources */,
 				737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */,

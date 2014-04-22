@@ -60,6 +60,12 @@
 - (UIColor *)canGrowEdgeColor;
 - (UIColor *)cannotGrowEdgeColor;
 
+- (NSString *)theSaurusFontName;
+
+- (UIColor *)wordColor;
+- (NSString *)wordFontName;
+- (CGFloat)wordFontSize;
+
 - (UIColor *)messageColor;
 - (NSString *)messageFontName;
 - (CGFloat)messageFontSize;
@@ -105,7 +111,7 @@
 - (CGRect)backButtonFrameInFrame:(CGRect)frame;
 - (CGRect)forwardButtonFrameInFrame:(CGRect)frame;
 - (CGRect)helpButtonFrameInFrame:(CGRect)frame;
-- (CGRect)settingsButtonFrameInFrame:(CGRect)frame;
+//- (CGRect)settingsButtonFrameInFrame:(CGRect)frame;
 - (CGRect)searchButtonFrameInFrame:(CGRect)frame;
 
 @end
