@@ -114,7 +114,7 @@ Artwork
                                                     </fragment>
                                                     <fragment>
                                                         <string key="content">
-Brontosaurus Image</string>
+Dinosaur Image</string>
                                                         <attributes>
                                                             <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Futura-Medium"/>
