@@ -22,7 +22,6 @@
 		7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67918E795E60006FFC5 /* forward_enabled.png */; };
 		7356ED1E18F39D5F0091862B /* SJSAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */; };
 		735F5BE719072C22007A15E3 /* background_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 735F5BE619072C22007A15E3 /* background_light.png */; };
-		735F5BE919072CDD007A15E3 /* launch_image.png in Resources */ = {isa = PBXBuildFile; fileRef = 735F5BE819072CDD007A15E3 /* launch_image.png */; };
 		737F04DC18ADE33B005717F6 /* SJSWordNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04DB18ADE33B005717F6 /* SJSWordNode.m */; };
 		737F04DE18AE0744005717F6 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 737F04DD18AE0744005717F6 /* libsqlite3.0.dylib */; };
 		737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 737F04E518AE1180005717F6 /* wordnet.sqlite */; };
@@ -84,7 +83,6 @@
 		7356ED1C18F39D5F0091862B /* SJSAboutViewController.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSAboutViewController.h; sourceTree = "<group>"; };
 		7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSAboutViewController.m; sourceTree = "<group>"; };
 		735F5BE619072C22007A15E3 /* background_light.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_light.png; sourceTree = "<group>"; };
-		735F5BE819072CDD007A15E3 /* launch_image.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = launch_image.png; sourceTree = "<group>"; };
 		737F04DA18ADE33B005717F6 /* SJSWordNode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSWordNode.h; sourceTree = "<group>"; };
 		737F04DB18ADE33B005717F6 /* SJSWordNode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSWordNode.m; sourceTree = "<group>"; };
 		737F04DD18AE0744005717F6 /* libsqlite3.0.dylib */ = {isa = PBXFileReference; lastKnownFileType = "compiled.mach-o.dylib"; name = libsqlite3.0.dylib; path = usr/lib/libsqlite3.0.dylib; sourceTree = SDKROOT; };
@@ -164,6 +162,20 @@
 			name = FMDB;
 			sourceTree = "<group>";
 		};
+		735F5BEA190772B6007A15E3 /* Images */ = {
+			isa = PBXGroup;
+			children = (
+				73AD7F25190383BE00D40746 /* brontosaurus.png */,
+				7350F67618E795E60006FFC5 /* backward_disabled.png */,
+				7350F67718E795E60006FFC5 /* backward_enabled.png */,
+				7350F67818E795E60006FFC5 /* forward_disabled.png */,
+				7350F67918E795E60006FFC5 /* forward_enabled.png */,
+				7350F67418E78B0F0006FFC5 /* cog.png */,
+				735F5BE619072C22007A15E3 /* background_light.png */,
+			);
+			name = Images;
+			sourceTree = "<group>";
+		};
 		73BC69F618A87106006E6898 = {
 			isa = PBXGroup;
 			children = (
@@ -230,14 +242,7 @@
 				73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */,
 				73BC6A0918A87107006E6898 /* Supporting Files */,
 				737F04E518AE1180005717F6 /* wordnet.sqlite */,
-				73AD7F25190383BE00D40746 /* brontosaurus.png */,
-				7350F67618E795E60006FFC5 /* backward_disabled.png */,
-				7350F67718E795E60006FFC5 /* backward_enabled.png */,
-				7350F67818E795E60006FFC5 /* forward_disabled.png */,
-				7350F67918E795E60006FFC5 /* forward_enabled.png */,
-				7350F67418E78B0F0006FFC5 /* cog.png */,
-				735F5BE619072C22007A15E3 /* background_light.png */,
-				735F5BE819072CDD007A15E3 /* launch_image.png */,
+				735F5BEA190772B6007A15E3 /* Images */,
 			);
 			name = TheSaurus;
 			path = VisualDictionary;
@@ -334,7 +339,6 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				735F5BE919072CDD007A15E3 /* launch_image.png in Resources */,
 				7350F67A18E795E60006FFC5 /* backward_disabled.png in Resources */,
 				73AD7F26190383BE00D40746 /* brontosaurus.png in Resources */,
 				7350F67B18E795E60006FFC5 /* backward_enabled.png in Resources */,
