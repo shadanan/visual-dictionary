@@ -38,4 +38,7 @@
 - (void)setRemove:(BOOL)remove;
 - (BOOL)remove;
 
+- (void)highlight;
+- (void)reset;
+
 @end

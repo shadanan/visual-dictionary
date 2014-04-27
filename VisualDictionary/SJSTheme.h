@@ -26,6 +26,7 @@
 - (UIColor *)searchFieldBackgroundColor;
 
 - (UIColor *)rootNodeColor;
+- (UIColor *)currentNodeColor;
 - (UIColor *)wordNodeColor;
 - (UIColor *)adverbNodeColor;
 - (UIColor *)adjectiveNodeColor;
@@ -34,6 +35,7 @@
 - (UIColor *)colorByNodeType:(NodeType)type;
 
 - (UIColor *)rootNodeFontColor;
+- (UIColor *)currentNodeFontColor;
 - (UIColor *)wordNodeFontColor;
 - (UIColor *)adverbNodeFontColor;
 - (UIColor *)adjectiveNodeFontColor;
@@ -42,9 +44,11 @@
 - (UIColor *)fontColorByNodeType:(NodeType)type;
 
 - (CGFloat)rootNodeFontSize;
+- (CGFloat)currentNodeFontSize;
 - (CGFloat)fontSizeByNodeType:(NodeType)type;
 
 - (NSString *)rootNodeFontNameByNodeType:(NodeType)type;
+- (NSString *)currentNodeFontNameByNodeType:(NodeType)type;
 - (NSString *)fontNameByNodeType:(NodeType)type;
 
 - (NodeStyle)nodeStyleByNodeType:(NodeType)type;
@@ -57,6 +61,7 @@
 - (UIColor *)edgeColor;
 - (CGFloat)lineWidth;
 
+- (UIColor *)currentNodeEdgeColor;
 - (UIColor *)canGrowEdgeColor;
 - (UIColor *)cannotGrowEdgeColor;
 
@@ -81,10 +86,15 @@
 - (UIColor *)pruneIconColor;
 - (CGFloat)pruneIconSize;
 
-- (UIFont *)typeFont;
-- (UIFont *)definitionFont;
-- (UIColor *)typeColor;
-- (UIColor *)definitionColor;
+- (NSString *)wordDefFontName;
+- (CGFloat)wordDefFontSize;
+- (UIColor *)wordDefFontColor;
+- (NSString *)typeFontName;
+- (CGFloat)typeFontSize;
+- (UIColor *)typeFontColor;
+- (NSString *)definitionFontName;
+- (CGFloat)definitionFontSize;
+- (UIColor *)definitionFontColor;
 
 - (CGFloat)definitionsHeight;
 - (UIColor *)definitionsBackgroundColor;
@@ -111,7 +121,6 @@
 - (CGRect)backButtonFrameInFrame:(CGRect)frame;
 - (CGRect)forwardButtonFrameInFrame:(CGRect)frame;
 - (CGRect)helpButtonFrameInFrame:(CGRect)frame;
-//- (CGRect)settingsButtonFrameInFrame:(CGRect)frame;
 - (CGRect)searchButtonFrameInFrame:(CGRect)frame;
 
 @end

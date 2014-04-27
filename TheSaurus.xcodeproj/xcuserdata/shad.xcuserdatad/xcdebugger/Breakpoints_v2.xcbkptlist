@@ -20,11 +20,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VisualDictionary/SJSWordNode.m"
-            timestampString = "419744433.230938"
+            timestampString = "420254485.466325"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "179"
-            endingLineNumber = "179"
+            startingLineNumber = "234"
+            endingLineNumber = "234"
             landmarkName = "-promoteToRoot"
             landmarkType = "5">
          </BreakpointContent>
@@ -36,11 +36,11 @@
             ignoreCount = "0"
             continueAfterRunningActions = "No"
             filePath = "VisualDictionary/SJSWordNode.m"
-            timestampString = "419744433.230938"
+            timestampString = "420254485.466325"
             startingColumnNumber = "9223372036854775807"
             endingColumnNumber = "9223372036854775807"
-            startingLineNumber = "281"
-            endingLineNumber = "281"
+            startingLineNumber = "341"
+            endingLineNumber = "341"
             landmarkName = "-grow"
             landmarkType = "5">
          </BreakpointContent>

@@ -18,6 +18,7 @@ static CGFloat scale = 1;
 
 @implementation SJSGraphScene {
     BOOL _dragging;
+    BOOL _scaling;
     BOOL _contentCreated;
     CGFloat _scaleStart;
     
@@ -29,6 +30,7 @@ static CGFloat scale = 1;
     
     SJSWordNode *_activeNode;
     SJSWordNode *_currentNode;
+    SJSWordNode *_definitionNode;
     SJSWordNode *_root;
     
     SJSSearchView *_searchView;
@@ -41,10 +43,12 @@ static CGFloat scale = 1;
     SJSIconButton *_backButton;
     SJSIconButton *_forwardButton;
     SJSTextButton *_helpButton;
-//    SJSIconButton *_settingsButton;
     SJSSearchButton *_searchButton;
     
     SKShapeNode *_splash;
+    
+    SKLabelNode *_wordNode;
+    SKLabelNode *_messageNode;
 }
 
 + (void)initialize
@@ -119,10 +123,12 @@ CGFloat limitScale(CGFloat scale)
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
     if ([recognizer state] == UIGestureRecognizerStateBegan) {
         _scaleStart = scale;
+        _scaling = YES;
+    } else if ([recognizer state] == UIGestureRecognizerStateEnded) {
+        _scaling = NO;
     }
     
     scale = limitScale(_scaleStart * recognizer.scale);
-    [self update];
 
     NSLog(@"Scale: %f", scale);
 }
@@ -195,11 +201,6 @@ CGFloat limitScale(CGFloat scale)
     [_helpButton setIconFontName:[theme helpButtonFontName]];
     [_buttonBar addChild:_helpButton];
     
-//    _settingsButton = [[SJSIconButton alloc] init];
-//    _settingsButton.text = @"SETTINGS";
-//    [_settingsButton setIcon:@"cog.png"];
-//    [_buttonBar addChild:_settingsButton];
-    
     _searchButton = [[SJSSearchButton alloc] init];
     [_buttonBar addChild:_searchButton];
     
@@ -238,6 +239,7 @@ CGFloat limitScale(CGFloat scale)
     _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:definitionsFrame];
     [self.view addSubview:_definitionsView];
     
+    // Create the splash
     _splash = [[SKShapeNode alloc] init];
     _splash.name = @"splashNode";
     _splash.zPosition = 15000;
@@ -296,6 +298,32 @@ CGFloat limitScale(CGFloat scale)
     
     [self addChild:_splash];
     
+    
+    // Create message nodes
+    _wordNode = [SKLabelNode new];
+    _wordNode.alpha = 0;
+    _wordNode.fontColor = [theme wordColor];
+    _wordNode.fontName = [theme wordFontName];
+    _wordNode.fontSize = [theme wordFontSize];
+    _wordNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    _wordNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    _wordNode.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 134);
+    _wordNode.zPosition = 20000;
+    [self addChild:_wordNode];
+    
+    _messageNode = [SKLabelNode new];
+    _messageNode.alpha = 0;
+    _messageNode.text = @"not found in dictionary";
+    _messageNode.fontColor = [theme messageColor];
+    _messageNode.fontName = [theme messageFontName];
+    _messageNode.fontSize = [theme messageFontSize];
+    _messageNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
+    _messageNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
+    _messageNode.position = CGPointMake(CGRectGetMidX(self.frame), _wordNode.position.y - [theme wordFontSize]);
+    _messageNode.zPosition = 20000;
+    [self addChild:_messageNode];
+    
+    
     [self update];
 }
 
@@ -307,6 +335,8 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)update
 {
+    NSLog(@"Updating all objects.");
+    
     [theme updateBackgroundSprite:_backgroundSprite];
     
     self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, [theme buttonBarHeight], self.frame.size.width, self.frame.size.height - [theme buttonBarHeight])];
@@ -325,7 +355,6 @@ CGFloat limitScale(CGFloat scale)
     _backButton.frame = [theme backButtonFrameInFrame:_buttonBar.frame];
     _forwardButton.frame = [theme forwardButtonFrameInFrame:_buttonBar.frame];
     _helpButton.frame = [theme helpButtonFrameInFrame:_buttonBar.frame];
-//    _settingsButton.frame = [theme settingsButtonFrameInFrame:_buttonBar.frame];
     _searchButton.frame = [theme searchButtonFrameInFrame:_buttonBar.frame];
     
     if (_histpos <= 0) {
@@ -350,8 +379,6 @@ CGFloat limitScale(CGFloat scale)
     _anchorPoint.alpha = [theme disabledAlpha];
     _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     
-    [_definitionsView close];
-    
     [self closeSearchPane];
     _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);
     
@@ -371,6 +398,10 @@ CGFloat limitScale(CGFloat scale)
                 [_edgeNodes addChild:edge];
             }
         }
+    }
+    
+    if (_definitionNode != nil) {
+        [_definitionsView setText:[_definitionNode getDefinition]];
     }
 }
 
@@ -451,6 +482,9 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    CGPoint pos = [[touches anyObject] locationInNode:self];
+    NSLog(@"Touch Began:  %f %f", pos.x, pos.y);
+    
     [self closeSearchPane];
     if (_root == nil) {
         [self showSplash];
@@ -458,27 +492,35 @@ CGFloat limitScale(CGFloat scale)
     
     _currentNode = nil;
     _dragging = NO;
-    [_definitionsView close];
     
-    CGPoint start = [[touches anyObject] locationInNode:self];
-    for (SKNode *node in [self nodesAtPoint:start]) {
+    for (SKNode *node in [self nodesAtPoint:pos]) {
         if ([node isKindOfClass:[SJSWordNode class]]) {
             _currentNode = (SJSWordNode *)node;
             [_currentNode disableDynamic];
         }
     }
+    
+    if (_definitionNode != nil && _currentNode != _definitionNode) {
+        [_definitionNode reset];
+        _definitionNode = nil;
+        [_definitionsView close];
+    }
+    
+//    [self update];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
 {
+    CGPoint pos = [[touches anyObject] locationInNode:self];
+//    NSLog(@"Touch Moved:  %f %f", pos.x, pos.y);
+    
     if (_currentNode != nil) {
         _dragging = YES;
         
-        CGPoint point = [[touches anyObject] locationInNode:self];
-        if (point.y < [theme buttonBarHeight]) {
-            _currentNode.position = CGPointMake(point.x, [theme buttonBarHeight]);
+        if (pos.y < [theme buttonBarHeight]) {
+            _currentNode.position = CGPointMake(pos.x, [theme buttonBarHeight]);
         } else {
-            _currentNode.position = point;
+            _currentNode.position = pos;
         }
         
         CGFloat activeAlpha = [theme activeAlpha];
@@ -508,8 +550,8 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)touchesEnded:(NSSet *)touches withEvent:(UIEvent *)event
 {
-    CGPoint end = [[touches anyObject] locationInNode:self];
-    NSLog(@"Touch Ended:  %f %f", end.x, end.y);
+    CGPoint pos = [[touches anyObject] locationInNode:self];
+    NSLog(@"Touch Ended:  %f %f", pos.x, pos.y);
     
     if (_currentNode != nil && _currentNode != _root) {
         [_currentNode enableDynamic];
@@ -521,7 +563,7 @@ CGFloat limitScale(CGFloat scale)
             [_anchorPoint runAction:fadeOut];
             [_pruneIcon runAction:fadeOut];
 
-            if ([_anchorPoint containsPoint:end]) {
+            if ([_anchorPoint containsPoint:pos]) {
                 [_root enableDynamic];
                 _root = _currentNode;
                 [_root disableDynamic];
@@ -536,7 +578,7 @@ CGFloat limitScale(CGFloat scale)
                 return;
             }
             
-            if ([_pruneIcon containsPoint:end]) {
+            if ([_pruneIcon containsPoint:pos]) {
                 [self prune:_currentNode];
                 _currentNode = nil;
                 
@@ -544,7 +586,7 @@ CGFloat limitScale(CGFloat scale)
             }
         }
     } else {
-        if ([_backButton containsPoint:end]) {
+        if ([_backButton containsPoint:pos]) {
             NSString *previous = [self historyPrevious];
             if (previous != nil) {
                 [self createSceneForWord:previous];
@@ -553,7 +595,7 @@ CGFloat limitScale(CGFloat scale)
             return;
         }
         
-        if ([_forwardButton containsPoint:end]) {
+        if ([_forwardButton containsPoint:pos]) {
             NSString *next = [self historyNext];
             if (next != nil) {
                 [self createSceneForWord:next];
@@ -562,68 +604,57 @@ CGFloat limitScale(CGFloat scale)
             return;
         }
         
-        if ([_helpButton containsPoint:end]) {
+        if ([_helpButton containsPoint:pos]) {
             [[NSNotificationCenter defaultCenter] postNotificationName:@"GoToAboutViewController" object:self];
             return;
         }
         
-//        if ([_settingsButton containsPoint:end]) {
-//            NSLog(@"Settings clicked!");
-//            return;
-//        }
-        
-        if ([_searchButton containsPoint:end]) {
+        if ([_searchButton containsPoint:pos]) {
             [self openSearchPane];
             return;
         }
         
         if (_currentNode != nil) {
+            _definitionNode = _currentNode;
+            [_definitionNode highlight];
             [_currentNode grow];
-            [self update];
+            [_root updateDistances];
             
             [_definitionsView open];
-            [_definitionsView setText:[_currentNode getDefinition]];
+            [_definitionsView setText:[_definitionNode getDefinition]];
         }
     }
 }
 
 - (void)flashWordNotFound:(NSString *)word
 {
-    SKLabelNode *wordNode = [SKLabelNode new];
-    wordNode.text = word;
-    wordNode.fontColor = [theme wordColor];
-    wordNode.fontName = [theme wordFontName];
-    wordNode.fontSize = [theme wordFontSize];
-    wordNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-    wordNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-    wordNode.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 134);
-    wordNode.zPosition = 20000;
-    [self addChild:wordNode];
+    [_wordNode removeAllActions];
+    [_messageNode removeAllActions];
     
-    SKLabelNode *messageNode = [SKLabelNode new];
-    messageNode.text = @"not found in dictionary";
-    messageNode.fontColor = [theme messageColor];
-    messageNode.fontName = [theme messageFontName];
-    messageNode.fontSize = [theme messageFontSize];
-    messageNode.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeCenter;
-    messageNode.verticalAlignmentMode = SKLabelVerticalAlignmentModeCenter;
-    messageNode.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame) + 114);
-    messageNode.zPosition = 20000;
-    [self addChild:messageNode];
+    _wordNode.text = word;
+    _wordNode.xScale = 10;
+    _wordNode.yScale = 10;
+    _wordNode.alpha = 0;
+    _messageNode.xScale = 10;
+    _messageNode.yScale = 10;
+    _messageNode.alpha = 0;
     
     CGFloat duration = 2.0;
-    SKAction *moveDown = [SKAction moveByX:0 y:-50 duration:duration];
     
-    SKAction *pause = [SKAction waitForDuration:duration - 0.5];
-    SKAction *fadeOut = [SKAction fadeOutWithDuration:0.5];
-    SKAction *pauseThenFadeOut = [SKAction sequence:@[pause, fadeOut]];
-    SKAction *moveDownAndFadeOut = [SKAction group:@[moveDown, pauseThenFadeOut]];
+    SKAction *fadeIn = [SKAction fadeInWithDuration:0.25];
+    SKAction *scaleIn = [SKAction scaleTo:1 duration:0.25];
+    SKAction *scaleAndFadeIn = [SKAction group:@[fadeIn, scaleIn]];
     
-    SKAction *remove = [SKAction removeFromParent];
-    SKAction *sequence = [SKAction sequence:@[moveDownAndFadeOut, remove]];
+    SKAction *pause = [SKAction waitForDuration:duration - 0.25];
     
-    [wordNode runAction:sequence];
-    [messageNode runAction:sequence];
+    SKAction *fadeOut = [SKAction fadeOutWithDuration:0.25];
+    SKAction *scaleOut = [SKAction scaleTo:0.1 duration:0.25];
+    SKAction *scaleAndFadeOut = [SKAction group:@[fadeOut, scaleOut]];
+    
+    SKAction *sequence = [SKAction sequence:@[scaleAndFadeIn, pause, scaleAndFadeOut]];
+    
+    [_wordNode runAction:sequence];
+    [_messageNode runAction:sequence];
 }
 
 - (void)clearScene
@@ -640,8 +671,6 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)createSceneForRandomWord
 {
-    [self hideSplash];
-    
     NSString *word = [wordNetDb getRandomWord];
     [self historyAppend:word];
     [self createSceneForWord:word];
@@ -650,6 +679,7 @@ CGFloat limitScale(CGFloat scale)
 - (void)createSceneForWord:(NSString *)word
 {
     [self clearScene];
+    [self hideSplash];
     
     _root = [[SJSWordNode alloc] initWordWithName:word];
     [_root disableDynamic];
@@ -695,6 +725,10 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)update:(NSTimeInterval)currentTime
 {
+    if (_scaling) {
+        [self update];
+    }
+    
     double r0 = springLength * scale;
     double ka = 1 * scale;
     double kp = 10000 * scale;

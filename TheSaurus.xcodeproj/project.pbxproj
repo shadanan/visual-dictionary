@@ -22,12 +22,12 @@
 		7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */ = {isa = PBXBuildFile; fileRef = 7350F67918E795E60006FFC5 /* forward_enabled.png */; };
 		7356ED1E18F39D5F0091862B /* SJSAboutViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */; };
 		735F5BE719072C22007A15E3 /* background_light.png in Resources */ = {isa = PBXBuildFile; fileRef = 735F5BE619072C22007A15E3 /* background_light.png */; };
+		735F5C0C19078F96007A15E3 /* brontosaurus.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AD7F25190383BE00D40746 /* brontosaurus.png */; };
 		737F04DC18ADE33B005717F6 /* SJSWordNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04DB18ADE33B005717F6 /* SJSWordNode.m */; };
 		737F04DE18AE0744005717F6 /* libsqlite3.0.dylib in Frameworks */ = {isa = PBXBuildFile; fileRef = 737F04DD18AE0744005717F6 /* libsqlite3.0.dylib */; };
 		737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */ = {isa = PBXBuildFile; fileRef = 737F04E518AE1180005717F6 /* wordnet.sqlite */; };
 		737F04E918B118AE005717F6 /* SJSEdgeNode.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04E818B118AE005717F6 /* SJSEdgeNode.m */; };
 		737F04F618B1F39F005717F6 /* SJSDefinitionsView.m in Sources */ = {isa = PBXBuildFile; fileRef = 737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */; };
-		73AD7F26190383BE00D40746 /* brontosaurus.png in Resources */ = {isa = PBXBuildFile; fileRef = 73AD7F25190383BE00D40746 /* brontosaurus.png */; };
 		73BC6A0318A87107006E6898 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0218A87107006E6898 /* Foundation.framework */; };
 		73BC6A0518A87107006E6898 /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0418A87107006E6898 /* CoreGraphics.framework */; };
 		73BC6A0718A87107006E6898 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0618A87107006E6898 /* UIKit.framework */; };
@@ -339,8 +339,8 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				735F5C0C19078F96007A15E3 /* brontosaurus.png in Resources */,
 				7350F67A18E795E60006FFC5 /* backward_disabled.png in Resources */,
-				73AD7F26190383BE00D40746 /* brontosaurus.png in Resources */,
 				7350F67B18E795E60006FFC5 /* backward_enabled.png in Resources */,
 				7350F67C18E795E60006FFC5 /* forward_disabled.png in Resources */,
 				7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */,

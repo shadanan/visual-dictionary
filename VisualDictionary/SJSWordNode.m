@@ -17,9 +17,12 @@ NSInteger maxDepth = 3;
 static NSMutableArray *oldLabelNodes = nil;
 
 @implementation SJSWordNode {
+    NSString *_meaning;
     NSArray *_neighbourNames;
     SKShapeNode *_nodeFrame;
     BOOL _remove;
+    BOOL _highlighted;
+    CGFloat _prevZPos;
 }
 
 // Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
@@ -70,6 +73,9 @@ static NSMutableArray *oldLabelNodes = nil;
     
     _neighbourNames = nil;
     _remove = NO;
+    _highlighted = NO;
+    _meaning = nil;
+    _prevZPos = 0;
     
     _nodeFrame = [SKShapeNode new];
     _nodeFrame.zPosition = -0.5;
@@ -95,6 +101,45 @@ static NSMutableArray *oldLabelNodes = nil;
     _remove = remove;
 }
 
+- (void)setZPosition:(CGFloat)zPosition
+{
+    if (_highlighted) {
+        _prevZPos = zPosition;
+    } else {
+        [super setZPosition:zPosition];
+    }
+}
+
+- (void)highlight
+{
+    if (_highlighted) {
+        return;
+    }
+    
+    _highlighted = YES;
+    _prevZPos = self.zPosition;
+    super.zPosition = 0;
+
+    [self update];
+    
+    NSLog(@"prev zpos: %f  curr zpos: %f", _prevZPos, self.zPosition);
+}
+
+- (void)reset
+{
+    if (!_highlighted) {
+        return;
+    }
+    
+    _highlighted = NO;
+    super.zPosition = _prevZPos;
+    _prevZPos = 0;
+
+    [self update];
+    
+    NSLog(@"reset zpos: %f", self.zPosition);
+}
+
 - (BOOL)remove
 {
     return _remove;
@@ -102,7 +147,12 @@ static NSMutableArray *oldLabelNodes = nil;
 
 - (void)update
 {
-    if (self.distance == 0) {
+    if (_highlighted) {
+        _nodeFrame.fillColor = [SJSGraphScene.theme currentNodeColor];
+        self.fontSize = [SJSGraphScene.theme currentNodeFontSize] * SJSGraphScene.scale;
+        self.fontName = [SJSGraphScene.theme currentNodeFontNameByNodeType:self.type];
+        self.fontColor = [SJSGraphScene.theme currentNodeFontColor];
+    } else if (self.distance == 0) {
         _nodeFrame.fillColor = [SJSGraphScene.theme rootNodeColor];
         self.fontSize = [SJSGraphScene.theme rootNodeFontSize] * SJSGraphScene.scale;
         self.fontName = [SJSGraphScene.theme rootNodeFontNameByNodeType:self.type];
@@ -117,6 +167,9 @@ static NSMutableArray *oldLabelNodes = nil;
     _nodeFrame.lineWidth = [SJSGraphScene.theme lineWidth];
     
     CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
+    if (_highlighted) {
+        nodeSize *= 1.2;
+    }
     
     if ([SJSGraphScene.theme nodeStyleByNodeType:self.type] == CircleStyle) {
         CGMutablePathRef circlePath = CGPathCreateMutable();
@@ -137,6 +190,8 @@ static NSMutableArray *oldLabelNodes = nil;
     
     if ([self canGrow]) {
         _nodeFrame.strokeColor = [SJSGraphScene.theme canGrowEdgeColor];
+    } else if (_highlighted) {
+        _nodeFrame.strokeColor = [SJSGraphScene.theme currentNodeEdgeColor];
     } else {
         _nodeFrame.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
     }
@@ -201,7 +256,11 @@ static NSMutableArray *oldLabelNodes = nil;
     }
     
     NSMutableArray *queue = [NSMutableArray new];
+    
     self.distance = 0;
+    CGFloat zPos = -1;
+    self.zPosition = zPos--;
+    
     [queue addObject:self];
     
     while (queue.count > 0) {
@@ -210,6 +269,7 @@ static NSMutableArray *oldLabelNodes = nil;
         
         for (SJSWordNode *child in [node neighbourNodes]) {
             if (child.distance == -1) {
+                child.zPosition = zPos--;
                 child.distance = node.distance + 1;
                 [queue addObject:child];
             }
@@ -347,30 +407,49 @@ static NSMutableArray *oldLabelNodes = nil;
     }
 }
 
+- (NSString *)meaning
+{
+    if (_meaning == nil) {
+        _meaning = [SJSGraphScene.wordNetDb definitionOfMeaning:self.name];
+    }
+    
+    return _meaning;
+}
+
 - (NSMutableAttributedString *)getDefinition
 {
     if (self.type != WordType) {
         NSString *typeString = [self getTypeAsString];
-        NSString *definitionString = [SJSGraphScene.wordNetDb definitionOfMeaning:self.name];
+        NSString *definitionString = self.meaning;
         
         NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:[NSString stringWithFormat:@"%@: %@", typeString, definitionString]];
         NSRange typeRange = NSMakeRange(0, typeString.length + 2);
         NSRange definitionRange = NSMakeRange(typeString.length + 2, definitionString.length);
         
-        [result addAttribute:NSFontAttributeName value:[SJSGraphScene.theme typeFont] range:typeRange];
-        [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme typeColor] range:typeRange];
+        UIFont *typeFont = [UIFont fontWithName:[SJSGraphScene.theme typeFontName]
+                                           size:[SJSGraphScene.theme typeFontSize] * SJSGraphScene.scale];
+        [result addAttribute:NSFontAttributeName value:typeFont range:typeRange];
+        [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme typeFontColor] range:typeRange];
         
-        [result addAttribute:NSFontAttributeName value:[SJSGraphScene.theme definitionFont] range:definitionRange];
-        [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme definitionColor] range:definitionRange];
+        UIFont *definitionFont = [UIFont fontWithName:[SJSGraphScene.theme definitionFontName]
+                                                 size:[SJSGraphScene.theme definitionFontSize] * SJSGraphScene.scale];
+        [result addAttribute:NSFontAttributeName value:definitionFont range:definitionRange];
+        [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme definitionFontColor] range:definitionRange];
         
         return result;
     }
     
     if (self.type == WordType) {
         NSArray *neighbours = [self neighbourNodes];
-        NSMutableAttributedString *result = [[neighbours objectAtIndex:0] getDefinition];
         
-        for (int i = 1; i < neighbours.count; i++) {
+        NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:self.text];
+        NSRange wordRange = NSMakeRange(0, result.length);
+        UIFont *wordDefFont = [UIFont fontWithName:[SJSGraphScene.theme wordDefFontName]
+                                              size:[SJSGraphScene.theme wordDefFontSize] * SJSGraphScene.scale];
+        [result addAttribute:NSFontAttributeName value:wordDefFont range:wordRange];
+        [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme wordDefFontColor] range:wordRange];
+        
+        for (int i = 0; i < neighbours.count; i++) {
             NSMutableAttributedString *next = [[neighbours objectAtIndex:i] getDefinition];
             if (next != nil) {
                 [result appendAttributedString:[[NSMutableAttributedString alloc] initWithString:@"\n"]];

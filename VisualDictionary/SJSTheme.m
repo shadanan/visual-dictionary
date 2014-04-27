@@ -76,6 +76,16 @@
     return [UIColor colorWithRed:0.96 green:0.38 blue:0.31 alpha:1];
 }
 
+- (UIColor *)currentNodeColor
+{
+    return [UIColor colorWithRed:0.15 green:0.16 blue:0.16 alpha:1];
+}
+
+- (UIColor *)currentNodeEdgeColor
+{
+    return [UIColor colorWithRed:.43 green:.65 blue:.31 alpha:1];
+}
+
 - (UIColor *)wordNodeColor
 {
     return [UIColor whiteColor];
@@ -121,6 +131,11 @@
 - (UIColor *)rootNodeFontColor
 {
     return [UIColor whiteColor];
+}
+
+- (UIColor *)currentNodeFontColor
+{
+    return [UIColor colorWithRed:.43 green:.65 blue:.31 alpha:1];
 }
 
 - (UIColor *)wordNodeFontColor
@@ -179,12 +194,26 @@
     return 20;
 }
 
+- (CGFloat)currentNodeFontSize
+{
+    return 20;
+}
+
 - (CGFloat)fontSizeByNodeType:(NodeType)type
 {
     return 16;
 }
 
 - (NSString *)rootNodeFontNameByNodeType:(NodeType)type
+{
+    if (type == WordType) {
+        return @"Georgia-Italic";
+    } else {
+        return @"Futura-MediumItalic";
+    }
+}
+
+- (NSString *)currentNodeFontNameByNodeType:(NodeType)type
 {
     if (type == WordType) {
         return @"Georgia-Italic";
@@ -285,9 +314,9 @@
 - (CGFloat)wordFontSize
 {
     if (_idiom == UIUserInterfaceIdiomPhone) {
-        return 16;
-    } else {
         return 24;
+    } else {
+        return 28;
     }
 }
 
@@ -317,7 +346,7 @@
     if (_idiom == UIUserInterfaceIdiomPhone) {
         return 16;
     } else {
-        return 24;
+        return 28;
     }
 }
 
@@ -393,22 +422,47 @@
     }
 }
 
-- (UIFont *)typeFont
+- (NSString *)wordDefFontName
 {
-    return [UIFont fontWithName:@"Georgia-Italic" size:14];
+    return @"Georgia-Bold";
 }
 
-- (UIFont *)definitionFont
+- (CGFloat)wordDefFontSize
 {
-    return [UIFont fontWithName:@"Georgia" size:12];
+    return 16;
 }
 
-- (UIColor *)typeColor
+- (UIColor *)wordDefFontColor
+{
+    return [UIColor colorWithRed:.43 green:.65 blue:.31 alpha:1];
+}
+
+- (NSString *)typeFontName
+{
+    return @"Georgia-Italic";
+}
+
+- (CGFloat)typeFontSize
+{
+    return 16;
+}
+
+- (UIColor *)typeFontColor
 {
     return [UIColor colorWithRed:1 green:0.7 blue:0.45 alpha:1];
 }
 
-- (UIColor *)definitionColor
+- (NSString *)definitionFontName
+{
+    return @"Georgia";
+}
+
+- (CGFloat)definitionFontSize
+{
+    return 14;
+}
+
+- (UIColor *)definitionFontColor
 {
     return [UIColor colorWithRed:1 green:1 blue:1 alpha:1];
 }
@@ -520,11 +574,6 @@
     return [self rectWithIndex:2 withFrame:frame];
 }
 
-//- (CGRect)settingsButtonFrameInFrame:(CGRect)frame
-//{
-//    return [self rectWithIndex:3 withFrame:frame];
-//}
-
 - (CGRect)searchButtonFrameInFrame:(CGRect)frame
 {
     return [self rectWithIndex:3 withFrame:frame];
@@ -549,8 +598,6 @@
         return 72;
     } else if (index == 2) {
         return 64;
-//    } else if (index == 3) {
-//        return 48;
     } else {
         return frame.size.width - [self positionWithIndex:3 withFrame:frame];
     }
