@@ -499,14 +499,6 @@ CGFloat limitScale(CGFloat scale)
             [_currentNode disableDynamic];
         }
     }
-    
-    if (_definitionNode != nil && _currentNode != _definitionNode) {
-        [_definitionNode reset];
-        _definitionNode = nil;
-        [_definitionsView close];
-    }
-    
-//    [self update];
 }
 
 - (void)touchesMoved:(NSSet *)touches withEvent:(UIEvent *)event
@@ -555,6 +547,13 @@ CGFloat limitScale(CGFloat scale)
     
     if (_currentNode != nil && _currentNode != _root) {
         [_currentNode enableDynamic];
+    }
+    
+    if (_definitionNode != nil && _currentNode != _definitionNode) {
+        [_definitionNode reset];
+        _definitionNode = nil;
+        [_definitionsView close];
+        [self update];
     }
     
     if (_dragging) {

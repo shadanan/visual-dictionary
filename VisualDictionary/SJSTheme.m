@@ -81,11 +81,6 @@
     return [UIColor colorWithRed:0.15 green:0.16 blue:0.16 alpha:1];
 }
 
-- (UIColor *)currentNodeEdgeColor
-{
-    return [UIColor colorWithRed:.43 green:.65 blue:.31 alpha:1];
-}
-
 - (UIColor *)wordNodeColor
 {
     return [UIColor whiteColor];
@@ -288,6 +283,11 @@
     } else {
         return [UIColor colorWithRed:0.82 green:0.21 blue:0.51 alpha:1];
     }
+}
+
+- (UIColor *)currentNodeEdgeColor
+{
+    return [UIColor colorWithRed:1 green:0.7 blue:0.45 alpha:1];
 }
 
 - (UIColor *)cannotGrowEdgeColor
