@@ -32,12 +32,12 @@
 
 - (void)updateBackgroundSprite:(SKSpriteNode *)background
 {
-    background.texture = [SKTexture textureWithImageNamed:@"background_light.png"];
-    
-    if (_scale > 1.0) {
+    if (_idiom == UIUserInterfaceIdiomPhone) {
+        background.texture = [SKTexture textureWithImageNamed:@"background_iphone.png"];
         background.size = CGSizeMake(background.texture.size.width / 2, background.texture.size.height / 2);
     } else {
-        background.size = background.texture.size;
+        background.texture = [SKTexture textureWithImageNamed:@"background_ipad.png"];
+        background.size = CGSizeMake(background.texture.size.width / 2, background.texture.size.height / 2);
     }
 }
 
