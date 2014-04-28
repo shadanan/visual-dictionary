@@ -176,7 +176,7 @@ CGFloat limitScale(CGFloat scale)
     [self addChild:_backgroundSprite];
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
-    self.physicsWorld.speed = 4;
+    self.physicsWorld.speed = 4.0;
     
     _history = [[NSMutableArray alloc] init];
     _histpos = -1;
@@ -625,6 +625,7 @@ CGFloat limitScale(CGFloat scale)
             [_definitionNode highlight];
             [_currentNode grow];
             [_root updateDistances];
+            _updateRequired = YES;
             
             [_definitionsView open];
             [_definitionsView setText:[_definitionNode getDefinition]];
