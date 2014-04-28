@@ -17,9 +17,11 @@ static SJSTheme *theme = nil;
 static CGFloat scale = 1;
 
 @implementation SJSGraphScene {
+    BOOL _updateRequired;
     BOOL _dragging;
     BOOL _scaling;
     BOOL _contentCreated;
+    CGFloat _prevScale;
     CGFloat _scaleStart;
     
     NSInteger _histpos;
@@ -129,6 +131,11 @@ CGFloat limitScale(CGFloat scale)
     }
     
     scale = limitScale(_scaleStart * recognizer.scale);
+    
+    if (scale != _prevScale) {
+        _updateRequired = YES;
+        _prevScale = scale;
+    }
 
     NSLog(@"Scale: %f", scale);
 }
@@ -147,7 +154,7 @@ CGFloat limitScale(CGFloat scale)
         _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     }
     
-    [self update];
+    _updateRequired = YES;
 }
 
 - (CGFloat)width
@@ -235,7 +242,8 @@ CGFloat limitScale(CGFloat scale)
     _wordNodes.zPosition = 1000;
     [self addChild:_wordNodes];
     
-    CGRect definitionsFrame = CGRectMake(0, self.view.frame.size.height - [theme definitionsHeight] - [theme buttonBarHeight], self.view.frame.size.width, [theme definitionsHeight]);
+    CGRect definitionsFrame = CGRectMake(0, self.view.frame.size.height - [theme definitionsHeight] - [theme buttonBarHeight],
+                                         self.view.frame.size.width, [theme definitionsHeight]);
     _definitionsView = [[SJSDefinitionsView alloc] initWithFrame:definitionsFrame];
     [self.view addSubview:_definitionsView];
     
@@ -245,10 +253,10 @@ CGFloat limitScale(CGFloat scale)
     _splash.zPosition = 15000;
     _splash.strokeColor = [UIColor blackColor];
     _splash.fillColor = [UIColor whiteColor];
+    _splash.position = CGPointMake(self.view.frame.size.width / 2,
+                                   (self.view.frame.size.height - [theme buttonBarHeight] - 10) / 2 + [theme buttonBarHeight]);
     
-    CGRect splashFrame = CGRectMake(10, [theme buttonBarHeight] + 10,
-                                    self.view.frame.size.width - 20,
-                                    self.view.frame.size.height - [theme buttonBarHeight] - 34);
+    CGRect splashFrame = CGRectMake(-150, -200, 300, 400);
     CGPathRef splashPath = [SJSGraphScene newPathForRoundedRect:splashFrame radius:2];
     _splash.path = splashPath;
     CGPathRelease(splashPath);
@@ -323,14 +331,13 @@ CGFloat limitScale(CGFloat scale)
     _messageNode.zPosition = 20000;
     [self addChild:_messageNode];
     
-    
-    [self update];
+    _updateRequired = YES;
 }
 
 - (void)setTheme:(Theme)t
 {
     theme.theme = t;
-    [self update];
+    _updateRequired = YES;
 }
 
 - (void)update
@@ -553,7 +560,7 @@ CGFloat limitScale(CGFloat scale)
         [_definitionNode reset];
         _definitionNode = nil;
         [_definitionsView close];
-        [self update];
+        _updateRequired = YES;
     }
     
     if (_dragging) {
@@ -568,7 +575,7 @@ CGFloat limitScale(CGFloat scale)
                 [_root disableDynamic];
                 
                 [_root promoteToRoot];
-                [self update];
+                _updateRequired = YES;
                 [self historyAppend:_root.name];
                 
                 SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
@@ -665,7 +672,7 @@ CGFloat limitScale(CGFloat scale)
         [child removeFromParent];
     }
     
-    [self update];
+    _updateRequired = YES;
 }
 
 - (void)createSceneForRandomWord
@@ -686,7 +693,7 @@ CGFloat limitScale(CGFloat scale)
     [_wordNodes addChild:_root];
     
     [_root promoteToRoot];
-    [self update];
+    _updateRequired = YES;
 }
 
 - (void)prune:(SJSWordNode *)node
@@ -706,7 +713,7 @@ CGFloat limitScale(CGFloat scale)
         }
     }
     
-    [self update];
+    _updateRequired = YES;
 }
 
 - (BOOL)node:(SJSWordNode *)node1 isConnectedTo:(SJSWordNode *)node2
@@ -724,7 +731,8 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)update:(NSTimeInterval)currentTime
 {
-    if (_scaling) {
+    if (_updateRequired) {
+        _updateRequired = NO;
         [self update];
     }
     
