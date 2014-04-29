@@ -151,6 +151,7 @@ CGFloat limitScale(CGFloat scale)
     
     _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, [theme searchHeight])];
     _searchView.delegate = self;
+    _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);    
     [self.view addSubview:_searchView];
     
     _buttonBar = [[SKShapeNode alloc] init];
@@ -353,9 +354,6 @@ CGFloat limitScale(CGFloat scale)
     _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
     _anchorPoint.alpha = [theme disabledAlpha];
     _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    
-    [self closeSearchPane];
-    _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);
     
     for (SJSWordNode *node in _wordNodes.children) {
         [node update];

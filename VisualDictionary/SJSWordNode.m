@@ -12,10 +12,6 @@
 NSInteger maxNodeThreshold = 20;
 NSInteger maxDepth = 3;
 
-// Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
-// Causes memory leak!
-static NSMutableArray *oldLabelNodes = nil;
-
 @implementation SJSWordNode {
     NSString *_meaning;
     NSSet *_neighbourNames;
@@ -23,14 +19,6 @@ static NSMutableArray *oldLabelNodes = nil;
     BOOL _remove;
     BOOL _highlighted;
     CGFloat _prevZPos;
-}
-
-// Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
-+ (void)initialize
-{
-    if (!oldLabelNodes) {
-        oldLabelNodes = [[NSMutableArray alloc] init];
-    }
 }
 
 - (id)initWordWithName:(NSString *)name
@@ -80,9 +68,6 @@ static NSMutableArray *oldLabelNodes = nil;
     _nodeFrame = [SKShapeNode new];
     _nodeFrame.zPosition = -0.5;
     [self addChild:_nodeFrame];
-    
-    // Hack to prevent crash on SKCSprite::removeSubsprite(SKCSprite*)
-    [oldLabelNodes addObject:_nodeFrame];
     
     CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
     self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:nodeSize];;

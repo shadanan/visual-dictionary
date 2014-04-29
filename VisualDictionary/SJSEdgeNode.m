@@ -10,8 +10,8 @@
 #import "SJSGraphScene.h"
 
 @implementation SJSEdgeNode {
-    SJSWordNode __weak *_nodeA;
-    SJSWordNode __weak *_nodeB;
+    SJSWordNode *_nodeA;
+    SJSWordNode *_nodeB;
 }
 
 - (id)initWithNodeA:(SJSWordNode *)nodeA withNodeB:(SJSWordNode *)nodeB

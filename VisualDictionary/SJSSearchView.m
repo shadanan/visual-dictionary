@@ -19,8 +19,8 @@
 {
     self = [super initWithFrame:frame];
     if (self) {
-        _closed = NO;
-        self.center = CGPointMake(self.center.x, self.height / 2);
+        _closed = YES;
+        self.center = CGPointMake(self.center.x, -self.height / 2);
         
         _searchField = [UITextField new];
         _searchField.frame = CGRectMake(20, self.height - 48, self.width - 40, 32);
