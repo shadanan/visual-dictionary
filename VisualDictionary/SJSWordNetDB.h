@@ -13,10 +13,9 @@
 
 @interface SJSWordNetDB : NSObject
 
-- (NSArray *)meaningsForWord:(NSString *)word;
-- (NSArray *)wordsForMeaning:(NSString *)meaning;
+- (NSSet *)meaningsForWord:(NSString *)word;
+- (NSSet *)wordsForMeaning:(NSString *)meaning;
 - (NSString *)definitionOfMeaning:(NSString *)meaning;
-- (BOOL)word:(NSString *)word isConnectedToMeaning:(NSString *)meaning;
 - (BOOL)containsWord:(NSString *)word;
 - (NSString *)getRandomWord;
 

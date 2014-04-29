@@ -31,6 +31,8 @@
 
 - (NSArray *)neighbourNodes;
 
+- (BOOL)isConnectedTo:(SJSWordNode *)node;
+
 - (void)grow;
 
 - (NSMutableAttributedString *)getDefinition;

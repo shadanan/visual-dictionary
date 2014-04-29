@@ -10,13 +10,10 @@
 
 @implementation SJSWordNetDB {
     FMDatabaseQueue *_queue;
-    NSMutableSet *_connected;
 }
 
 - (id)init
 {
-    _connected = [NSMutableSet new];
-    
     NSString *dbFile = [[NSBundle mainBundle] pathForResource:@"wordnet.sqlite" ofType:nil];
     NSLog(@"Sqlite Db: %@", dbFile);
     
@@ -25,9 +22,9 @@
     return self;
 }
 
-- (NSArray *)meaningsForWord:(NSString *)word
+- (NSSet *)meaningsForWord:(NSString *)word
 {
-    __block NSMutableArray *meanings = [NSMutableArray new];
+    __block NSMutableSet *meanings = [NSMutableSet new];
     
     [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT meaning FROM words_meanings WHERE word = ?", word];
@@ -39,17 +36,12 @@
         [rs close];
     }];
     
-    for (NSString *meaning in meanings) {
-        NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
-        [_connected addObject:wordMeaningKey];
-    }
-    
     return meanings;
 }
 
-- (NSArray *)wordsForMeaning:(NSString *)meaning
+- (NSSet *)wordsForMeaning:(NSString *)meaning
 {
-    __block NSMutableArray *words = [NSMutableArray new];
+    __block NSMutableSet *words = [NSMutableSet new];
     
     [_queue inDatabase:^(FMDatabase *db) {
         FMResultSet *rs = [db executeQuery:@"SELECT word FROM words_meanings WHERE meaning = ?", meaning];
@@ -60,11 +52,6 @@
         
         [rs close];
     }];
-    
-    for (NSString *word in words) {
-        NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
-        [_connected addObject:wordMeaningKey];
-    }
     
     return words;
 }
@@ -99,12 +86,6 @@
     }];
     
     return result;
-}
-
-- (BOOL)word:(NSString *)word isConnectedToMeaning:(NSString *)meaning
-{
-    NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
-    return [_connected containsObject:wordMeaningKey];
 }
 
 - (NSString *)getRandomWord

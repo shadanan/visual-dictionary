@@ -18,7 +18,7 @@ static NSMutableArray *oldLabelNodes = nil;
 
 @implementation SJSWordNode {
     NSString *_meaning;
-    NSArray *_neighbourNames;
+    NSSet *_neighbourNames;
     SKShapeNode *_nodeFrame;
     BOOL _remove;
     BOOL _highlighted;
@@ -190,7 +190,7 @@ static NSMutableArray *oldLabelNodes = nil;
         
         CGRect rect = CGRectMake(-width/2, -height/2, width, height);
         CGFloat radius = [SJSGraphScene.theme roundedRectRadius];
-        CGPathRef path = [SJSGraphScene newPathForRoundedRect:rect radius:radius];
+        CGPathRef path = CGPathCreateWithRoundedRect(rect, radius, radius, NULL);
         _nodeFrame.path = path;
         CGPathRelease(path);
     }
@@ -210,7 +210,7 @@ static NSMutableArray *oldLabelNodes = nil;
     }
 }
 
-- (NSArray *)neighbourNames
+- (NSSet *)neighbourNames
 {
     if (_neighbourNames == nil) {
         if (self.type == WordType) {
@@ -220,6 +220,11 @@ static NSMutableArray *oldLabelNodes = nil;
         }
     }
     return _neighbourNames;
+}
+
+- (BOOL)isConnectedTo:(SJSWordNode *)node
+{
+    return [self.neighbourNames containsObject:node.name];
 }
 
 - (void)disableDynamic
@@ -286,8 +291,10 @@ static NSMutableArray *oldLabelNodes = nil;
 
 - (NSArray *)neighbourNodes
 {
-    if (self.neighbourNames == nil)
+    if (self.neighbourNames == nil) {
+        NSLog(@"neighbourNames returned nil!");
         return nil;
+    }
     
     NSMutableArray *neighbourNodes = [NSMutableArray new];
     

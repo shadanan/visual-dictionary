@@ -23,7 +23,6 @@
 + (SJSWordNetDB *)wordNetDb;
 + (SJSTheme *)theme;
 + (CGFloat)scale;
-+ (CGPathRef)newPathForRoundedRect:(CGRect)rect radius:(CGFloat)radius;
 
 - (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
 
