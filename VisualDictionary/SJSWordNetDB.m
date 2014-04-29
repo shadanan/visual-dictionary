@@ -11,13 +11,11 @@
 @implementation SJSWordNetDB {
     FMDatabaseQueue *_queue;
     NSMutableSet *_connected;
-    NSMutableSet *_disconnected;
 }
 
 - (id)init
 {
     _connected = [NSMutableSet new];
-    _disconnected = [NSMutableSet new];
     
     NSString *dbFile = [[NSBundle mainBundle] pathForResource:@"wordnet.sqlite" ofType:nil];
     NSLog(@"Sqlite Db: %@", dbFile);
@@ -42,7 +40,7 @@
     }];
     
     for (NSString *meaning in meanings) {
-        NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
+        NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
         [_connected addObject:wordMeaningKey];
     }
     
@@ -64,7 +62,7 @@
     }];
     
     for (NSString *word in words) {
-        NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
+        NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
         [_connected addObject:wordMeaningKey];
     }
     
@@ -105,7 +103,7 @@
 
 - (BOOL)word:(NSString *)word isConnectedToMeaning:(NSString *)meaning
 {
-    NSString *wordMeaningKey = [[word stringByAppendingString:@"-"] stringByAppendingString:meaning];
+    NSString *wordMeaningKey = [NSString stringWithFormat:@"%@-%@", word, meaning];
     return [_connected containsObject:wordMeaningKey];
 }
 

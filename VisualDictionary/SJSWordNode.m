@@ -101,6 +101,13 @@ static NSMutableArray *oldLabelNodes = nil;
     _remove = remove;
 }
 
+- (void)setFontName:(NSString *)fontName
+{
+    if (super.fontName != fontName) {
+        super.fontName = fontName;
+    }
+}
+
 - (void)setZPosition:(CGFloat)zPosition
 {
     if (_highlighted) {
