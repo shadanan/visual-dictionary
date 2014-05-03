@@ -8,7 +8,6 @@
 
 #import "SJSGraphScene.h"
 
-CGFloat springLength = 80;
 CGFloat maxScale = 2.5;
 CGFloat minScale = 0.25;
 
@@ -690,9 +689,13 @@ CGFloat limitScale(CGFloat scale)
         [self update];
     }
     
-    double r0 = springLength * scale;
+    double r0 = 80 * scale;
     double ka = 1 * scale;
     double kp = 10000 * scale;
+    double kb = 0 * scale;
+    
+    double w = self.frame.size.width / 2;
+    double h = self.frame.size.height / 2;
     
     for (SJSWordNode *me in _wordNodes.children) {
         double x1 = me.position.x;
@@ -703,8 +706,8 @@ CGFloat limitScale(CGFloat scale)
             continue;
         }
         
-        double fx = 0.0;
-        double fy = 0.0;
+        double fx = kb * pow((w - x1) / w, 3);
+        double fy = kb * pow((h - y1) / h, 3);
         
         for (SJSWordNode *them in _wordNodes.children) {
             if (me == them) {
