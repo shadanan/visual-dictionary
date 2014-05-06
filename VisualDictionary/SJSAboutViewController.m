@@ -12,6 +12,7 @@
 
 @property (strong, nonatomic) IBOutlet UIScrollView *aboutScrollView;
 @property (strong, nonatomic) IBOutlet UIView *aboutContentView;
+@property (strong, nonatomic) IBOutlet UILabel *helpLabel;
 
 @end
 
@@ -42,18 +43,22 @@
 {
     [super viewDidLayoutSubviews];
     [self.aboutScrollView layoutIfNeeded];
+    [self.helpLabel sizeToFit];
+    
+    float height = self.helpLabel.frame.origin.y + self.helpLabel.frame.size.height + 20;
+    float width = self.aboutContentView.frame.size.width;
+    CGPoint origin = self.aboutContentView.frame.origin;
+    self.aboutContentView.frame = CGRectMake(origin.x, origin.y, width, height);
+    
     self.aboutScrollView.contentSize = self.aboutContentView.bounds.size;
+    
+    UITapGestureRecognizer *tapGestureRecognizer = [[UITapGestureRecognizer alloc] initWithTarget:self action:@selector(handleTapFrom:)];
+    [self.aboutContentView addGestureRecognizer:tapGestureRecognizer];
 }
 
-/*
-#pragma mark - Navigation
-
-// In a storyboard-based application, you will often want to do a little preparation before navigation
-- (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender
+- (void)handleTapFrom:(UITapGestureRecognizer *)recognizer
 {
-    // Get the new view controller using [segue destinationViewController].
-    // Pass the selected object to the new view controller.
+    [self dismissViewControllerAnimated:YES completion:nil];
 }
-*/
 
 @end

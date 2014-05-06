@@ -28,15 +28,15 @@
             <objects>
                 <viewController title="About" id="xjY-I1-LWh" customClass="SJSAboutViewController" sceneMemberID="viewController">
                     <view key="view" contentMode="scaleToFill" id="qFj-9j-9jj">
-                        <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                        <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
+                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                         <subviews>
                             <scrollView clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" showsHorizontalScrollIndicator="NO" id="rN2-3Z-sUo">
-                                <rect key="frame" x="0.0" y="0.0" width="320" height="1000"/>
-                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                <rect key="frame" x="0.0" y="0.0" width="320" height="2000"/>
+                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES" flexibleMaxY="YES"/>
                                 <subviews>
                                     <view contentMode="scaleToFill" id="BQv-uw-yFD" userLabel="Content View">
-                                        <rect key="frame" x="0.0" y="0.0" width="320" height="985"/>
+                                        <rect key="frame" x="0.0" y="0.0" width="320" height="1889"/>
                                         <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                         <subviews>
                                             <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" text="THE" textAlignment="center" lineBreakMode="tailTruncation" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="TfG-Zh-T0L">
@@ -52,31 +52,39 @@
                                                 <fontDescription key="fontDescription" name="Futura-Medium" family="Futura" pointSize="71"/>
                                                 <nil key="highlightedColor"/>
                                             </label>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5bh-P0-90J">
-                                                <rect key="frame" x="20" y="443" width="280" height="214"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
-                                                <string key="text">TheSaurus is an interactive visual thesaurus where words and their meanings are presented as a graph.
-
-Word nodes are associated with meaning nodes that can be nouns, verbs, adjectives, and adverbs.
-
-Click on a node to see its meaning. Drag the graph around to get an idea of the relationship between nodes.</string>
-                                                <fontDescription key="fontDescription" name="Georgia" family="Georgia" pointSize="17"/>
-                                                <color key="textColor" cocoaTouchSystemColor="darkTextColor"/>
-                                                <nil key="highlightedColor"/>
-                                            </label>
                                             <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="brontosaurus.png" id="KRf-En-ayW">
                                                 <rect key="frame" x="20" y="263" width="280" height="172"/>
-                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" widthSizable="YES" flexibleMaxX="YES" flexibleMinY="YES" heightSizable="YES" flexibleMaxY="YES"/>
+                                                <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMaxY="YES"/>
                                             </imageView>
-                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="left" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="6g1-nY-85N">
-                                                <rect key="frame" x="20" y="678" width="280" height="287"/>
-                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                                            <label opaque="NO" clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" usesAttributedText="YES" lineBreakMode="tailTruncation" numberOfLines="0" baselineAdjustment="alignBaselines" adjustsFontSizeToFit="NO" id="5bh-P0-90J">
+                                                <rect key="frame" x="20" y="443" width="280" height="1184"/>
+                                                <autoresizingMask key="autoresizingMask" widthSizable="YES" flexibleMaxY="YES"/>
                                                 <attributedString key="attributedText">
+                                                    <fragment>
+                                                        <mutableString key="content">TheSaurus is an interactive visual thesaurus. When you search for a word, the word and its synonyms are presented as a graph. The word node that was searched becomes the root of the graph and is centered in the middle. 
+
+Word nodes are connected to meaning nodes. A meaning node can be a noun, verb, adjective, or adverb. Word nodes themselves are defined by the set of meaning nodes with which they are associated. If two word nodes are connected to the same meaning node, then those two word nodes will have that meaning in common.
+
+If you tap on a node, you will be presented with the node's definition. Since a word's definition is its set of meanings, all of its meanings will be presented when it is tapped.
+
+By default, the graph only shows a limited number of nodes at a time. If a node has neighbors that aren't currently displayed, it will have a magenta outline. Tapping on one of these nodes will expand the graph to show that node's neighbours. If there are too many nodes on the screen, you can drag a node to the recycle area at the bottom left and that node and all of its descendents will be pruned from the graph. 
+
+Other neat features:
+• Shake your device for a random word
+• Drag a node to the center of the graph to promote it to the root
+• Pinch the display to adjust the size of the nodes and fonts
+
+</mutableString>
+                                                        <attributes>
+                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
+                                                            <font key="NSFont" size="17" name="Georgia"/>
+                                                            <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
+                                                        </attributes>
+                                                    </fragment>
                                                     <fragment>
                                                         <string key="content">Lead Developer
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Futura-Medium"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
@@ -86,9 +94,7 @@ Click on a node to see its meaning. Drag the graph around to get an idea of the 
 ICAgIANTaGFkIFNoYXJtYQo
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Georgia"/>
-                                                            <font key="NSOriginalFont" size="14" name="Georgia"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -97,7 +103,6 @@ ICAgIANTaGFkIFNoYXJtYQo
 Artwork
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Futura-Medium"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
@@ -106,9 +111,7 @@ Artwork
                                                         <string key="content">    Tim Peters
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Georgia"/>
-                                                            <font key="NSOriginalFont" size="14" name="Georgia"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -116,9 +119,7 @@ Artwork
                                                         <string key="content">
 Dinosaur Image</string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Futura-Medium"/>
-                                                            <font key="NSOriginalFont" size="14" name="Futura-Medium"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -128,9 +129,7 @@ Dinosaur Image</string>
     (released to public domain)
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Georgia"/>
-                                                            <font key="NSOriginalFont" size="14" name="Georgia"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -139,9 +138,7 @@ Dinosaur Image</string>
 Dictionary Data
 </string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Futura-Medium"/>
-                                                            <font key="NSOriginalFont" size="14" name="Futura-Medium"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -152,9 +149,7 @@ Dictionary Data
 WordNet Copyright Notice:
 WordNet 3.0 Copyright 2006 by Princeton University. All rights reserved.</string>
                                                         <attributes>
-                                                            <color key="NSColor" cocoaTouchSystemColor="darkTextColor"/>
                                                             <font key="NSFont" size="14" name="Georgia"/>
-                                                            <font key="NSOriginalFont" size="14" name="Georgia"/>
                                                             <paragraphStyle key="NSParagraphStyle" alignment="left" lineBreakMode="wordWrapping" baseWritingDirection="natural"/>
                                                         </attributes>
                                                     </fragment>
@@ -172,10 +167,11 @@ WordNet 3.0 Copyright 2006 by Princeton University. All rights reserved.</string
                     </view>
                     <navigationItem key="navigationItem" id="dVb-1C-w5A"/>
                     <freeformSimulatedSizeMetrics key="simulatedDestinationMetrics"/>
-                    <size key="freeformSize" width="320" height="1000"/>
+                    <size key="freeformSize" width="320" height="2000"/>
                     <connections>
                         <outlet property="aboutContentView" destination="BQv-uw-yFD" id="qM5-MH-tcF"/>
                         <outlet property="aboutScrollView" destination="rN2-3Z-sUo" id="0XW-wq-OKO"/>
+                        <outlet property="helpLabel" destination="5bh-P0-90J" id="qkl-O0-Nkt"/>
                     </connections>
                 </viewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="m0b-mE-lmo" userLabel="First Responder" sceneMemberID="firstResponder"/>
