@@ -333,14 +333,18 @@ CGFloat limitScale(CGFloat scale)
     _searchButton.frame = [theme searchButtonFrameInFrame:_buttonBar.frame];
     
     if (_histpos <= 0) {
+        _backButton.text = @"BACK";
         [_backButton disable];
     } else {
+        _backButton.text = [_history objectAtIndex:_histpos - 1];
         [_backButton enable];
     }
     
     if (_histpos == _history.count - 1) {
+        _forwardButton.text = @"FORWARD";
         [_forwardButton disable];
     } else {
+        _forwardButton.text = [_history objectAtIndex:_histpos + 1];
         [_forwardButton enable];
     }
     
@@ -395,6 +399,13 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)historyAppend:(NSString *)word
 {
+    if (_histpos >= 0 && _histpos < _history.count) {
+        NSString *curr = [_history objectAtIndex:_histpos];
+        if ([curr isEqualToString:word]) {
+            return;
+        }
+    }
+    
     _histpos += 1;
     while (_histpos < _history.count) {
         [_history removeLastObject];
@@ -541,7 +552,10 @@ CGFloat limitScale(CGFloat scale)
                 
                 [_root promoteToRoot];
                 _updateRequired = YES;
-                [self historyAppend:_root.name];
+                
+                if (_root.type == WordType) {
+                    [self historyAppend:_root.name];
+                }
                 
                 SKAction *moveToCentre = [SKAction moveTo:CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame)) duration:0.2];
                 [_root runAction:moveToCentre];
@@ -581,6 +595,11 @@ CGFloat limitScale(CGFloat scale)
         }
         
         if ([_searchButton containsPoint:pos]) {
+            [self openSearchPane];
+            return;
+        }
+        
+        if ([_splash containsPoint:pos] && _splash.alpha == 1) {
             [self openSearchPane];
             return;
         }
@@ -633,6 +652,8 @@ CGFloat limitScale(CGFloat scale)
 {
     _root = nil;
     _currentNode = nil;
+    
+    [_definitionsView close];
     
     for (SJSWordNode *child in _wordNodes.children) {
         [child removeFromParent];
