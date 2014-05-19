@@ -36,9 +36,6 @@
 		73BC6A1318A87107006E6898 /* SJSAppDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A1218A87107006E6898 /* SJSAppDelegate.m */; };
 		73BC6A1C18A87107006E6898 /* SJSViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A1B18A87107006E6898 /* SJSViewController.m */; };
 		73BC6A1E18A87107006E6898 /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1D18A87107006E6898 /* Images.xcassets */; };
-		73BC6A2518A87107006E6898 /* XCTest.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A2418A87107006E6898 /* XCTest.framework */; };
-		73BC6A2618A87107006E6898 /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0218A87107006E6898 /* Foundation.framework */; };
-		73BC6A2718A87107006E6898 /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A0618A87107006E6898 /* UIKit.framework */; };
 		73BC6A5E18A8722C006E6898 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A5D18A8722C006E6898 /* SpriteKit.framework */; };
 		73BC6A6118A872D8006E6898 /* SJSGraphScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A6018A872D8006E6898 /* SJSGraphScene.m */; };
 		73BC6A7918AAA531006E6898 /* SJSWordNetDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */; };
@@ -47,16 +44,6 @@
 		73E0A15C190E143A00376646 /* background_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 73E0A15B190E143A00376646 /* background_ipad.png */; };
 		73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1418A87107006E6898 /* iPhone.storyboard */; };
 /* End PBXBuildFile section */
-
-/* Begin PBXContainerItemProxy section */
-		73BC6A2818A87107006E6898 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = 73BC69F718A87106006E6898 /* Project object */;
-			proxyType = 1;
-			remoteGlobalIDString = 73BC69FE18A87106006E6898;
-			remoteInfo = GraphVisualizer;
-		};
-/* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		732639FD18BEE5D5006213E8 /* SJSTheme.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSTheme.h; sourceTree = "<group>"; };
@@ -106,7 +93,6 @@
 		73BC6A1A18A87107006E6898 /* SJSViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSViewController.h; sourceTree = "<group>"; };
 		73BC6A1B18A87107006E6898 /* SJSViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SJSViewController.m; sourceTree = "<group>"; };
 		73BC6A1D18A87107006E6898 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
-		73BC6A2318A87107006E6898 /* TheSaurusTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = TheSaurusTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		73BC6A2418A87107006E6898 /* XCTest.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = XCTest.framework; path = Library/Frameworks/XCTest.framework; sourceTree = DEVELOPER_DIR; };
 		73BC6A5D18A8722C006E6898 /* SpriteKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SpriteKit.framework; path = System/Library/Frameworks/SpriteKit.framework; sourceTree = SDKROOT; };
 		73BC6A5F18A872D8006E6898 /* SJSGraphScene.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSGraphScene.h; sourceTree = "<group>"; };
@@ -131,16 +117,6 @@
 				73BC6A0718A87107006E6898 /* UIKit.framework in Frameworks */,
 				73BC6A5E18A8722C006E6898 /* SpriteKit.framework in Frameworks */,
 				73BC6A0318A87107006E6898 /* Foundation.framework in Frameworks */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		73BC6A2018A87107006E6898 /* Frameworks */ = {
-			isa = PBXFrameworksBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-				73BC6A2518A87107006E6898 /* XCTest.framework in Frameworks */,
-				73BC6A2718A87107006E6898 /* UIKit.framework in Frameworks */,
-				73BC6A2618A87107006E6898 /* Foundation.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -192,7 +168,6 @@
 			isa = PBXGroup;
 			children = (
 				73BC69FF18A87107006E6898 /* TheSaurus.app */,
-				73BC6A2318A87107006E6898 /* TheSaurusTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -282,24 +257,6 @@
 			productReference = 73BC69FF18A87107006E6898 /* TheSaurus.app */;
 			productType = "com.apple.product-type.application";
 		};
-		73BC6A2218A87107006E6898 /* TheSaurusTests */ = {
-			isa = PBXNativeTarget;
-			buildConfigurationList = 73BC6A3718A87107006E6898 /* Build configuration list for PBXNativeTarget "TheSaurusTests" */;
-			buildPhases = (
-				73BC6A1F18A87107006E6898 /* Sources */,
-				73BC6A2018A87107006E6898 /* Frameworks */,
-				73BC6A2118A87107006E6898 /* Resources */,
-			);
-			buildRules = (
-			);
-			dependencies = (
-				73BC6A2918A87107006E6898 /* PBXTargetDependency */,
-			);
-			name = TheSaurusTests;
-			productName = GraphVisualizerTests;
-			productReference = 73BC6A2318A87107006E6898 /* TheSaurusTests.xctest */;
-			productType = "com.apple.product-type.bundle.unit-test";
-		};
 /* End PBXNativeTarget section */
 
 /* Begin PBXProject section */
@@ -312,9 +269,6 @@
 				TargetAttributes = {
 					73BC69FE18A87106006E6898 = {
 						DevelopmentTeam = A5S59GAS97;
-					};
-					73BC6A2218A87107006E6898 = {
-						TestTargetID = 73BC69FE18A87106006E6898;
 					};
 				};
 			};
@@ -332,7 +286,6 @@
 			projectRoot = "";
 			targets = (
 				73BC69FE18A87106006E6898 /* TheSaurus */,
-				73BC6A2218A87107006E6898 /* TheSaurusTests */,
 			);
 		};
 /* End PBXProject section */
@@ -354,13 +307,6 @@
 				73BC6A1E18A87107006E6898 /* Images.xcassets in Resources */,
 				73BC6A0D18A87107006E6898 /* InfoPlist.strings in Resources */,
 				737F04E618AE1180005717F6 /* wordnet.sqlite in Resources */,
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
-		73BC6A2118A87107006E6898 /* Resources */ = {
-			isa = PBXResourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -393,22 +339,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
-		73BC6A1F18A87107006E6898 /* Sources */ = {
-			isa = PBXSourcesBuildPhase;
-			buildActionMask = 2147483647;
-			files = (
-			);
-			runOnlyForDeploymentPostprocessing = 0;
-		};
 /* End PBXSourcesBuildPhase section */
-
-/* Begin PBXTargetDependency section */
-		73BC6A2918A87107006E6898 /* PBXTargetDependency */ = {
-			isa = PBXTargetDependency;
-			target = 73BC69FE18A87106006E6898 /* TheSaurus */;
-			targetProxy = 73BC6A2818A87107006E6898 /* PBXContainerItemProxy */;
-		};
-/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		73BC6A0B18A87107006E6898 /* InfoPlist.strings */ = {
@@ -507,14 +438,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VisualDictionary/TheSaurus-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/VisualDictionary/TheSaurus-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = TheSaurus;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "3E331072-9476-4D48-937E-7A0171298C2F";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -525,56 +456,16 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "iPhone Developer";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
+				CODE_SIGN_IDENTITY = "";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VisualDictionary/TheSaurus-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/VisualDictionary/TheSaurus-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 7.0;
 				PRODUCT_NAME = TheSaurus;
-				PROVISIONING_PROFILE = "";
+				PROVISIONING_PROFILE = "3E331072-9476-4D48-937E-7A0171298C2F";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
-			};
-			name = Release;
-		};
-		73BC6A3818A87107006E6898 /* Debug */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GraphVisualizer.app/GraphVisualizer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "GraphVisualizer/GraphVisualizer-Prefix.pch";
-				GCC_PREPROCESSOR_DEFINITIONS = (
-					"DEBUG=1",
-					"$(inherited)",
-				);
-				INFOPLIST_FILE = "GraphVisualizerTests/VisualDictionaryTests-Info.plist";
-				PRODUCT_NAME = TheSaurusTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
-			};
-			name = Debug;
-		};
-		73BC6A3918A87107006E6898 /* Release */ = {
-			isa = XCBuildConfiguration;
-			buildSettings = {
-				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/GraphVisualizer.app/GraphVisualizer";
-				FRAMEWORK_SEARCH_PATHS = (
-					"$(SDKROOT)/Developer/Library/Frameworks",
-					"$(inherited)",
-					"$(DEVELOPER_FRAMEWORKS_DIR)",
-				);
-				GCC_PRECOMPILE_PREFIX_HEADER = YES;
-				GCC_PREFIX_HEADER = "GraphVisualizer/GraphVisualizer-Prefix.pch";
-				INFOPLIST_FILE = "GraphVisualizerTests/VisualDictionaryTests-Info.plist";
-				PRODUCT_NAME = TheSaurusTests;
-				TEST_HOST = "$(BUNDLE_LOADER)";
-				WRAPPER_EXTENSION = xctest;
 			};
 			name = Release;
 		};
@@ -595,15 +486,6 @@
 			buildConfigurations = (
 				73BC6A3518A87107006E6898 /* Debug */,
 				73BC6A3618A87107006E6898 /* Release */,
-			);
-			defaultConfigurationIsVisible = 0;
-			defaultConfigurationName = Release;
-		};
-		73BC6A3718A87107006E6898 /* Build configuration list for PBXNativeTarget "TheSaurusTests" */ = {
-			isa = XCConfigurationList;
-			buildConfigurations = (
-				73BC6A3818A87107006E6898 /* Debug */,
-				73BC6A3918A87107006E6898 /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;

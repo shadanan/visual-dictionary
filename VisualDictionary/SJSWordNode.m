@@ -462,4 +462,12 @@ NSInteger maxDepth = 3;
     return nil;
 }
 
+- (void)removeFromParent
+{
+    [_nodeFrame removeFromParent];
+    _nodeFrame = nil;
+    
+    [super removeFromParent];
+}
+
 @end
