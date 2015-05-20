@@ -12,22 +12,34 @@
 	<dict>
 		<key>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</key>
 		<string>ssh://github.com/shadanan/visual-dictionary.git</string>
+		<key>DA22E0A6F70C3A10DB8202F400A2336EC2F778E3</key>
+		<string>github.com:shadanan/visual-dictionary.git</string>
 	</dict>
 	<key>IDESourceControlProjectPath</key>
-	<string>TheSaurus.xcodeproj/project.xcworkspace</string>
+	<string>TheSaurus.xcodeproj</string>
 	<key>IDESourceControlProjectRelativeInstallPathDictionary</key>
 	<dict>
 		<key>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</key>
+		<string>../../../VisualDictionary</string>
+		<key>DA22E0A6F70C3A10DB8202F400A2336EC2F778E3</key>
 		<string>../..</string>
 	</dict>
 	<key>IDESourceControlProjectURL</key>
-	<string>ssh://github.com/shadanan/visual-dictionary.git</string>
+	<string>github.com:shadanan/visual-dictionary.git</string>
 	<key>IDESourceControlProjectVersion</key>
-	<integer>110</integer>
+	<integer>111</integer>
 	<key>IDESourceControlProjectWCCIdentifier</key>
-	<string>8DE46D65-A91E-4516-BF4C-CE7967AE41B0</string>
+	<string>DA22E0A6F70C3A10DB8202F400A2336EC2F778E3</string>
 	<key>IDESourceControlProjectWCConfigurations</key>
 	<array>
+		<dict>
+			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
+			<string>public.vcs.git</string>
+			<key>IDESourceControlWCCIdentifierKey</key>
+			<string>DA22E0A6F70C3A10DB8202F400A2336EC2F778E3</string>
+			<key>IDESourceControlWCCName</key>
+			<string>TheSaurus</string>
+		</dict>
 		<dict>
 			<key>IDESourceControlRepositoryExtensionIdentifierKey</key>
 			<string>public.vcs.git</string>

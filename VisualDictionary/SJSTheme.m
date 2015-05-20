@@ -580,7 +580,7 @@
 }
 
 - (CGRect)rectWithIndex:(NSInteger)index withFrame:(CGRect)frame {
-    return CGRectMake([self positionWithIndex:index withFrame:frame] - 1, -1, [self widthWithIndex:index withFrame:frame], frame.size.height);
+    return CGRectMake([self positionWithIndex:index withFrame:frame] - 1, -1, [self widthWithIndex:index withFrame:frame], frame.size.height - 1);
 }
 
 - (CGFloat)positionWithIndex:(NSInteger)index withFrame:(CGRect)frame {

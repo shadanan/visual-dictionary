@@ -169,9 +169,10 @@ NSInteger maxDepth = 3;
         _nodeFrame.path = circlePath;
         CGPathRelease(circlePath);
     } else if ([SJSGraphScene.theme nodeStyleByNodeType:self.type] == RoundedRectStyle) {
-        CGRect wordFrame = [self calculateAccumulatedFrame];
+        CGRect wordFrame = [self frame];
         CGFloat width = wordFrame.size.width + [SJSGraphScene.theme roundedRectMarginX] * 2 * SJSGraphScene.scale;
         CGFloat height = wordFrame.size.height + [SJSGraphScene.theme roundedRectMarginY] * 2 * SJSGraphScene.scale;
+        NSLog(@"wordFrame(%f, %f, %f, %f)", wordFrame.origin.x, wordFrame.origin.y, wordFrame.size.width, wordFrame.size.height);
         
         CGRect rect = CGRectMake(-width/2, -height/2, width, height);
         CGFloat radius = [SJSGraphScene.theme roundedRectRadius];
