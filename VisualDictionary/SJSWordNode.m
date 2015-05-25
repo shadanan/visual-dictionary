@@ -69,13 +69,15 @@ NSInteger maxDepth = 3;
     _nodeFrame.zPosition = -0.5;
     [self addChild:_nodeFrame];
     
-    CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
-    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:nodeSize];;
+    CGFloat nodeSize = [SJSGraphScene.theme nodeSize];
+    self.physicsBody = [SKPhysicsBody bodyWithCircleOfRadius:nodeSize];
     self.physicsBody.mass = 1;
     self.physicsBody.dynamic = YES;
-    self.physicsBody.linearDamping = 0.2;
+    self.physicsBody.linearDamping = 1;
     self.physicsBody.friction = 0;
+    self.physicsBody.restitution = 0;
     self.physicsBody.allowsRotation = NO;
+    self.physicsBody.collisionBitMask = 1;
     
     [self update];
     return self;
@@ -111,10 +113,7 @@ NSInteger maxDepth = 3;
     _highlighted = YES;
     _prevZPos = self.zPosition;
     super.zPosition = 0;
-
     [self update];
-    
-    NSLog(@"prev zpos: %f  curr zpos: %f", _prevZPos, self.zPosition);
 }
 
 - (void)reset
@@ -126,10 +125,7 @@ NSInteger maxDepth = 3;
     _highlighted = NO;
     super.zPosition = _prevZPos;
     _prevZPos = 0;
-
     [self update];
-    
-    NSLog(@"reset zpos: %f", self.zPosition);
 }
 
 - (BOOL)remove
@@ -141,24 +137,24 @@ NSInteger maxDepth = 3;
 {
     if (_highlighted) {
         _nodeFrame.fillColor = [SJSGraphScene.theme currentNodeColor];
-        self.fontSize = [SJSGraphScene.theme currentNodeFontSize] * SJSGraphScene.scale;
+        self.fontSize = [SJSGraphScene.theme currentNodeFontSize];
         self.fontName = [SJSGraphScene.theme currentNodeFontNameByNodeType:self.type];
         self.fontColor = [SJSGraphScene.theme currentNodeFontColor];
     } else if (self.distance == 0) {
         _nodeFrame.fillColor = [SJSGraphScene.theme rootNodeColor];
-        self.fontSize = [SJSGraphScene.theme rootNodeFontSize] * SJSGraphScene.scale;
+        self.fontSize = [SJSGraphScene.theme rootNodeFontSize];
         self.fontName = [SJSGraphScene.theme rootNodeFontNameByNodeType:self.type];
         self.fontColor = [SJSGraphScene.theme rootNodeFontColor];
     } else {
         _nodeFrame.fillColor = [SJSGraphScene.theme colorByNodeType:self.type];
-        self.fontSize = [SJSGraphScene.theme fontSizeByNodeType:self.type] * SJSGraphScene.scale;
+        self.fontSize = [SJSGraphScene.theme fontSizeByNodeType:self.type];
         self.fontName = [SJSGraphScene.theme fontNameByNodeType:self.type];
         self.fontColor = [SJSGraphScene.theme fontColorByNodeType:self.type];
     }
     
     _nodeFrame.lineWidth = [SJSGraphScene.theme lineWidth];
     
-    CGFloat nodeSize = [SJSGraphScene.theme nodeSize] * SJSGraphScene.scale;
+    CGFloat nodeSize = [SJSGraphScene.theme nodeSize];
     if (_highlighted) {
         nodeSize *= 1.2;
     }
@@ -170,9 +166,8 @@ NSInteger maxDepth = 3;
         CGPathRelease(circlePath);
     } else if ([SJSGraphScene.theme nodeStyleByNodeType:self.type] == RoundedRectStyle) {
         CGRect wordFrame = [self frame];
-        CGFloat width = wordFrame.size.width + [SJSGraphScene.theme roundedRectMarginX] * 2 * SJSGraphScene.scale;
-        CGFloat height = wordFrame.size.height + [SJSGraphScene.theme roundedRectMarginY] * 2 * SJSGraphScene.scale;
-        NSLog(@"wordFrame(%f, %f, %f, %f)", wordFrame.origin.x, wordFrame.origin.y, wordFrame.size.width, wordFrame.size.height);
+        CGFloat width = wordFrame.size.width + [SJSGraphScene.theme roundedRectMarginX] * 2;
+        CGFloat height = wordFrame.size.height + [SJSGraphScene.theme roundedRectMarginY] * 2;
         
         CGRect rect = CGRectMake(-width/2, -height/2, width, height);
         CGFloat radius = [SJSGraphScene.theme roundedRectRadius];
@@ -188,21 +183,15 @@ NSInteger maxDepth = 3;
     } else {
         _nodeFrame.strokeColor = [SJSGraphScene.theme cannotGrowEdgeColor];
     }
-    
-    if (self.position.x <= 0 || self.position.x >= self.scene.size.width ||
-        self.position.y <= [SJSGraphScene.theme buttonBarHeight] || self.position.y >= self.scene.size.height) {
-        self.position = CGPointMake(MIN(MAX(self.position.x, 1), self.scene.size.width - 1),
-                                    MIN(MAX(self.position.y, [SJSGraphScene.theme buttonBarHeight] + 1), self.scene.size.height - 1));
-    }
 }
 
 - (NSSet *)neighbourNames
 {
     if (_neighbourNames == nil) {
         if (self.type == WordType) {
-            _neighbourNames = [SJSGraphScene.wordNetDb meaningsForWord:self.name];
+            _neighbourNames = [SJSWordNetDB.instance meaningsForWord:self.name];
         } else {
-            _neighbourNames = [SJSGraphScene.wordNetDb wordsForMeaning:self.name];
+            _neighbourNames = [SJSWordNetDB.instance wordsForMeaning:self.name];
         }
     }
     return _neighbourNames;
@@ -331,17 +320,16 @@ NSInteger maxDepth = 3;
                 neighbour = [[SJSWordNode alloc] initWordWithName:neighbourName];
             }
             
+            CGFloat count = self.parent.children.count;
+            CGFloat x_off = sinf(M_PI * 2 * count / maxNodeThreshold) * 60;
+            CGFloat y_off = cosf(M_PI * 2 * count / maxNodeThreshold) * 60;
+            neighbour.position = CGPointMake(x_off + self.position.x, y_off + self.position.y);
+
             [self.parent addChild:neighbour];
-            
-            CGFloat x = self.position.x + arc4random_uniform(40) - 20;
-            CGFloat y = self.position.y + arc4random_uniform(40) - 20;
-            neighbour.position = CGPointMake(x, y);
         } else {
             neighbour.remove = NO;
         }
     }
-    
-    self.physicsBody.mass = self.neighbourNames.count;
 }
 
 - (void)growRecursively
@@ -410,7 +398,7 @@ NSInteger maxDepth = 3;
 - (NSString *)meaning
 {
     if (_meaning == nil) {
-        _meaning = [SJSGraphScene.wordNetDb definitionOfMeaning:self.name];
+        _meaning = [SJSWordNetDB.instance definitionOfMeaning:self.name];
     }
     
     return _meaning;
@@ -427,12 +415,12 @@ NSInteger maxDepth = 3;
         NSRange definitionRange = NSMakeRange(typeString.length + 2, definitionString.length);
         
         UIFont *typeFont = [UIFont fontWithName:[SJSGraphScene.theme typeFontName]
-                                           size:[SJSGraphScene.theme typeFontSize] * SJSGraphScene.scale];
+                                           size:[SJSGraphScene.theme typeFontSize]];
         [result addAttribute:NSFontAttributeName value:typeFont range:typeRange];
         [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme typeFontColor] range:typeRange];
         
         UIFont *definitionFont = [UIFont fontWithName:[SJSGraphScene.theme definitionFontName]
-                                                 size:[SJSGraphScene.theme definitionFontSize] * SJSGraphScene.scale];
+                                                 size:[SJSGraphScene.theme definitionFontSize]];
         [result addAttribute:NSFontAttributeName value:definitionFont range:definitionRange];
         [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme definitionFontColor] range:definitionRange];
         
@@ -445,7 +433,7 @@ NSInteger maxDepth = 3;
         NSMutableAttributedString *result = [[NSMutableAttributedString alloc] initWithString:self.text];
         NSRange wordRange = NSMakeRange(0, result.length);
         UIFont *wordDefFont = [UIFont fontWithName:[SJSGraphScene.theme wordDefFontName]
-                                              size:[SJSGraphScene.theme wordDefFontSize] * SJSGraphScene.scale];
+                                              size:[SJSGraphScene.theme wordDefFontSize]];
         [result addAttribute:NSFontAttributeName value:wordDefFont range:wordRange];
         [result addAttribute:NSForegroundColorAttributeName value:[SJSGraphScene.theme wordDefFontColor] range:wordRange];
         

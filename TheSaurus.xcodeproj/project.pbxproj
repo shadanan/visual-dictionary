@@ -39,8 +39,9 @@
 		73BC6A5E18A8722C006E6898 /* SpriteKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 73BC6A5D18A8722C006E6898 /* SpriteKit.framework */; };
 		73BC6A6118A872D8006E6898 /* SJSGraphScene.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A6018A872D8006E6898 /* SJSGraphScene.m */; };
 		73BC6A7918AAA531006E6898 /* SJSWordNetDB.m in Sources */ = {isa = PBXBuildFile; fileRef = 73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */; };
+		73C1001C1B0EA9DA008F371F /* Main.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73C1001B1B0EA9DA008F371F /* Main.storyboard */; };
+		73C100261B1023E8008F371F /* SJSMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 73C100251B1023E8008F371F /* SJSMainViewController.m */; };
 		73CBA8A818CD427500B4E9B9 /* SJSIconButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA8A718CD427500B4E9B9 /* SJSIconButton.m */; };
-		73D06F5318BDB2FF00A81600 /* SJSSearchView.m in Sources */ = {isa = PBXBuildFile; fileRef = 73D06F5218BDB2FF00A81600 /* SJSSearchView.m */; };
 		73E0A15C190E143A00376646 /* background_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 73E0A15B190E143A00376646 /* background_ipad.png */; };
 		73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1418A87107006E6898 /* iPhone.storyboard */; };
 /* End PBXBuildFile section */
@@ -99,11 +100,12 @@
 		73BC6A6018A872D8006E6898 /* SJSGraphScene.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSGraphScene.m; sourceTree = "<group>"; };
 		73BC6A7718AAA531006E6898 /* SJSWordNetDB.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSWordNetDB.h; sourceTree = "<group>"; };
 		73BC6A7818AAA531006E6898 /* SJSWordNetDB.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSWordNetDB.m; sourceTree = "<group>"; };
+		73C1001B1B0EA9DA008F371F /* Main.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; path = Main.storyboard; sourceTree = "<group>"; };
+		73C100251B1023E8008F371F /* SJSMainViewController.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSMainViewController.m; sourceTree = "<group>"; };
+		73C100271B1023FE008F371F /* SJSMainViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSMainViewController.h; sourceTree = "<group>"; };
 		73CBA8A618CD427500B4E9B9 /* SJSIconButton.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSIconButton.h; sourceTree = "<group>"; };
 		73CBA8A718CD427500B4E9B9 /* SJSIconButton.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSIconButton.m; sourceTree = "<group>"; };
 		73D06F5018BDABF700A81600 /* SJSEnums.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSEnums.h; sourceTree = "<group>"; };
-		73D06F5118BDB2FF00A81600 /* SJSSearchView.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = SJSSearchView.h; sourceTree = "<group>"; };
-		73D06F5218BDB2FF00A81600 /* SJSSearchView.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = SJSSearchView.m; sourceTree = "<group>"; };
 		73E0A15B190E143A00376646 /* background_ipad.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = background_ipad.png; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -190,7 +192,10 @@
 			children = (
 				734EF9B618B3103A007A5BB2 /* FMDB */,
 				73BC6A1D18A87107006E6898 /* Images.xcassets */,
+				73C1001B1B0EA9DA008F371F /* Main.storyboard */,
 				73BC6A1418A87107006E6898 /* iPhone.storyboard */,
+				73C100271B1023FE008F371F /* SJSMainViewController.h */,
+				73C100251B1023E8008F371F /* SJSMainViewController.m */,
 				7356ED1C18F39D5F0091862B /* SJSAboutViewController.h */,
 				7356ED1D18F39D5F0091862B /* SJSAboutViewController.m */,
 				73BC6A1118A87107006E6898 /* SJSAppDelegate.h */,
@@ -208,8 +213,6 @@
 				7350F66E18E779F30006FFC5 /* SJSTextButton.m */,
 				7350F66A18DFA47A0006FFC5 /* SJSSearchButton.h */,
 				7350F66B18DFA47A0006FFC5 /* SJSSearchButton.m */,
-				73D06F5118BDB2FF00A81600 /* SJSSearchView.h */,
-				73D06F5218BDB2FF00A81600 /* SJSSearchView.m */,
 				737F04F418B1F39F005717F6 /* SJSDefinitionsView.h */,
 				737F04F518B1F39F005717F6 /* SJSDefinitionsView.m */,
 				737F04DA18ADE33B005717F6 /* SJSWordNode.h */,
@@ -302,6 +305,7 @@
 				7350F67C18E795E60006FFC5 /* forward_disabled.png in Resources */,
 				7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */,
 				73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */,
+				73C1001C1B0EA9DA008F371F /* Main.storyboard in Resources */,
 				7350F67518E78B0F0006FFC5 /* cog.png in Resources */,
 				735F5BE719072C22007A15E3 /* background_iphone.png in Resources */,
 				73BC6A1E18A87107006E6898 /* Images.xcassets in Resources */,
@@ -319,7 +323,7 @@
 			files = (
 				737F04DC18ADE33B005717F6 /* SJSWordNode.m in Sources */,
 				73BC6A7918AAA531006E6898 /* SJSWordNetDB.m in Sources */,
-				73D06F5318BDB2FF00A81600 /* SJSSearchView.m in Sources */,
+				73C100261B1023E8008F371F /* SJSMainViewController.m in Sources */,
 				73BC6A1C18A87107006E6898 /* SJSViewController.m in Sources */,
 				734EF9C118B3104C007A5BB2 /* FMDatabase.m in Sources */,
 				737F04E918B118AE005717F6 /* SJSEdgeNode.m in Sources */,
@@ -442,14 +446,18 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VisualDictionary/TheSaurus-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/VisualDictionary/TheSaurus-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = TheSaurus;
-				PROVISIONING_PROFILE = "42459528-7390-4967-980e-6cb22f703204";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "VisualDictionary/TheSaurus-Bridging-Header.h";
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};
@@ -460,14 +468,17 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
-				CODE_SIGN_IDENTITY = "";
-				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
+				CLANG_ENABLE_MODULES = YES;
+				CODE_SIGN_IDENTITY = "iPhone Developer";
+				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "VisualDictionary/TheSaurus-Prefix.pch";
 				INFOPLIST_FILE = "$(SRCROOT)/VisualDictionary/TheSaurus-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 8.0;
+				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_NAME = TheSaurus;
-				PROVISIONING_PROFILE = "3E331072-9476-4D48-937E-7A0171298C2F";
+				PROVISIONING_PROFILE = "";
+				SWIFT_OBJC_BRIDGING_HEADER = "VisualDictionary/TheSaurus-Bridging-Header.h";
 				TARGETED_DEVICE_FAMILY = "1,2";
 				WRAPPER_EXTENSION = app;
 			};

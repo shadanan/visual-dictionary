@@ -12,6 +12,16 @@
     FMDatabaseQueue *_queue;
 }
 
++ (SJSWordNetDB *)instance
+{
+    static SJSWordNetDB *wordNetDb = nil;
+    if (wordNetDb == nil) {
+        wordNetDb = [[SJSWordNetDB alloc] init];
+    }
+    return wordNetDb;
+}
+
+// Do not call this. Use the static 'instance' method instead.
 - (id)init
 {
     NSString *dbFile = [[NSBundle mainBundle] pathForResource:@"wordnet.sqlite" ofType:nil];

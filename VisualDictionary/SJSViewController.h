@@ -8,7 +8,10 @@
 
 #import <UIKit/UIKit.h>
 #import <SpriteKit/SpriteKit.h>
+#import "SJSGraphScene.h"
 
 @interface SJSViewController : UIViewController
+
+- (SJSGraphScene*)graphScene;
 
 @end

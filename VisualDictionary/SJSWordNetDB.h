@@ -13,6 +13,7 @@
 
 @interface SJSWordNetDB : NSObject
 
++ (SJSWordNetDB *)instance;
 - (NSSet *)meaningsForWord:(NSString *)word;
 - (NSSet *)wordsForMeaning:(NSString *)meaning;
 - (NSString *)definitionOfMeaning:(NSString *)meaning;

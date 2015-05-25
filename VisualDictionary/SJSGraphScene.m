@@ -8,20 +8,13 @@
 
 #import "SJSGraphScene.h"
 
-CGFloat maxScale = 2.5;
-CGFloat minScale = 0.25;
-
-static SJSWordNetDB *wordNetDb = nil;
 static SJSTheme *theme = nil;
-static CGFloat scale = 1;
 
 @implementation SJSGraphScene {
     BOOL _updateRequired;
     BOOL _dragging;
-    BOOL _scaling;
-    BOOL _contentCreated;
-    CGFloat _prevScale;
-    CGFloat _scaleStart;
+    CGFloat _scale;
+    CGSize _initialSize;
     
     NSInteger _histpos;
     NSMutableArray *_history;
@@ -34,18 +27,10 @@ static CGFloat scale = 1;
     SJSWordNode *_definitionNode;
     SJSWordNode *_root;
     
-    SJSSearchView *_searchView;
     SJSDefinitionsView *_definitionsView;
     SKLabelNode *_pruneIcon;
     SKShapeNode *_anchorPoint;
-    SKSpriteNode *_backgroundSprite;
 
-    SKShapeNode *_buttonBar;
-    SJSIconButton *_backButton;
-    SJSIconButton *_forwardButton;
-    SJSTextButton *_helpButton;
-    SJSSearchButton *_searchButton;
-    
     SKShapeNode *_splash;
     
     SKLabelNode *_wordNode;
@@ -54,18 +39,9 @@ static CGFloat scale = 1;
 
 + (void)initialize
 {
-    if (!wordNetDb) {
-        wordNetDb = [[SJSWordNetDB alloc] init];
-    }
-    
     if (!theme) {
         theme = [[SJSTheme alloc] initWithTheme:DevelTheme];
     }
-}
-
-+ (SJSWordNetDB *)wordNetDb
-{
-    return wordNetDb;
 }
 
 + (SJSTheme *)theme
@@ -73,55 +49,12 @@ static CGFloat scale = 1;
     return theme;
 }
 
-+ (CGFloat)scale
-{
-    return scale;
-}
-
-CGFloat limitScale(CGFloat scale)
-{
-    if (scale > maxScale) {
-        return maxScale;
-    } else if (scale < minScale) {
-        return minScale;
-    } else {
-        return scale;
-    }
-}
-
-- (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer {
-    if ([recognizer state] == UIGestureRecognizerStateBegan) {
-        _scaleStart = scale;
-        _scaling = YES;
-    } else if ([recognizer state] == UIGestureRecognizerStateEnded) {
-        _scaling = NO;
-    }
-    
-    scale = limitScale(_scaleStart * recognizer.scale);
-    
-    if (scale != _prevScale) {
-        _updateRequired = YES;
-        _prevScale = scale;
-    }
-
-    NSLog(@"Scale: %f", scale);
-}
-
 - (void)didMoveToView:(SKView *)view
 {
     if (!_contentCreated) {
-        _contentCreated = true;
         [self createSceneContents];
+        _contentCreated = true;
     }
-}
-
-- (void)didChangeSize:(CGSize)oldSize
-{
-    if (_root != nil) {
-        _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    }
-    
-    _updateRequired = YES;
 }
 
 - (CGFloat)width
@@ -134,71 +67,57 @@ CGFloat limitScale(CGFloat scale)
     return self.frame.size.height;
 }
 
+- (CGFloat)scale
+{
+    return _scale;
+}
+
+- (void)setScale:(CGFloat)scale
+{
+    _scale = scale;
+    self.size = CGSizeMake(_initialSize.width / _scale, _initialSize.height / _scale);
+}
+
+
 - (void)createSceneContents
 {
-    self.scaleMode = SKSceneScaleModeResizeFill;
-    _backgroundSprite = [[SKSpriteNode alloc] init];
-    _backgroundSprite.zPosition = -100;
-    _backgroundSprite.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
-    [self addChild:_backgroundSprite];
+    self.backgroundColor = [SKColor whiteColor];
+
+    self.anchorPoint = CGPointMake(0.5, 0.5);
+    self.scaleMode = SKSceneScaleModeAspectFill;
+    _initialSize = self.size;
+    _scale = 1;
     
     self.physicsWorld.gravity = CGVectorMake(0, 0);
-    self.physicsWorld.speed = 4.0;
+    self.physicsWorld.speed = 1.0;
+    
+    self.r0 = 0;
+    self.ka = 0.5;
+    self.kp = 20000;
     
     _history = [[NSMutableArray alloc] init];
     _histpos = -1;
     
-    _searchView = [[SJSSearchView alloc] initWithFrame:CGRectMake(0, 0, self.width, [theme searchHeight])];
-    _searchView.delegate = self;
-    _searchView.frame = CGRectMake(0, -[theme searchHeight], self.width, [theme searchHeight]);
-    [self.view addSubview:_searchView];
-    
-    _buttonBar = [[SKShapeNode alloc] init];
-    _buttonBar.name = @"buttonBar";
-    _buttonBar.zPosition = 10000;
-    [self addChild:_buttonBar];
-    
-    _backButton = [[SJSIconButton alloc] init];
-    _backButton.text = @"BACK";
-    [_backButton setIcon:@"backward_enabled.png"];
-    [_backButton setDisabledIcon:@"backward_disabled.png"];
-    [_buttonBar addChild:_backButton];
-    
-    _forwardButton = [[SJSIconButton alloc] init];
-    _forwardButton.text = @"FORWARD";
-    [_forwardButton setIcon:@"forward_enabled.png"];
-    [_forwardButton setDisabledIcon:@"forward_disabled.png"];
-    [_buttonBar addChild:_forwardButton];
-    
-    _helpButton = [[SJSTextButton alloc] init];
-    [_helpButton setLabelText:@"HELP"];
-    [_helpButton setIconText:[theme helpButtonIconText]];
-    [_helpButton setIconFontName:[theme helpButtonFontName]];
-    [_buttonBar addChild:_helpButton];
-    
-    _searchButton = [[SJSSearchButton alloc] init];
-    [_buttonBar addChild:_searchButton];
-    
-    _pruneIcon = [SKLabelNode new];
-    _pruneIcon.name = @"pruneIcon";
-    _pruneIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x99\xBC"];
-    _pruneIcon.alpha = 0;
-    _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
-    _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
-    _pruneIcon.zPosition = 50;
-    [self addChild:_pruneIcon];
-    
-    _anchorPoint = [SKShapeNode new];
-    _anchorPoint.name = @"anchorPoint";
-    _anchorPoint.alpha = 0;
-    _anchorPoint.zPosition = 50;
-    
-    CGMutablePathRef path = CGPathCreateMutable();
-    CGPathAddArc(path, nil, 0, 0, [theme anchorPointRadius], 0, M_PI*2, YES);
-    _anchorPoint.path = path;
-    CGPathRelease(path);
-    
-    [self addChild:_anchorPoint];
+//    _pruneIcon = [SKLabelNode new];
+//    _pruneIcon.name = @"pruneIcon";
+//    _pruneIcon.text = [[NSString alloc] initWithUTF8String:"\xE2\x99\xBC"];
+//    _pruneIcon.alpha = 0;
+//    _pruneIcon.horizontalAlignmentMode = SKLabelHorizontalAlignmentModeLeft;
+//    _pruneIcon.verticalAlignmentMode = SKLabelVerticalAlignmentModeBottom;
+//    _pruneIcon.zPosition = 50;
+//    [self addChild:_pruneIcon];
+//    
+//    _anchorPoint = [SKShapeNode new];
+//    _anchorPoint.name = @"anchorPoint";
+//    _anchorPoint.alpha = 0;
+//    _anchorPoint.zPosition = 50;
+//    
+//    CGMutablePathRef path = CGPathCreateMutable();
+//    CGPathAddArc(path, nil, 0, 0, [theme anchorPointRadius], 0, M_PI*2, YES);
+//    _anchorPoint.path = path;
+//    CGPathRelease(path);
+//    
+//    [self addChild:_anchorPoint];
     
     _edgeNodes = [[SKNode alloc] init];
     _edgeNodes.name = @"edgeNodes";
@@ -312,51 +231,15 @@ CGFloat limitScale(CGFloat scale)
 {
     NSLog(@"Updating all objects.");
     
-    [theme updateBackgroundSprite:_backgroundSprite];
-    
-    self.physicsBody = [SKPhysicsBody bodyWithEdgeLoopFromRect:CGRectMake(0, [theme buttonBarHeight], self.frame.size.width, self.frame.size.height - [theme buttonBarHeight])];
-    self.physicsBody.friction = 0;
-    
-    CGMutablePathRef buttonBarPath = CGPathCreateMutable();
-    CGPathAddRect(buttonBarPath, nil, CGRectMake(-1, -1, self.frame.size.width + 2, [theme buttonBarHeight] + 1));
-    _buttonBar.path = buttonBarPath;
-    CGPathRelease(buttonBarPath);
-    
-    _buttonBar.strokeColor = [theme buttonBarStrokeColor];
-    _buttonBar.lineWidth = 1;
-    _buttonBar.fillColor = [theme buttonBarFillColor];
-    _buttonBar.antialiased = NO;
-    
-    _backButton.frame = [theme backButtonFrameInFrame:_buttonBar.frame];
-    _forwardButton.frame = [theme forwardButtonFrameInFrame:_buttonBar.frame];
-    _helpButton.frame = [theme helpButtonFrameInFrame:_buttonBar.frame];
-    _searchButton.frame = [theme searchButtonFrameInFrame:_buttonBar.frame];
-    
-    if (_histpos <= 0) {
-        _backButton.text = @"BACK";
-        [_backButton disable];
-    } else {
-        _backButton.text = [_history objectAtIndex:_histpos - 1];
-        [_backButton enable];
-    }
-    
-    if (_histpos == _history.count - 1) {
-        _forwardButton.text = @"FORWARD";
-        [_forwardButton disable];
-    } else {
-        _forwardButton.text = [_history objectAtIndex:_histpos + 1];
-        [_forwardButton enable];
-    }
-    
-    _pruneIcon.fontColor = [theme pruneIconColor];
-    _pruneIcon.fontSize = [theme pruneIconSize];
-    _pruneIcon.alpha = [theme disabledAlpha];
-    _pruneIcon.position = CGPointMake(4, 4 + [theme buttonBarHeight]);
-    
-    _anchorPoint.fillColor = [theme anchorPointColor];
-    _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
-    _anchorPoint.alpha = [theme disabledAlpha];
-    _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+//    _pruneIcon.fontColor = [theme pruneIconColor];
+//    _pruneIcon.fontSize = [theme pruneIconSize];
+//    _pruneIcon.alpha = [theme disabledAlpha];
+//    _pruneIcon.position = CGPointMake(4, 4 + [theme buttonBarHeight]);
+//    
+//    _anchorPoint.fillColor = [theme anchorPointColor];
+//    _anchorPoint.glowWidth = [theme anchorPointGlowWidth];
+//    _anchorPoint.alpha = [theme disabledAlpha];
+//    _anchorPoint.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
     
     for (SJSWordNode *node in _wordNodes.children) {
         [node update];
@@ -379,22 +262,6 @@ CGFloat limitScale(CGFloat scale)
     if (_definitionNode != nil) {
         [_definitionsView setText:[_definitionNode getDefinition]];
     }
-}
-
-- (BOOL)textFieldShouldReturn:(UITextField *)textField {
-    NSString *word = [[textField.text lowercaseString] stringByTrimmingCharactersInSet:[NSCharacterSet whitespaceAndNewlineCharacterSet]];
-    
-    if ([word isEqualToString:@""]) {
-        [self closeSearchPane];
-    } else if (![wordNetDb containsWord:word]) {
-        [self flashWordNotFound:word];
-    } else {
-        [self closeSearchPane];
-        [self historyAppend:word];
-        [self createSceneForWord:word];
-    }
-    
-    return NO;
 }
 
 - (void)historyAppend:(NSString *)word
@@ -452,23 +319,11 @@ CGFloat limitScale(CGFloat scale)
     [_splash runAction:fadeIn];
 }
 
-- (void)openSearchPane
-{
-    [self hideSplash];
-    [_searchView open];
-}
-
-- (void)closeSearchPane
-{
-    [_searchView close];
-}
-
 - (void)touchesBegan:(NSSet *)touches withEvent:(UIEvent *)event
 {
     CGPoint pos = [[touches anyObject] locationInNode:self];
     NSLog(@"Touch Began:  %f %f", pos.x, pos.y);
     
-    [self closeSearchPane];
     if (_root == nil) {
         [self showSplash];
     }
@@ -492,11 +347,7 @@ CGFloat limitScale(CGFloat scale)
     if (_currentNode != nil) {
         _dragging = YES;
         
-        if (pos.y < [theme buttonBarHeight]) {
-            _currentNode.position = CGPointMake(pos.x, [theme buttonBarHeight]);
-        } else {
-            _currentNode.position = pos;
-        }
+        _currentNode.position = pos;
         
         CGFloat activeAlpha = [theme activeAlpha];
         CGFloat inactiveAlpha = [theme inactiveAlpha];
@@ -571,36 +422,7 @@ CGFloat limitScale(CGFloat scale)
             }
         }
     } else {
-        if ([_backButton containsPoint:pos]) {
-            NSString *previous = [self historyPrevious];
-            if (previous != nil) {
-                [self createSceneForWord:previous];
-            }
-
-            return;
-        }
-        
-        if ([_forwardButton containsPoint:pos]) {
-            NSString *next = [self historyNext];
-            if (next != nil) {
-                [self createSceneForWord:next];
-            }
-            
-            return;
-        }
-        
-        if ([_helpButton containsPoint:pos]) {
-            [[NSNotificationCenter defaultCenter] postNotificationName:@"GoToAboutViewController" object:self];
-            return;
-        }
-        
-        if ([_searchButton containsPoint:pos]) {
-            [self openSearchPane];
-            return;
-        }
-        
         if ([_splash containsPoint:pos] && _splash.alpha == 1) {
-            [self openSearchPane];
             return;
         }
         
@@ -664,7 +486,7 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)createSceneForRandomWord
 {
-    NSString *word = [wordNetDb getRandomWord];
+    NSString *word = [SJSWordNetDB.instance getRandomWord];
     [self historyAppend:word];
     [self createSceneForWord:word];
 }
@@ -676,7 +498,7 @@ CGFloat limitScale(CGFloat scale)
     
     _root = [[SJSWordNode alloc] initWordWithName:word];
     [_root disableDynamic];
-    _root.position = CGPointMake(CGRectGetMidX(self.frame), CGRectGetMidY(self.frame));
+    _root.position = self.position;
     [_wordNodes addChild:_root];
     
     [_root promoteToRoot];
@@ -710,57 +532,50 @@ CGFloat limitScale(CGFloat scale)
         [self update];
     }
     
-    double r0 = 80 * scale;
-    double ka = 1 * scale;
-    double kp = 10000 * scale;
-    double kb = 0 * scale;
-    
-    double w = self.frame.size.width / 2;
-    double h = self.frame.size.height / 2;
-    
     for (SJSWordNode *me in _wordNodes.children) {
-        double x1 = me.position.x;
-        double y1 = me.position.y;
+        float x1 = me.position.x;
+        float y1 = me.position.y;
                 
         // No forces on the root
         if (me == _root) {
             continue;
         }
         
-        double fx = kb * pow((w - x1) / w, 3);
-        double fy = kb * pow((h - y1) / h, 3);
+        float fx = 0;
+        float fy = 0;
         
         for (SJSWordNode *them in _wordNodes.children) {
             if (me == them) {
                 continue;
             }
             
-            double x2 = them.position.x;
-            double y2 = them.position.y;
+            float x2 = them.position.x;
+            float y2 = them.position.y;
             
-            double r = sqrt(pow(x1 - x2, 2) + pow(y1 - y2, 2)) + 0.1;
-            double theta = atan2(y2 - y1, x2 - x1);
+            float r = sqrtf(powf(x1 - x2, 2) + powf(y1 - y2, 2)) + 0.1;
+            float theta = atan2f(y2 - y1, x2 - x1);
             
-            double fa = 0;
-            double fp = 0;
+            // Repulsive force
+            float f = -self.kp / powf(r, 2);
             
+            // Attractive force
             if ([me isConnectedTo:them]) {
-                fa = ka * (r - r0);
+                f += self.ka * (r - self.r0);
             }
-            fp = -kp / pow(r, 2);
             
-            fx += (fa + fp) * cos(theta);
-            fy += (fa + fp) * sin(theta);
-            
-            if (fa > 1000 || fa < -1000 || fp > 1000 || fp < -1000) {
-                NSLog(@"me: %@  them: %@  p(%f, %f)  fa(%f, %f)  fp(%f, %f)",
-                      me.name, them.name, x1, y1,
-                      fa * cos(theta), fa * sin(theta), fp * cos(theta), fp * sin(theta));
-            }
+            fx += f * cosf(theta);
+            fy += f * sinf(theta);
         }
         
-        [me.physicsBody applyForce:CGVectorMake(fx, fy)];
+        [me.physicsBody applyImpulse:CGVectorMake(limitForce(fx), limitForce(fy))];
+//        [me.physicsBody applyForce:CGVectorMake(limitForce(fx), limitForce(fy))];
     }
+}
+
+CGFloat limitForce(CGFloat force)
+{
+    //    return force;
+    return MIN(MAX(force, -1000), 1000);
 }
 
 - (void)didSimulatePhysics

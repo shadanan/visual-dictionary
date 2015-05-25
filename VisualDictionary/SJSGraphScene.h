@@ -14,20 +14,28 @@
 #import "SJSEdgeNode.h"
 #import "SJSWordNetDB.h"
 #import "SJSDefinitionsView.h"
-#import "SJSSearchView.h"
 #import "SJSTheme.h"
 #import "SJSEnums.h"
 
 @interface SJSGraphScene : SKScene
 
-+ (SJSWordNetDB *)wordNetDb;
-+ (SJSTheme *)theme;
-+ (CGFloat)scale;
+@property float r0;
+@property float ka;
+@property float kp;
 
-- (IBAction)handlePinch:(UIPinchGestureRecognizer *)recognizer;
+@property CGFloat scale;
+@property (readonly) BOOL contentCreated;
+
++ (SJSTheme *)theme;
 
 - (void)setTheme:(Theme)theme;
 
 - (void)createSceneForRandomWord;
+
+- (void)createSceneForWord:(NSString *)word;
+
+- (void)flashWordNotFound:(NSString *)word;
+
+- (void)historyAppend:(NSString *)word;
 
 @end

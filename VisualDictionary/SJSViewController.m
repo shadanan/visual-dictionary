@@ -7,7 +7,6 @@
 //
 
 #import "SJSViewController.h"
-#import "SJSGraphScene.h"
 
 @implementation SJSViewController {
     SJSGraphScene *_graphScene;
@@ -29,13 +28,13 @@
     skView.ignoresSiblingOrder = YES;
 
     _graphScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
-    _graphScene.scaleMode = SKSceneScaleModeAspectFill;
-    
-    UIPinchGestureRecognizer *recognizer = [[UIPinchGestureRecognizer alloc] initWithTarget:_graphScene action:@selector(handlePinch:)];
-    recognizer.delegate = (id)_graphScene;
-    [skView addGestureRecognizer:recognizer];
-    
+    _graphScene.scaleMode = SKSceneScaleModeAspectFill;    
     [skView presentScene:_graphScene];
+}
+
+- (SJSGraphScene*)graphScene
+{
+    return _graphScene;
 }
 
 - (void)motionBegan:(UIEventSubtype)motion withEvent:(UIEvent *)event
