@@ -10,53 +10,28 @@
 
 @implementation SJSMainViewController {
     SJSViewController *_graphViewController;
-    float _scaleStart;
-    BOOL _scaling;
     
     __weak IBOutlet UIView *settingsView;
     __weak IBOutlet UISearchBar *searchBar;
-    __weak IBOutlet UITextField *springCoefficientTextField;
-    __weak IBOutlet UITextField *springLengthTextField;
-    __weak IBOutlet UITextField *chargeCoefficientTextField;
+
+    float initialSpringCoefficient;
+    __weak IBOutlet UILabel *springCoefficientLabel;
+    __weak IBOutlet UISlider *springCoefficientSlider;
+
+    float initialSpringLength;
+    __weak IBOutlet UILabel *springLengthLabel;
+    __weak IBOutlet UISlider *springLengthSlider;
+
+    float initialChargeCoefficient;
+    __weak IBOutlet UILabel *chargeCoefficientLabel;
+    __weak IBOutlet UISlider *chargeCoefficientSlider;
 }
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
     searchBar.delegate = self;
-}
-
-- (IBAction)handleTapGesture:(UITapGestureRecognizer *)sender {
-    if ([self isSearchBarVisible]) {
-        [self hideSearchBar];
-    }
-}
-
-
-CGFloat maxScale = 2.5;
-CGFloat minScale = 0.25;
-
-CGFloat limitScale(CGFloat scale)
-{
-    if (scale > maxScale) {
-        return maxScale;
-    } else if (scale < minScale) {
-        return minScale;
-    } else {
-        return scale;
-    }
-}
-
-- (IBAction)handlePinchGesture:(UIPinchGestureRecognizer *)sender {
-    if ([sender state] == UIGestureRecognizerStateBegan) {
-        _scaleStart = self.graphScene.scale;
-        _scaling = YES;
-    } else if ([sender state] == UIGestureRecognizerStateEnded) {
-        _scaling = NO;
-    }
-    
-    self.graphScene.scale = limitScale(_scaleStart * sender.scale);
-    NSLog(@"Scale: %f", self.graphScene.scale);
+    [self showSearchBar];
 }
 
 - (void)hideAllExcept:(id)sender
@@ -125,7 +100,7 @@ CGFloat limitScale(CGFloat scale)
 {
     [searchBar becomeFirstResponder];
     [UIView animateWithDuration:0.2 animations:^{
-        searchBar.alpha = 1;
+        searchBar.alpha = 0.95;
     }];
 }
 
@@ -154,34 +129,63 @@ CGFloat limitScale(CGFloat scale)
 
 - (void)showSettings
 {
+    [self loadSettings];
     [UIView animateWithDuration:0.2 animations:^{
-        settingsView.alpha = 0.8;
+        settingsView.alpha = 0.95;
     }];
 }
 
-- (IBAction)springCoefficientChanged:(UITextField *)sender {
-    self.graphScene.ka = sender.text.floatValue;
-}
-
-- (IBAction)springLengthChanged:(UITextField *)sender {
-    self.graphScene.r0 = sender.text.floatValue;
-}
-
-- (IBAction)chargeCoefficientChanged:(UITextField *)sender {
-    self.graphScene.kp = sender.text.floatValue;
-}
-
-
-- (void)viewDidLayoutSubviews
+- (void)loadSettings
 {
-    springCoefficientTextField.text = [NSString stringWithFormat:@"%f", self.graphScene.ka];
-    springLengthTextField.text = [NSString stringWithFormat:@"%f", self.graphScene.r0];
-    chargeCoefficientTextField.text = [NSString stringWithFormat:@"%f", self.graphScene.kp];
+    initialSpringCoefficient = self.graphScene.ka;
+    springCoefficientSlider.value = self.graphScene.ka;
+    springCoefficientLabel.text = [NSString stringWithFormat:@"%1.2f", initialSpringCoefficient];
+    
+    initialSpringLength = self.graphScene.r0;
+    springLengthSlider.value = self.graphScene.r0;
+    springLengthLabel.text = [NSString stringWithFormat:@"%1.2f", initialSpringLength];
+    
+    initialChargeCoefficient = self.graphScene.kp;
+    chargeCoefficientSlider.value = log10f(self.graphScene.kp);
+    chargeCoefficientLabel.text = [NSString stringWithFormat:@"%1.2f", initialChargeCoefficient];
+}
+
+- (IBAction)springCoefficientValueChanged:(UISlider *)sender {
+    float springCoefficient = springCoefficientSlider.value;
+    self.graphScene.ka = springCoefficient;
+    springCoefficientLabel.text = [NSString stringWithFormat:@"%1.2f", springCoefficient];
+}
+
+- (IBAction)springLengthValueChanged:(UISlider *)sender {
+    float springLength = springLengthSlider.value;
+    self.graphScene.r0 = springLength;
+    springLengthLabel.text = [NSString stringWithFormat:@"%1.2f", springLength];
+}
+
+- (IBAction)chargeCoefficientValueChanged:(UISlider *)sender {
+    float chargeCoefficient = powf(10, chargeCoefficientSlider.value);
+    self.graphScene.kp = chargeCoefficient;
+    chargeCoefficientLabel.text = [NSString stringWithFormat:@"%1.2f", chargeCoefficient];
+}
+
+- (IBAction)touchUpInsideApply:(UIButton *)sender {
+    [self hideSettings];
+}
+
+- (IBAction)touchUpInsideCancel:(UIButton *)sender {
+    self.graphScene.ka = initialSpringCoefficient;
+    self.graphScene.r0 = initialSpringLength;
+    self.graphScene.kp = initialChargeCoefficient;
+    [self hideSettings];
 }
 
 - (SJSGraphScene *)graphScene
 {
     return [_graphViewController graphScene];
+}
+
+- (IBAction)showAbout:(UIBarButtonItem *)sender {
+    [self performSegueWithIdentifier:@"aboutSegue" sender:self];
 }
 
 - (void)prepareForSegue:(UIStoryboardSegue *)segue sender:(id)sender

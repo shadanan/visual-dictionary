@@ -43,7 +43,6 @@
 		73C100261B1023E8008F371F /* SJSMainViewController.m in Sources */ = {isa = PBXBuildFile; fileRef = 73C100251B1023E8008F371F /* SJSMainViewController.m */; };
 		73CBA8A818CD427500B4E9B9 /* SJSIconButton.m in Sources */ = {isa = PBXBuildFile; fileRef = 73CBA8A718CD427500B4E9B9 /* SJSIconButton.m */; };
 		73E0A15C190E143A00376646 /* background_ipad.png in Resources */ = {isa = PBXBuildFile; fileRef = 73E0A15B190E143A00376646 /* background_ipad.png */; };
-		73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 73BC6A1418A87107006E6898 /* iPhone.storyboard */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -90,7 +89,6 @@
 		73BC6A1018A87107006E6898 /* TheSaurus-Prefix.pch */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "TheSaurus-Prefix.pch"; sourceTree = "<group>"; };
 		73BC6A1118A87107006E6898 /* SJSAppDelegate.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSAppDelegate.h; sourceTree = "<group>"; };
 		73BC6A1218A87107006E6898 /* SJSAppDelegate.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SJSAppDelegate.m; sourceTree = "<group>"; };
-		73BC6A1518A87107006E6898 /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/iPhone.storyboard; sourceTree = "<group>"; };
 		73BC6A1A18A87107006E6898 /* SJSViewController.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = SJSViewController.h; sourceTree = "<group>"; };
 		73BC6A1B18A87107006E6898 /* SJSViewController.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = SJSViewController.m; sourceTree = "<group>"; };
 		73BC6A1D18A87107006E6898 /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Images.xcassets; sourceTree = "<group>"; };
@@ -193,7 +191,6 @@
 				734EF9B618B3103A007A5BB2 /* FMDB */,
 				73BC6A1D18A87107006E6898 /* Images.xcassets */,
 				73C1001B1B0EA9DA008F371F /* Main.storyboard */,
-				73BC6A1418A87107006E6898 /* iPhone.storyboard */,
 				73C100271B1023FE008F371F /* SJSMainViewController.h */,
 				73C100251B1023E8008F371F /* SJSMainViewController.m */,
 				7356ED1C18F39D5F0091862B /* SJSAboutViewController.h */,
@@ -304,7 +301,6 @@
 				7350F67B18E795E60006FFC5 /* backward_enabled.png in Resources */,
 				7350F67C18E795E60006FFC5 /* forward_disabled.png in Resources */,
 				7350F67D18E795E60006FFC5 /* forward_enabled.png in Resources */,
-				73F40FC518B6D29300802464 /* iPhone.storyboard in Resources */,
 				73C1001C1B0EA9DA008F371F /* Main.storyboard in Resources */,
 				7350F67518E78B0F0006FFC5 /* cog.png in Resources */,
 				735F5BE719072C22007A15E3 /* background_iphone.png in Resources */,
@@ -352,14 +348,6 @@
 				73BC6A0C18A87107006E6898 /* en */,
 			);
 			name = InfoPlist.strings;
-			sourceTree = "<group>";
-		};
-		73BC6A1418A87107006E6898 /* iPhone.storyboard */ = {
-			isa = PBXVariantGroup;
-			children = (
-				73BC6A1518A87107006E6898 /* Base */,
-			);
-			name = iPhone.storyboard;
 			sourceTree = "<group>";
 		};
 /* End PBXVariantGroup section */

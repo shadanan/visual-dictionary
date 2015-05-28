@@ -16,19 +16,10 @@
 {
     [super viewDidLoad];
     
-    [[NSNotificationCenter defaultCenter]
-     addObserver:self
-     selector:@selector(goToAboutViewController:)
-     name:@"GoToAboutViewController"
-     object:nil];
-    
-    [self becomeFirstResponder];
-    
     SKView *skView = (SKView *) self.view;
     skView.ignoresSiblingOrder = YES;
 
     _graphScene = [SJSGraphScene sceneWithSize:skView.bounds.size];
-    _graphScene.scaleMode = SKSceneScaleModeAspectFill;    
     [skView presentScene:_graphScene];
 }
 
@@ -44,9 +35,9 @@
     }
 }
 
-- (void)goToAboutViewController:(NSNotification *) notification
+- (IBAction)handlePanGesture:(UIPanGestureRecognizer *)sender
 {
-    [self performSegueWithIdentifier:@"AboutSegue" sender:self];
+    NSLog(@"Panning!");
 }
 
 - (void)dealloc

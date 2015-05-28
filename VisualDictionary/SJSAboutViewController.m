@@ -10,9 +10,9 @@
 
 @interface SJSAboutViewController ()
 
-@property (strong, nonatomic) IBOutlet UIScrollView *aboutScrollView;
-@property (strong, nonatomic) IBOutlet UIView *aboutContentView;
-@property (strong, nonatomic) IBOutlet UILabel *helpLabel;
+@property (weak, nonatomic) IBOutlet UIScrollView *aboutScrollView;
+@property (weak, nonatomic) IBOutlet UIView *aboutContentView;
+@property (weak, nonatomic) IBOutlet UILabel *helpLabel;
 
 @end
 

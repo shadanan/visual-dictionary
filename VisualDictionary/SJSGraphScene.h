@@ -17,7 +17,7 @@
 #import "SJSTheme.h"
 #import "SJSEnums.h"
 
-@interface SJSGraphScene : SKScene
+@interface SJSGraphScene : SKScene<UIGestureRecognizerDelegate>
 
 @property float r0;
 @property float ka;
